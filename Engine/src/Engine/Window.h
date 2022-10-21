@@ -46,8 +46,6 @@ namespace Engine
 		void Init(const WindowProperties& properties);
 		void Shutdown();
 
-
-
 		GLFWwindow* m_Window{ nullptr };
 		WindowProperties m_Data;
 		bool m_vsync{ false };

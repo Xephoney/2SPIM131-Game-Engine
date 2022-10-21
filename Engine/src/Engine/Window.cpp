@@ -25,10 +25,11 @@ namespace Engine
 		m_Data.Height = properties.Height;
 		m_Data.WindowTitle = properties.WindowTitle;
 
-		// Verify that GLFW has not been verified yet, and stop it if it has. 
+		// Verify that GLFW has not been initialized yet. 
 		if(s_GLFWinitialized == false)
 		{
 			int success = glfwInit();
+			ENGINE_CORE_ASSERT(success, "Could not initialize GLFW");
 			s_GLFWinitialized = true;
 		}
 
