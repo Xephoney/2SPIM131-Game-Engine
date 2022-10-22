@@ -1,9 +1,10 @@
 #pragma once
 
-// TODO (PCH) : Include precompiled header with <string>
-#include <string>
+#include <Engine/engpch.h>
 #include <GLFW/glfw3.h>
 #include "Core.h"
+
+#include "Engine/Events/Event.h"
 
 
 namespace Engine
@@ -14,6 +15,7 @@ namespace Engine
 		uint16_t Width;
 		uint16_t Height;
 
+	
 		WindowProperties
 		(const std::string& title = "Game Engine Architecture 2022",
 			uint16_t width = 1280,
@@ -30,25 +32,36 @@ namespace Engine
 		virtual ~Window() {}
 
 		//TODO (Window Abstraction) : Make virtual
-		void OnUpdate();
+		virtual void OnUpdate();
 		uint16_t GetWidth() const { return m_Data.Width; }
 		uint16_t GetHeight() const { return m_Data.Height; }
 
-		//TODO (EVENTS): Add function after implementing Event system 
-		//virtual void SetEventCallback(const EventCallbackFn& callback) = 0;
+		using EventCallbackFn = std::function<void(Event&)>;
+		virtual void SetEventCallback(const EventCallbackFn&);
 		void SetVSync(bool enable);
 		void isVSync() const;
 
 		static Window* Create(const WindowProperties& properties = WindowProperties());
-		
+
+
 
 	private:
 		void Init(const WindowProperties& properties);
 		void Shutdown();
 
 		GLFWwindow* m_Window{ nullptr };
-		WindowProperties m_Data;
+		struct WindowData
+		{
+			std::string Title;
+			unsigned int Width, Height;
+			bool VSync;
+
+			EventCallbackFn EventCallback;
+		};
+		WindowData m_Data;
 		bool m_vsync{ false };
 		bool m_initialized { false };
+		EventCallbackFn EventCallback;
+
 	};
 }

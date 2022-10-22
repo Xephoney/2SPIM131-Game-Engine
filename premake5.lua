@@ -24,25 +24,28 @@ project "Engine"
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "Engine/engpch.h"
+	pchsource "Engine/src/Engine/engpch.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/src/**.hpp",
-		"glad.c"
+		"%{prj.name}/src/**.hpp"
+		--"glad.c"
 	}
 
 	includedirs
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/3rdParty/spdlog/include",
-		"Libraries/lib",
-		"Libraries/include"
+		"%{prj.name}/3rdParty/lib",
+		"%{prj.name}/3rdParty/include"
 	}
 
 	libdirs
 	{
-		"Libraries/lib"
+		"%{prj.name}/3rdParty/lib"
 	}
 
 	links
@@ -101,8 +104,8 @@ project "Sandbox"
 	includedirs
 	{
 		"Engine/3rdParty/spdlog/include",
-		"Libraries/include",
-		"Libraries/lib",
+		"Engine/3rdParty/include",
+		"Engine/3rdParty/lib",
 		"Engine/src"
 	}
 

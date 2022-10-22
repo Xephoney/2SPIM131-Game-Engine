@@ -1,10 +1,7 @@
 #pragma once
 
+#include "Engine/engpch.h"
 #include "Engine/Core.h"
-
-
-#include <string>
-#include <functional>
 
 
 namespace Engine
@@ -34,15 +31,14 @@ namespace Engine
  */
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
 								virtual EventType GetEventType() const override { return GetStaticType(); } \
-								virtual const char* GetName() const override {return #type; }
+								virtual const char* GetName() const override { return #type; }
 
 #define EVENT_CLASS_CATEGORY(category) virtual int GetCategoryFlags() const override { return category; }
 
 	class ENGINE_API Event
 	{
 	public:
-
-		virtual ~Event() = default;
+		friend class EventDispatcher;
 
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
@@ -57,6 +53,31 @@ namespace Engine
 		bool m_Handled { false };
 	};
 
+	// class EventDispatcher
+	// {
+	// public:
+	// 	template<typename T>
+	// 	using EventFn = std::function<bool(T&)>;
+	//
+	// 	EventDispatcher(Event& event)
+	// 		: m_Event(event)
+	// 	{
+	// 	}
+	//
+	// 	// F will be deduced by the compiler
+	// 	template<typename T>
+	// 	bool Dispatch(EventFn<T> func)
+	// 	{
+	// 		if (m_Event.GetEventType() == T::GetStaticType())
+	// 		{
+	// 			m_Event.m_Handled = func(*(T*)(m_Event));
+	// 			return true;
+	// 		}
+	// 		return false;
+	// 	}
+	// private:
+	// 	Event& m_Event;
+	// };
 	class EventDispatcher
 	{
 	public:
@@ -84,7 +105,5 @@ namespace Engine
 	{
 		return os << e.ToString();
 	}
-
-
 }
 

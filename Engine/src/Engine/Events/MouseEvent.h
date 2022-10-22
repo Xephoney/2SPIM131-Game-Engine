@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Event.h"
-#include <sstream>
+
 
 namespace Engine
 {
@@ -21,8 +21,9 @@ namespace Engine
 			return ss.str();
 		}
 
-		EVENT_CLASS_TYPE(MouseMoved);
+		EVENT_CLASS_TYPE(MouseMoved)
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		
 	private:
 		float m_MouseX, m_MouseY;
 	};
@@ -44,7 +45,7 @@ namespace Engine
 		}
 
 		EVENT_CLASS_TYPE(MouseScrolled)
-			EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
 	private:
 		float m_XOffset, m_YOffset;
 	};
@@ -53,9 +54,10 @@ namespace Engine
 	{
 	public:
 		int GetMouseButton() const { return m_Button; }
-
+		
 		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
-			
+
+
 	protected:
 		MouseButtonEvent(int button)
 			:m_Button(button) {}
@@ -76,7 +78,6 @@ namespace Engine
 			ss << "MouseButtonPressedEvent: " << m_Button;
 			return ss.str();
 		}
-
 		EVENT_CLASS_TYPE(MouseButtonPressed)
 	};
 

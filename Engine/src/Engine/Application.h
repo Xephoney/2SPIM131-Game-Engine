@@ -1,8 +1,9 @@
 #pragma once
 
-#include <memory>
+#include "Engine/engpch.h"
 
 #include "Core.h"
+#include "Events/ApplicationEvent.h"
 #include "Window.h"
 
 namespace Engine
@@ -15,10 +16,10 @@ namespace Engine
 
 		void run();
 
-
+		void OnEvent(Event& e);
 	private:
 		std::unique_ptr<Window> m_Window;
-
+		bool OnWindowClose(WindowCloseEvent& e);
 
 		bool m_Running = true;
 	};
