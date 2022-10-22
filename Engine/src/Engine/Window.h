@@ -1,9 +1,8 @@
 #pragma once
 
 #include <Engine/engpch.h>
-#include <GLFW/glfw3.h>
 #include "Core.h"
-
+#include "GLFW/glfw3.h"
 #include "Engine/Events/Event.h"
 
 
@@ -12,14 +11,13 @@ namespace Engine
 	struct WindowProperties
 	{
 		std::string	WindowTitle;
-		uint16_t Width;
-		uint16_t Height;
+		unsigned int Width;
+		unsigned int Height;
 
-	
 		WindowProperties
 		(const std::string& title = "Game Engine Architecture 2022",
-			uint16_t width = 1280,
-			uint16_t height = 720)
+			unsigned int width = 1280,
+			unsigned int height = 720)
 				: WindowTitle(title), Width(width), Height(height)
 		{
 		}
@@ -33,8 +31,8 @@ namespace Engine
 
 		//TODO (Window Abstraction) : Make virtual
 		virtual void OnUpdate();
-		uint16_t GetWidth() const { return m_Data.Width; }
-		uint16_t GetHeight() const { return m_Data.Height; }
+		unsigned int GetWidth() const { return m_Data.Width; }
+		unsigned int GetHeight() const { return m_Data.Height; }
 
 		using EventCallbackFn = std::function<void(Event&)>;
 		virtual void SetEventCallback(const EventCallbackFn&);

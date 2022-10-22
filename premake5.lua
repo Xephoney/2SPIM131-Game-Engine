@@ -12,9 +12,14 @@ workspace "Game Engine"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 --Include Directories relative to root folder 
---IncludeDir = {}
---IncludeDir["GLFW"] = "Engine/3rdParty/include/"
+IncludeDir = {}
+IncludeDir["spdlog"] = "Engine/3rdParty/spdlog/include"
+IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
+IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
+IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 
+include "Engine/3rdParty/GLAD"
+include "Engine/3rdParty/imgui"
 
 project "Engine"
 	location "Engine"
@@ -38,19 +43,22 @@ project "Engine"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/3rdParty/spdlog/include",
-		"%{prj.name}/3rdParty/lib",
-		"%{prj.name}/3rdParty/include"
+		"%{IncludeDir.spdlog}",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.GLAD}",
+		"%{IncludeDir.imgui}"
 	}
 
 	libdirs
 	{
-		"%{prj.name}/3rdParty/lib"
+		"%{prj.name}/3rdParty/GLFW/lib"
 	}
 
 	links
 	{
 		"glfw3",
+		"GLAD",
+		"imgui",
 		"opengl32"
 	}
 
@@ -63,7 +71,7 @@ project "Engine"
 		{
 			"ENG_PLATFORM_WINDOWS",
 			"ENG_BUILD_DLL",
-			"_WINDLL"
+			"GLFW_INCLUDE_NONE"
 		}
 		
 		postbuildcommands
@@ -104,8 +112,8 @@ project "Sandbox"
 	includedirs
 	{
 		"Engine/3rdParty/spdlog/include",
-		"Engine/3rdParty/include",
-		"Engine/3rdParty/lib",
+		"Engine/3rdParty/GLFW/include",
+		"Engine/3rdParty/GLFW/lib",
 		"Engine/src"
 	}
 

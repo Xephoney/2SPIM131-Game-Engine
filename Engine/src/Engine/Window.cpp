@@ -7,13 +7,16 @@
 #include "Events/MouseEvent.h"
 #include "Events/KeyEvent.h"
 
+#include "glad/glad.h"
+
+
 namespace Engine
 {
 	static bool s_GLFWinitialized = false;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		//ENGINE_LOG_ERROR("GLFW ERROR ({0}): {1}", error, description)
+		ENGINE_LOG_ERROR("GLFW ERROR ({0}): {1}", error, description)
 	}
 
 
@@ -54,11 +57,18 @@ namespace Engine
 
 		m_Window = glfwCreateWindow(static_cast<int>(m_Data.Width), static_cast<int>(m_Data.Height), m_Data.Title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_Window);
+
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		ENGINE_CORE_ASSERT(status, "Failed to initialize GLAD");
+		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
-		SetVSync(true);
+		glClearColor(0.f, 0.3f, 0.4f, 1.0f);
+
+		SetVSync(false);
 
 
-		// Setup events
+		// ------------------------------ Setup events ---------------------------
+		// Window Resize Event
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int Width, int Height)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -69,6 +79,8 @@ namespace Engine
 				data.EventCallback(event);
 
 			});
+
+		// Window Close Event
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -76,6 +88,7 @@ namespace Engine
 				data.EventCallback(event);
 			});
 
+		// Key input event
 		glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -104,6 +117,14 @@ namespace Engine
 				}
 			});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int character)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				KeyTypedEvent event(character);
+				data.EventCallback(event);
+			});
+
+		// MouseButton Event
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 				WindowData& a = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -127,6 +148,8 @@ namespace Engine
 						break;
 				}
 		});
+
+		// Scroll wheel Event
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double x_offset, double y_offset)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -136,6 +159,7 @@ namespace Engine
 			
 		});
 
+		// Cursor Moved Event
 		glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double x, double y)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -162,5 +186,6 @@ namespace Engine
 	{
 		glfwPollEvents();
 		glfwSwapBuffers(m_Window);
+		glClear(GL_COLOR_BUFFER_BIT);
 	}
 }

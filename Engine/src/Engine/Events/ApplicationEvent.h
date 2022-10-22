@@ -7,12 +7,12 @@ namespace Engine
 	class ENGINE_API WindowResizeEvent : public Event
 	{
 	public:
-		WindowResizeEvent(uint16_t width, uint16_t height)
+		WindowResizeEvent(unsigned int width, unsigned int height)
 			: m_Width(width), m_Height(height) {}
 
 		
-		uint16_t GetWidth() const { return m_Width; }
-		uint16_t GetHeight() const { return m_Height; }
+		unsigned int GetWidth() const { return m_Width; }
+		unsigned int GetHeight() const { return m_Height; }
 
 		std::string ToString() const override
 		{
@@ -23,7 +23,7 @@ namespace Engine
 
 		EVENT_CLASS_TYPE(WindowResize)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)
-		uint16_t m_Width, m_Height;
+		unsigned int m_Width, m_Height;
 	private:
 		
 	};

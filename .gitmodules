@@ -1,3 +1,6 @@
 [submodule "2SPIM131/3rdParty/spdlog"]
 	path = 2SPIM131/3rdParty/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Engine/3rdParty/imgui"]
+	path = Engine/3rdParty/imgui
+	url = https://github.com/ocornut/imgui

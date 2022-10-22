@@ -11,7 +11,7 @@ namespace Engine
 	{
 		none = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-		KeyPressed, KeyReleased,
+		KeyPressed, KeyReleased, KeyTyped,
 		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
@@ -53,31 +53,6 @@ namespace Engine
 		bool m_Handled { false };
 	};
 
-	// class EventDispatcher
-	// {
-	// public:
-	// 	template<typename T>
-	// 	using EventFn = std::function<bool(T&)>;
-	//
-	// 	EventDispatcher(Event& event)
-	// 		: m_Event(event)
-	// 	{
-	// 	}
-	//
-	// 	// F will be deduced by the compiler
-	// 	template<typename T>
-	// 	bool Dispatch(EventFn<T> func)
-	// 	{
-	// 		if (m_Event.GetEventType() == T::GetStaticType())
-	// 		{
-	// 			m_Event.m_Handled = func(*(T*)(m_Event));
-	// 			return true;
-	// 		}
-	// 		return false;
-	// 	}
-	// private:
-	// 	Event& m_Event;
-	// };
 	class EventDispatcher
 	{
 	public:
