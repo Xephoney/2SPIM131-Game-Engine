@@ -17,6 +17,8 @@ IncludeDir["spdlog"] = "Engine/3rdParty/spdlog/include"
 IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
+IncludeDir["glm"] = "Engine/3rdParty/glm"
+
 
 include "Engine/3rdParty/GLAD"
 include "Engine/3rdParty/imgui"
@@ -25,6 +27,7 @@ project "Engine"
 	location "Engine"
 	kind "SharedLib"
 	language"C++"
+	staticruntime "Off"
 
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("int/" .. outputdir .. "/%{prj.name}")
@@ -46,7 +49,8 @@ project "Engine"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
-		"%{IncludeDir.imgui}"
+		"%{IncludeDir.imgui}",
+		"%{IncludeDir.glm}"
 	}
 
 	libdirs
@@ -81,24 +85,28 @@ project "Engine"
 
 	filter "configurations:Debug"
 		defines "ENG_DEBUG"
-		buildoptions "/MDd"
+		staticruntime "off"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
-		buildoptions "/MD"
+		staticruntime "off"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Distribution"
 		defines "ENG_DIST"
-		buildoptions "/MD"
+		staticruntime "off"
+		runtime "Release"
 		symbols "Off"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
-
 	language "C++"
+	staticruntime "Off"
+
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("int/" .. outputdir .. "/%{prj.name}")
 	
@@ -112,8 +120,8 @@ project "Sandbox"
 	includedirs
 	{
 		"Engine/3rdParty/spdlog/include",
-		"Engine/3rdParty/GLFW/include",
-		"Engine/3rdParty/GLFW/lib",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.glm}",
 		"Engine/src"
 	}
 
@@ -124,7 +132,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines

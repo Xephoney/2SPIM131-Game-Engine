@@ -41,7 +41,7 @@ namespace Engine
 
 		static Window* Create(const WindowProperties& properties = WindowProperties());
 
-
+		inline virtual void* GetNativeWindow() const { return m_Window; }
 
 	private:
 		void Init(const WindowProperties& properties);

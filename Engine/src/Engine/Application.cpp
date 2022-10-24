@@ -4,6 +4,9 @@
 
 #include "Log.h"
 #include "ImGuiOpenGLRenderer.h"
+#include "Input.h"
+#include "Engine/KeyCodes.h"
+#include "Engine/MouseButtonCodes.h"
 
 #include "glad/glad.h"
 
@@ -37,37 +40,33 @@ namespace Engine
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-		// TODO : REMOVE BECAUSE ITS TEMPORARY
-		// TODO : SWAP WITH CUSTOM KEY_CODES
-		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
-		io.KeyMap[ImGuiKey_LeftArrow] = GLFW_KEY_LEFT;
-		io.KeyMap[ImGuiKey_RightArrow] = GLFW_KEY_RIGHT;
-		io.KeyMap[ImGuiKey_UpArrow] = GLFW_KEY_UP;
-		io.KeyMap[ImGuiKey_DownArrow] = GLFW_KEY_DOWN;
-		io.KeyMap[ImGuiKey_PageUp] = GLFW_KEY_PAGE_UP;
-		io.KeyMap[ImGuiKey_PageDown] = GLFW_KEY_PAGE_DOWN;
-		io.KeyMap[ImGuiKey_Home] = GLFW_KEY_HOME;
-		io.KeyMap[ImGuiKey_End] = GLFW_KEY_END;
-		io.KeyMap[ImGuiKey_Insert] = GLFW_KEY_INSERT;
-		io.KeyMap[ImGuiKey_Delete] = GLFW_KEY_DELETE;
-		io.KeyMap[ImGuiKey_Backspace] = GLFW_KEY_BACKSPACE;
-		io.KeyMap[ImGuiKey_Space] = GLFW_KEY_SPACE;
-		io.KeyMap[ImGuiKey_Enter] = GLFW_KEY_ENTER;
-		io.KeyMap[ImGuiKey_Escape] = GLFW_KEY_ESCAPE;
-		io.KeyMap[ImGuiKey_A] = GLFW_KEY_A;
-		io.KeyMap[ImGuiKey_C] = GLFW_KEY_C;
-		io.KeyMap[ImGuiKey_V] = GLFW_KEY_V;
-		io.KeyMap[ImGuiKey_X] = GLFW_KEY_X;
-		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
-		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
+		io.KeyMap[ImGuiKey_Tab] = KEY_TAB;
+		io.KeyMap[ImGuiKey_LeftArrow] = KEY_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow] = KEY_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow] = KEY_UP;
+		io.KeyMap[ImGuiKey_DownArrow] = KEY_DOWN;
+		io.KeyMap[ImGuiKey_PageUp] = KEY_PAGE_UP;
+		io.KeyMap[ImGuiKey_PageDown] = KEY_PAGE_DOWN;
+		io.KeyMap[ImGuiKey_Home] = KEY_HOME;
+		io.KeyMap[ImGuiKey_End] = KEY_END;
+		io.KeyMap[ImGuiKey_Insert] = KEY_INSERT;
+		io.KeyMap[ImGuiKey_Delete] = KEY_DELETE;
+		io.KeyMap[ImGuiKey_Backspace] = KEY_BACKSPACE;
+		io.KeyMap[ImGuiKey_Space] = KEY_SPACE;
+		io.KeyMap[ImGuiKey_Enter] = KEY_ENTER;
+		io.KeyMap[ImGuiKey_Escape] = KEY_ESCAPE;
+		io.KeyMap[ImGuiKey_A] = KEY_A;
+		io.KeyMap[ImGuiKey_C] = KEY_C;
+		io.KeyMap[ImGuiKey_V] = KEY_V;
+		io.KeyMap[ImGuiKey_X] = KEY_X;
+		io.KeyMap[ImGuiKey_Y] = KEY_Y;
+		io.KeyMap[ImGuiKey_Z] = KEY_Z;
 
 		ImGui_ImplOpenGL3_Init(glsl_version);
 	}
 
-	Application::~Application()
-	{
+	Application::~Application() = default;
 
-	}
 	float m_Time{ 0.f};
 	void Application::run()
 	{
@@ -77,7 +76,7 @@ namespace Engine
 		{
 			// Set Display Size
 			ImGuiIO& io = ImGui::GetIO();
-			io.DisplaySize = ImVec2((float)m_Window->GetWidth(), (float)m_Window->GetHeight());
+			io.DisplaySize = ImVec2(static_cast<float>(m_Window->GetWidth()), static_cast<float>(m_Window->GetHeight()));
 
 			// Update frame timer
 			const auto deltaTime = static_cast<float>(glfwGetTime());
@@ -94,6 +93,8 @@ namespace Engine
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 			m_Window->OnUpdate();
+			if(Input::IsKeyPressed(KEY_TAB))
+				LOG_WARNING("Tab pressed")
 
 			ImGui::EndFrame();
 		}
@@ -102,7 +103,13 @@ namespace Engine
 	void Application::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		LOG_INFO("{0}", e.ToString())
+		//LOG_INFO("{0}", e.ToString())
+
+		if(e.GetEventType() == EventType::KeyPressed)
+		{
+			Engine::KeyPressedEvent& evnt = (Engine::KeyPressedEvent&)e;
+			LOG_ERROR("{0}",(char)evnt.GetKeyCode());
+		}
 		dispatcher.Dispatch<MouseButtonPressedEvent>(BIND_EVENT_FN(Application::OnMouseButtonPressedEvent));
 		dispatcher.Dispatch<MouseButtonReleasedEvent>(BIND_EVENT_FN(Application::OnMouseButtonReleasedEvent));
 		dispatcher.Dispatch<MouseMovedEvent>(BIND_EVENT_FN(Application::OnMouseMovedEvent));
@@ -125,9 +132,9 @@ namespace Engine
 	bool Application::OnWindowResizeEvent(WindowResizeEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2(e.GetWidth(), e.GetHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(e.GetWidth()), static_cast<float>(e.GetHeight()));
 		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-		glViewport(0, 0, e.GetWidth(), e.GetHeight());
+		glViewport(0, 0, static_cast<GLsizei>(e.GetWidth()), static_cast<GLsizei>(e.GetHeight()));
 		return true;
 	}
 
@@ -163,10 +170,10 @@ namespace Engine
 		ImGuiIO& io = ImGui::GetIO();
 		io.KeysDown[e.GetKeyCode()] = true;
 
-		io.KeyCtrl = io.KeysDown[GLFW_KEY_LEFT_CONTROL] || io.KeysDown[GLFW_KEY_RIGHT_CONTROL];
-		io.KeyShift = io.KeysDown[GLFW_KEY_LEFT_SHIFT] || io.KeysDown[GLFW_KEY_RIGHT_SHIFT];
-		io.KeyAlt = io.KeysDown[GLFW_KEY_LEFT_ALT] || io.KeysDown[GLFW_KEY_RIGHT_ALT];
-		io.KeySuper = io.KeysDown[GLFW_KEY_LEFT_SUPER] || io.KeysDown[GLFW_KEY_RIGHT_SUPER];
+		io.KeyCtrl = io.KeysDown[KEY_LEFT_CONTROL] || io.KeysDown[KEY_RIGHT_CONTROL];
+		io.KeyShift = io.KeysDown[KEY_LEFT_SHIFT] || io.KeysDown[KEY_RIGHT_SHIFT];
+		io.KeyAlt = io.KeysDown[KEY_LEFT_ALT] || io.KeysDown[KEY_RIGHT_ALT];
+		io.KeySuper = io.KeysDown[KEY_LEFT_SUPER] || io.KeysDown[KEY_RIGHT_SUPER];
 
 		return false;
 	}

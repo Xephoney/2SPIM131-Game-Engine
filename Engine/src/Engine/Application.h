@@ -21,7 +21,7 @@ namespace Engine
 		void OnEvent(Event& e);
 		inline static Application& GetApplication() { return *s_instance; }
 
-		inline Window& GetWindow() { return *m_Window; }
+		inline Window& GetWindow() const { return *m_Window; }
 
 		//Private Functions/Methods
 	private:

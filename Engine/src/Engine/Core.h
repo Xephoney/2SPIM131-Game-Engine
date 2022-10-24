@@ -13,7 +13,9 @@
 
 #define BIT(x) (1 << x)
 
-
+#ifdef ENG_DEBUG
+	#define ENG_ENABLE_ASSERTS
+#endif
 
 #ifdef ENG_ENABLE_ASSERTS
 	#define ENGINE_ASSERT(x, ...) {if(!(x)) {LOG_ERROR("Assertion Failed :{0}", __VA_ARGS__); __debugbreak();}}

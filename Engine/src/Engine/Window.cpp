@@ -40,6 +40,7 @@ namespace Engine
 		return new Window(properties);
 	}
 
+
 	void Window::Init(const WindowProperties& properties)
 	{
 		m_Data.Width = properties.Width;
