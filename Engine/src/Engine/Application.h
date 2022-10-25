@@ -3,10 +3,10 @@
 #include "Engine/engpch.h"
 
 #include "Core.h"
-#include "Events/ApplicationEvent.h"
 #include "Window.h"
-#include "Events/KeyEvent.h"
-#include "Events/MouseEvent.h"
+#include "Engine/Events/Event.h"
+#include "Engine/LayerStack.h"
+#include "ImGui/ImGuiLayer.h"
 
 namespace Engine
 {
@@ -19,35 +19,27 @@ namespace Engine
 		void run();
 
 		void OnEvent(Event& e);
-		inline static Application& GetApplication() { return *s_instance; }
+		static Application& GetApplication() { return *s_instance; }
 
-		inline Window& GetWindow() const { return *m_Window; }
+		Window& GetWindow() const { return *m_Window; }
 
-		//Private Functions/Methods
+		void PushLayer(Layer* layer);
+		void PushOverLay(Layer* overlay);
+
 	private:
-		
-		bool OnWindowCloseEvent(WindowCloseEvent& e);
-		bool OnWindowResizeEvent(WindowResizeEvent& e);
+		bool OnWindowClose(WindowCloseEvent& event);
 
-		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& e);
-		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e);
-		bool OnMouseScrolledEvent(MouseScrolledEvent& e);
-		bool OnMouseMovedEvent(MouseMovedEvent& e);
-
-		bool OnKeyPressedEvent(KeyPressedEvent& e);
-		bool OnKeyReleasedEvent(KeyReleasedEvent& e);
-
-		// Type in character codes
-		bool OnKeyTypedEvent(KeyTypedEvent& e);
-
+	private:
 		//Private Variables
-	private:
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer { nullptr };
 		bool m_Running = true;
 		static Application* s_instance;
+		LayerStack m_LayerStack;
 	};
 
 	
+
 
 	Application* CreateApplication();
 

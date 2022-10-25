@@ -28,7 +28,7 @@ namespace Engine
 // Client logging macros :)
 #define LOG_ERROR(...)      ::Engine::Log::GetClientLogger()->error(__VA_ARGS__);
 #define LOG_WARNING(...)    ::Engine::Log::GetClientLogger()->warn(__VA_ARGS__);
-#define LOG_INFO(...)       ::Engine::Log::GetClientLogger()->info(__VA_ARGS__);
+#define LOG_INFO(...)       ::Engine::Log::GetClientLogger()->info(__VA_ARGS__); 
 #define LOG_TRACE(...)      ::Engine::Log::GetClientLogger()->trace(__VA_ARGS__);
 #define LOG_FATAL(...)      ::Engine::Log::GetClientLogger()->fatal(__VA_ARGS__);
 

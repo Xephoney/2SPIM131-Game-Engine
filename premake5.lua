@@ -15,8 +15,8 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["spdlog"] = "Engine/3rdParty/spdlog/include"
 IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
-IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
+IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["glm"] = "Engine/3rdParty/glm"
 
 
@@ -122,6 +122,7 @@ project "Sandbox"
 		"Engine/3rdParty/spdlog/include",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
+		"Engine/3rdParty",
 		"Engine/src"
 	}
 
