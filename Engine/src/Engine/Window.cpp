@@ -6,7 +6,7 @@
 #include "Events/ApplicationEvent.h"
 #include "Events/MouseEvent.h"
 #include "Events/KeyEvent.h"
-#include "glad/glad.h"
+#include "Platform/OpenGLContext.h"
 
 
 namespace Engine
@@ -17,8 +17,7 @@ namespace Engine
 	{
 		ENGINE_LOG_ERROR("GLFW ERROR ({0}): {1}", error, description)
 	}
-
-
+	
 	void Window::SetEventCallback(const EventCallbackFn& callback)
 	{
 		m_Data.EventCallback = callback;
@@ -38,8 +37,7 @@ namespace Engine
 	{
 		return new Window(properties);
 	}
-
-
+	
 	void Window::Init(const WindowProperties& properties)
 	{
 		m_Data.Width = properties.Width;
@@ -54,11 +52,11 @@ namespace Engine
 			s_GLFWinitialized = true;
 			glfwSetErrorCallback(GLFWErrorCallback);
 		}
-
+		
 		m_Window = glfwCreateWindow(static_cast<int>(m_Data.Width), static_cast<int>(m_Data.Height), m_Data.Title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		ENGINE_CORE_ASSERT(status, "Failed to initialize GLAD");
+		m_Context = new OpenGLContext(m_Window);
+		m_Context->init();
+		
 		
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		glClearColor(0.f, 0.3f, 0.4f, 1.0f);
@@ -174,7 +172,6 @@ namespace Engine
 		glfwDestroyWindow(m_Window);
 	}
 
-
 	Window::Window(const WindowProperties& properties)
 	{
 		Init(properties);
@@ -184,6 +181,6 @@ namespace Engine
 	void Window::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_Context->SwapBuffers();
 	}
 }

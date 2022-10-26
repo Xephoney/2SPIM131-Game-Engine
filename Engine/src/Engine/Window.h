@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/engpch.h>
+#include "Engine/Renderer/RenderContext.h"
 #include "Core.h"
 
 #include <GLFW/glfw3.h>
@@ -49,6 +50,7 @@ namespace Engine
 		void Shutdown();
 
 		GLFWwindow* m_Window{ nullptr };
+		RenderContext* m_Context;
 		struct WindowData
 		{
 			std::string Title;

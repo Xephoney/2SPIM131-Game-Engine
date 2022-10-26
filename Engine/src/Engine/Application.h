@@ -7,6 +7,8 @@
 #include "Engine/Events/Event.h"
 #include "Engine/LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/Shader.h"
 
 namespace Engine
 {
@@ -36,6 +38,11 @@ namespace Engine
 		bool m_Running = true;
 		static Application* s_instance;
 		LayerStack m_LayerStack;
+
+		unsigned int m_VertexArray;
+		std::unique_ptr<Shader> shader;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
+		std::unique_ptr<IndexBuffer> m_IndexBuffer;
 	};
 
 	

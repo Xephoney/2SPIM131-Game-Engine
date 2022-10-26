@@ -37,6 +37,9 @@
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Renderer">
+      <UniqueIdentifier>{ddc1a5c9-601a-43f1-a8e3-002e42a1d0e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\glm\glm\common.hpp">
@@ -1341,6 +1344,16 @@
     <ClInclude Include="src\Platform\WindowsInput.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\RenderContext.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGLContext.h">
+      <Filter>src\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\Shader.h" />
+    <ClInclude Include="src\Engine\Renderer\Buffer.h" />
+    <ClInclude Include="src\Platform\OpenGLBuffer.h" />
+    <ClInclude Include="src\Engine\Renderer\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1370,5 +1383,12 @@
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGLContext.cpp">
+      <Filter>src\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Engine\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGLBuffer.cpp" />
+    <ClCompile Include="src\Engine\Renderer\Renderer.cpp" />
   </ItemGroup>
 </Project>
