@@ -1,4 +1,4 @@
-#include "Engine/engpch.h"
+#include "engpch.h"
 
 #include "ImGuiLayer.h"
 
@@ -7,8 +7,6 @@
 
 #include "imgui.h"
 #include "Engine/Application.h"
-
-#include <glad/glad.h>
 
 namespace Engine
 {

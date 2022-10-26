@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	class ENGINE_API Log
+	class  Log
 	{
 	public:
 		static void Initialize();
@@ -26,7 +26,7 @@ namespace Engine
 #define ENGINE_LOG_FATAL(...)      ::Engine::Log::GetCoreLogger()->fatal(__VA_ARGS__);
 
 // Client logging macros :)
-#define LOG_ERROR(...)      ::Engine::Log::GetClientLogger()->error(__VA_ARGS__);
+#define LOG_ERROR(...)      ::Engine::Log::GetClientLogger()->error(__VA_ARGS__); 
 #define LOG_WARNING(...)    ::Engine::Log::GetClientLogger()->warn(__VA_ARGS__);
 #define LOG_INFO(...)       ::Engine::Log::GetClientLogger()->info(__VA_ARGS__); 
 #define LOG_TRACE(...)      ::Engine::Log::GetClientLogger()->trace(__VA_ARGS__);

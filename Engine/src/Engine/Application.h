@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/engpch.h"
+#include "engpch.h"
 
 #include "Core.h"
 #include "Window.h"
@@ -10,7 +10,7 @@
 
 namespace Engine
 {
-	class ENGINE_API Application
+	class Application
 	{
 	public:
 		Application();
