@@ -4,7 +4,7 @@
 
 namespace Engine
 {
-	class ENGINE_API Input
+	class  Input
 	{
 	public:
 		virtual ~Input() = default;

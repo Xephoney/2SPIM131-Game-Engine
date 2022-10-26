@@ -2,7 +2,8 @@
 
 #include <Engine/engpch.h>
 #include "Core.h"
-#include "GLFW/glfw3.h"
+//#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "Engine/Events/Event.h"
 
 
@@ -23,7 +24,7 @@ namespace Engine
 		}
 	};
 
-	class ENGINE_API Window
+	class  Window
 	{
 	public:
 		Window(const WindowProperties& properties);

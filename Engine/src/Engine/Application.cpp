@@ -9,10 +9,6 @@
 #include "Engine/KeyCodes.h"
 #include "Engine/MouseButtonCodes.h"
 
-#include "glad/glad.h"
-
-
-
 namespace Engine
 {
 

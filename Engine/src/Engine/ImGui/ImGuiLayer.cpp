@@ -8,8 +8,6 @@
 #include "imgui.h"
 #include "Engine/Application.h"
 
-#include <glad/glad.h>
-
 namespace Engine
 {
 	ImGuiLayer::ImGuiLayer()

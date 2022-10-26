@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	class ENGINE_API KeyEvent : public Event
+	class  KeyEvent : public Event
 
 	{
 	public:
@@ -20,7 +20,7 @@ namespace Engine
 		int m_KeyCode;
 	};
 
-	class ENGINE_API KeyPressedEvent : public KeyEvent
+	class  KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keycode, int repeatCount)
@@ -39,7 +39,7 @@ namespace Engine
 		int m_RepeatCount;
 	};
 
-	class ENGINE_API KeyTypedEvent : public KeyEvent
+	class  KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keycode)
@@ -56,7 +56,7 @@ namespace Engine
 		EVENT_CLASS_TYPE(KeyTyped)
 	};
 
-	class ENGINE_API KeyReleasedEvent : public KeyEvent
+	class  KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode)
