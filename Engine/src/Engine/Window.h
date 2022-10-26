@@ -2,7 +2,7 @@
 
 #include <Engine/engpch.h>
 #include "Core.h"
-//#include <glad/glad.h>
+
 #include <GLFW/glfw3.h>
 #include "Engine/Events/Event.h"
 
