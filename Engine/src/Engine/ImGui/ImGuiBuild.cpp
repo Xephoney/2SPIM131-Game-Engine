@@ -1,4 +1,4 @@
-#include "Engine/engpch.h"
+#include "engpch.h"
 
 // Denne må være her for å definere hvor imgui opengl glfw funksjonene ligger
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD

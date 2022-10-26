@@ -10,3 +10,6 @@
 [submodule "Engine/3rdParty/GLFW/glfw"]
 	path = Engine/3rdParty/GLFW/glfw
 	url = https://github.com/TheCherno/glfw
+[submodule "Engine/3rdParty/GLFW"]
+	path = Engine/3rdParty/GLFW
+	url = https://github.com/TheCherno/glfw.git

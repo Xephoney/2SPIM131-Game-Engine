@@ -14,14 +14,16 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 --Include Directories relative to root folder 
 IncludeDir = {}
 IncludeDir["spdlog"] = "Engine/3rdParty/spdlog/include"
+
 IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
-IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
+IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 IncludeDir["glm"] = "Engine/3rdParty/glm"
 
-
+include "Engine/3rdParty/GLFW"
 include "Engine/3rdParty/GLAD"
 include "Engine/3rdParty/imgui"
+
 
 project "Engine"
 	location "Engine"
@@ -33,16 +35,21 @@ project "Engine"
 	targetdir("bin/" .. outputdir .. "/%{prj.name}")
 	objdir("int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "Engine/engpch.h"
+	pchheader "engpch.h"
 	pchsource "Engine/src/Engine/engpch.cpp"
 
 	files
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/src/**.hpp"
+		"%{prj.name}/src/**.hpp",
+		"%{prj.name}/3rdParty/glm/glm/**.hpp",
+		"%{prj.name}/3rdParty/glm/glm/**.inl"
 	}
-
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
 	includedirs
 	{
 		"%{prj.name}/src",
@@ -53,17 +60,12 @@ project "Engine"
 		"%{IncludeDir.glm}"
 	}
 
-	libdirs
-	{
-		"%{prj.name}/3rdParty/GLFW/lib"
-	}
-
 	links
 	{
-		"glfw3",
+		"GLFW",
 		"GLAD",
 		"imgui",
-		"opengl32"
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -72,13 +74,7 @@ project "Engine"
 		defines
 		{
 			"ENG_PLATFORM_WINDOWS",
-			"ENG_BUILD_DLL",
-			"GLFW_INCLUDE_NONE"
-		}
-		
-		postbuildcommands
-		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" ..outputdir.. "/Sandbox")
+			"GLFW_INCLUCE_NONE"
 		}
 
 	filter "configurations:Debug"
@@ -88,11 +84,6 @@ project "Engine"
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
-		runtime "Release"
-		optimize "on"
-
-	filter "configurations:Distribution"
-		defines "ENG_DIST"
 		runtime "Release"
 		optimize "on"
 
@@ -113,25 +104,18 @@ project "Sandbox"
 		"%{prj.name}/src/**.hpp"
 	}
 
-	libdirs
-	{
-		"Engine/3rdParty/GLFW/lib"
-	}
-
 	includedirs
 	{
-		"Engine/3rdParty/spdlog/include",
-		"%{IncludeDir.glm}",
+		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
-		"Engine/3rdParty",
-		"Engine/src"
+		"%{IncludeDir.glm}",
+		"Engine/src",
+		"Engine/3rdParty"
 	}
 
 	links
 	{
-		"Engine",
-		"opengl32",
-		"glfw3"
+		"Engine"
 	}
 
 	filter "system:windows"
@@ -144,16 +128,13 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "ENG_DEBUG"
+		runtime "Debug"
 		symbols "on"
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
+		runtime "Release"
 		optimize "on"
-
-	filter "configurations:Distribution"
-		defines "ENG_DIST"
-		optimize "on"
-		symbols "off"
 
 
 

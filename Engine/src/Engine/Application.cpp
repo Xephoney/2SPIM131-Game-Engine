@@ -1,4 +1,4 @@
-#include "Engine/engpch.h"
+#include "engpch.h"
 #include "Engine/Events/ApplicationEvent.h"
 #include "Application.h"
 
@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "Engine/KeyCodes.h"
 #include "Engine/MouseButtonCodes.h"
+#include "glad/glad.h"
 
 namespace Engine
 {
