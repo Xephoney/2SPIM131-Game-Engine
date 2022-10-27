@@ -13,8 +13,12 @@ namespace Engine
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
+		void SetLayout(const BufferLayout& layout) override ;
+		const BufferLayout& GetLayout() const override;
+
 	private:
 		uint32_t m_RendererID{};
+		BufferLayout m_Layout;
 	};
 
 	class OpenGLIndexBuffer : public IndexBuffer

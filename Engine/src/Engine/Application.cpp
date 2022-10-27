@@ -23,38 +23,71 @@ namespace Engine
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverLay(m_ImGuiLayer);
 
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
-
 		
-		float vertices[3 * 3]
+
+		float vertices[7 * 3]
 		{
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.2f, 0.8f, 1.f,
+			 0.5f, -0.5f, 0.0f, 0.9f, 0.0f, 0.3f, 1.f,
+			 0.0f,  0.5f, 0.0f, 0.1f, 0.8f, 0.1f, 1.f,
 		};
-		unsigned int indices[3] = { 0,1,2 };
-
-		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-
 		
-		m_IndexBuffer.reset(IndexBuffer::Create(indices, 3));
-		m_IndexBuffer->Bind();
+		m_VertexArray.reset(VertexArray::Create());
+		std::shared_ptr<VertexBuffer> vertexBuffer;
+		vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+
+		BufferLayout layout = {
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float4, "a_Color"}
+		};
+
+
+		vertexBuffer->SetLayout(layout);
+		m_VertexArray->AddVertexBuffer(vertexBuffer);
+
+		unsigned int indices[3] = { 0,1,2 };
+		std::shared_ptr<IndexBuffer> indexBuffer;
+		indexBuffer.reset(IndexBuffer::Create(indices, 3));
+		m_VertexArray->SetIndexBuffer(indexBuffer);
+
+		m_SquareVertexArray.reset(VertexArray::Create());
+		
+		
+		
+		float q_vertices[7 * 4]
+		{
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.2f, 0.8f, 1.f,
+			 0.5f, -0.5f, 0.0f, 0.9f, 0.0f, 0.3f, 1.f,
+			 0.5f,  0.5f, 0.0f, 0.1f, 0.8f, 0.1f, 1.f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 0.2f, 0.8f, 1.f
+		};
+		std::shared_ptr<VertexBuffer> quadBuffer;
+		quadBuffer.reset( VertexBuffer::Create(q_vertices, sizeof(q_vertices)));
+		unsigned int indx[3 * 2]
+		{ 0, 1, 2, 2, 3, 0 };
+		std::shared_ptr<IndexBuffer> quad_i_Buffer;
+		quad_i_Buffer.reset(IndexBuffer::Create(indx, 6));
+
+		m_SquareVertexArray.reset(VertexArray::Create());
+		
+		quadBuffer->SetLayout(layout);
+		m_SquareVertexArray->AddVertexBuffer(quadBuffer);
+		m_SquareVertexArray->SetIndexBuffer(quad_i_Buffer);
+
 
 		std::string vertexShaderTemp = R"(
 
 			#version 410 core
-			layout(location = 0) in vec3 positionIn;
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec4 a_Color;
 
 			out vec3 v_pos;
-
+			out vec4 v_color;
 			void main()
 			{
-				gl_Position = vec4(positionIn,1);
-				v_pos = positionIn;
+				gl_Position = vec4(a_Position,1);
+				v_pos = a_Position;
+				v_color = a_Color;
 			}
 		)";
 		std::string fragmentShaderTemp = R"(
@@ -62,10 +95,11 @@ namespace Engine
 			#version 410 core
 			layout(location = 0) out vec4 fragmentColor;
 			in vec3 v_pos;
+			in vec4 v_color;
 
 			void main()
 			{
-				fragmentColor = vec4(v_pos+0.5, 1.0);
+				fragmentColor = v_color;
 			}
 		)";
 
@@ -83,8 +117,11 @@ namespace Engine
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			shader->Bind();
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_SquareVertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr); 
+			m_VertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			
 
 			for (Layer* l : m_LayerStack)
 				l->OnUpdate();

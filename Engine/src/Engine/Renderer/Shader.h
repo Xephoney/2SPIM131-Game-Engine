@@ -35,6 +35,4 @@ private:
 
     void CompileShader(const std::string& vertexPath, const std::string& fragmentPath);
     void CompileShaderFromFile(const std::string& vertexPath, const std::string& fragmentPath);
-    ///The logger - Output Log in the application
-    class Logger* mLogger{ nullptr };
 };
