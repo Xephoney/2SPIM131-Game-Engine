@@ -2,7 +2,6 @@
 
 #include "engpch.h"
 
-#include "Core.h"
 #include "Window.h"
 #include "Engine/Events/Event.h"
 #include "Engine/LayerStack.h"
@@ -46,10 +45,6 @@ namespace Engine
 		std::shared_ptr<VertexArray> m_SquareVertexArray;
 	};
 
-	
-
-
 	Application* CreateApplication();
-
 }
 

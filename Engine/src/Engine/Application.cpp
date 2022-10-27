@@ -3,8 +3,9 @@
 #include "Application.h"
 
 #include "Log.h"
-#include "backends/imgui_impl_glfw.h"
-#include "glad/glad.h"
+
+#include "Renderer/Renderer.h"
+
 
 namespace Engine
 {
@@ -115,14 +116,18 @@ namespace Engine
 		{
 			glClearColor(0.1f, 0.1f, 0.1f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
+			RenderCommand::Clear();
 
-			shader->Bind();
-			m_SquareVertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr); 
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::NewFrame();
 			
 
+			shader->Bind();
+
+			Renderer::Submit(m_SquareVertexArray);
+			Renderer::Submit(m_VertexArray);
+
+			Renderer::RenderFrame();
 			for (Layer* l : m_LayerStack)
 				l->OnUpdate();
 
@@ -133,6 +138,7 @@ namespace Engine
 			m_ImGuiLayer->End();
 			
 			m_Window->OnUpdate();
+			
 		}
 	}
 

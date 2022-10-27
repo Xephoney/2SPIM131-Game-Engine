@@ -1,22 +1,18 @@
 #pragma once
 
+#include "RenderCommand.h"
+
 namespace Engine
 {
-	enum RenderAPI
-	{
-		none = 0,
-		OpenGL = 1,
-		DirectX12 = 2,
-		Vulkan = 3
-	};
-
 	class Renderer
 	{
 	public:
-		RenderAPI static GetAPI() { return s_api; };
+		static void NewFrame();
 
-		//TODO : Lag SetAPI() 
-	private:
-		static RenderAPI s_api;
+		static void RenderFrame();
+
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); };
 	};
 }
