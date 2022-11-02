@@ -19,6 +19,8 @@ IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 IncludeDir["glm"] = "Engine/3rdParty/glm"
+IncludeDir["entt"] = "Engine/3rdParty/entt/include"
+IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 
 include "Engine/3rdParty/GLFW"
 include "Engine/3rdParty/GLAD"
@@ -57,7 +59,9 @@ project "Engine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.imgui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
@@ -109,8 +113,8 @@ project "Sandbox"
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
-		"Engine/src",
-		"Engine/3rdParty"
+		"%{IncludeDir.entt}",
+		"Engine/src"
 	}
 
 	links

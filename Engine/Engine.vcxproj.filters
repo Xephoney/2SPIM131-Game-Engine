@@ -37,6 +37,9 @@
     <Filter Include="src\Engine\Renderer">
       <UniqueIdentifier>{F838018B-649A-DE98-ED07-254B59681558}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Scene">
+      <UniqueIdentifier>{AF1338A9-9B0C-57FB-C43E-3C80B0963607}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
@@ -1338,6 +1341,9 @@
     <ClInclude Include="src\Engine\Renderer\Buffer.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\RenderCamera.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Renderer\RenderCommand.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
@@ -1355,6 +1361,9 @@
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer\VertexArray.h">
       <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Scene\Scene.h">
+      <Filter>src\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Window.h">
       <Filter>src\Engine</Filter>
@@ -1377,6 +1386,8 @@
     <ClInclude Include="src\Platform\WindowsInput.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Scene\Entity.h" />
+    <ClInclude Include="src\Engine\Scene\Components.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1415,6 +1426,9 @@
     <ClCompile Include="src\Engine\Renderer\VertexArray.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Scene\Scene.cpp">
+      <Filter>src\Engine\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Window.cpp">
       <Filter>src\Engine</Filter>
     </ClCompile>
@@ -1436,5 +1450,6 @@
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Scene\Entity.cpp" />
   </ItemGroup>
 </Project>
