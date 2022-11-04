@@ -1,8 +1,5 @@
 #pragma once
 #include "entt.hpp"
-#include "Scene.h"
-#include "Engine/Core.h"
-#include "glm/glm.hpp"
 
 namespace Engine
 {
@@ -10,29 +7,33 @@ namespace Engine
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, Scene* scene);
+		Entity(entt::entity handle, entt::registry& registry);
 		Entity(const Entity& other) = default;
 
-		template<typename T, typename... args>
-		T& AddComponent(args&&... _args)
+		template <typename T, typename ... Args>
+		T& AddComponent(Args&&... _args)
 		{
-			return m_Scene->GetReg().emplace_or_replace<T>(m_Entity, std::forward<args>(_args));
+			return m_Registry.emplace<T>(m_Entity, std::forward<Args>(_args)...);
 		}
 
-		template<typename T>
+		template <typename T>
 		T& GetComponent()
 		{
-			return m_Scene->GetReg().get<T>(m_Entity);
+			return m_Registry.get<T>(m_Entity);
 		}
 
-		template<typename T>
-		bool HasComponent()
+		template <typename T>
+		bool HasComponent() const
 		{
-			return m_Scene->GetReg().any_of<T>(m_Entity);
+			return m_Registry.any_of<T>(m_Entity);
 		}
+
+		operator bool() const { return m_Entity != entt::null; }
 
 	private:
-		Scene* m_Scene;
-		entt::entity m_Entity;
+		entt::registry& m_Registry;
+		entt::entity m_Entity {entt::null};
 	};
+
+	
 }

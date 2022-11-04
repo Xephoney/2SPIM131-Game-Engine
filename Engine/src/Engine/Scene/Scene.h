@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entity.h"
 #include "entt.hpp"
 
 namespace Engine
@@ -10,7 +11,7 @@ namespace Engine
 		Scene();
 		~Scene();
 
-		entt::entity CreateEntity();
+		Entity CreateEntity(const std::string& tagName = "_empty_");
 
 		entt::registry& GetReg() { return m_Registry; }
 

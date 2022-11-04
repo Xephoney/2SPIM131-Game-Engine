@@ -3,10 +3,13 @@
 
 namespace Engine
 {
-	Entity::Entity(entt::entity handle, Scene* scene)
+	
+
+	Entity::Entity(entt::entity handle, entt::registry& registry)
+		: m_Entity(handle), m_Registry(registry)
 	{
-		m_Entity = handle;
-		m_Scene = scene;
 
 	}
+
+	
 }

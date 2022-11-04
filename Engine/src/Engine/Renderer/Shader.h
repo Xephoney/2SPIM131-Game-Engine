@@ -7,6 +7,7 @@ class Shader
 {
 public:
     // Constructor generates the shader on the fly
+    Shader() = default;
     Shader(const std::string& shaderPath);
     Shader(const std::string& vertexPath, const std::string& fragmentPath);
     ~Shader();
@@ -16,11 +17,11 @@ public:
     void Unbind() const;
 
 
-    void SetUniform1i(const std::string& name, const int& data);
-    void SetUniform1f(const std::string& name, const float& data);
-    void SetUniform3f(const std::string& name, const glm::vec3& data);
-    void SetUniform4f(const std::string& name, const glm::vec4& data);
-    void SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix);
+    void SetUniform1i(const std::string& name, const int& data) const;
+    void SetUniform1f(const std::string& name, const float& data) const;
+    void SetUniform3f(const std::string& name, const glm::vec3& data) const;
+    void SetUniform4f(const std::string& name, const glm::vec4& data) const;
+    void SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix) ;
     ///Returns the program number for this shader
     uint32_t getProgram() const;
 

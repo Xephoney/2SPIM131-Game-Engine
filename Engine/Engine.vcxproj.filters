@@ -1362,6 +1362,12 @@
     <ClInclude Include="src\Engine\Renderer\VertexArray.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Scene\Components.h">
+      <Filter>src\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Scene\Entity.h">
+      <Filter>src\Engine\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Scene\Scene.h">
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
@@ -1386,8 +1392,7 @@
     <ClInclude Include="src\Platform\WindowsInput.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Scene\Entity.h" />
-    <ClInclude Include="src\Engine\Scene\Components.h" />
+    <ClInclude Include="src\Engine\Renderer\OrthographicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1426,6 +1431,9 @@
     <ClCompile Include="src\Engine\Renderer\VertexArray.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Scene\Entity.cpp">
+      <Filter>src\Engine\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
@@ -1450,6 +1458,6 @@
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Scene\Entity.cpp" />
+    <ClCompile Include="src\Engine\Renderer\OrthographicCamera.cpp" />
   </ItemGroup>
 </Project>
