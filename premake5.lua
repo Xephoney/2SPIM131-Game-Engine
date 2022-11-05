@@ -21,7 +21,9 @@ IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 IncludeDir["glm"] = "Engine/3rdParty/glm"
 IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
+IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 
+LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 
 include "Engine/3rdParty/GLFW"
@@ -63,7 +65,7 @@ project "Engine"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.FMOD",
+		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.entt}"
 	}
 	libdirs
@@ -122,12 +124,16 @@ project "Sandbox"
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.FMOD",
+		"%{IncludeDir.FMOD}",
 		"Engine/src"
 	}
-
+	libdirs
+	{
+		"%{LibraryDir.FMOD}"
+	}
 	links
 	{
+		"fmod_vc.lib",
 		"Engine"
 	}
 	postbuildcommands
