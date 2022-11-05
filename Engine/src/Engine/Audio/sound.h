@@ -8,13 +8,15 @@ namespace Engine {
 	class sound
 	{
 	public:
-		FMOD::ChannelGroup* TEST;
-		FMOD::Channel Memes;
+		FMOD::ChannelGroup* TEST = nullptr;
+		FMOD::Sound* soundTest = nullptr;
+		//FMOD::Channel* testChannel = nullptr;
 		FMOD::System* system = nullptr;
 
 		sound() {
 			FMOD_RESULT result;
 			
+			// INITIALIZATION CODE FROM FMOD STARTUP GUIDE //
 			result = FMOD::System_Create(&system);      // Create the main system object.
 			if (result != FMOD_OK)
 			{
@@ -29,22 +31,36 @@ namespace Engine {
 				exit(-1);
 			}
 			
-
 			ENGINE_LOG_INFO("Fmod Initialized");
+
+			//set up channel group
+			result = system->createChannelGroup("gameSounds", &TEST);
+			if (!successCheck(result))
+				exit(-1);
+
+			//set up sound
+			system->createSound("../bin/Debug-windows-x86_64/Sandbox/Trekant.mp3", FMOD_DEFAULT, nullptr, &soundTest);
+
+			ENGINE_LOG_INFO("Sound should work");
+
 		};
 
-		void testSound() {
-			FMOD::Sound* sound1 = nullptr;
-			FMOD::Sound* sound2 = nullptr;
-			FMOD::ChannelGroup** test;
-			system->createSound("Trekant.mp3", FMOD_DEFAULT, 0, &sound1);
-			system->createStream("Trekant.mp3", FMOD_DEFAULT, 0, &sound2);
-			sound1->setMode(FMOD_LOOP_OFF);
-			system->createChannelGroup("testChannel", &TEST);
-			system->playSound(sound2, TEST, false, 0);
+		bool successCheck(FMOD_RESULT result) {
+			if (result != FMOD_OK) {
+				ENGINE_LOG_ERROR("FMOD error! ({0}) {1}", result, FMOD_ErrorString(result));
+				return false;
+			}
+			return true;
+		}
 
-			if (system->getChannel();
-				ENGINE_LOG_INFO("sound should be playing");
+		void testSound() {
+			FMOD_RESULT  result;
+			FMOD::Channel* channel = nullptr;
+			
+			result = system->playSound(soundTest, nullptr, false, &channel);
+			if (!successCheck(result))
+				exit(-1);
+			ENGINE_LOG_INFO("played sound");
 		}
 		
 	};
