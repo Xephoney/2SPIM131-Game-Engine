@@ -8,6 +8,7 @@
 
 #include "Engine/Log.h"
 #include "glad/glad.h"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Engine
 {
@@ -24,6 +25,7 @@ Shader::Shader(const std::string& shaderPath)
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
 	CompileShader(vertexPath, fragmentPath);
+	shaderNavn = "SHADER";
 }
 
 Shader::~Shader()
@@ -41,26 +43,28 @@ void Shader::Unbind() const
 	glUseProgram(0);
 }
 
-void Shader::SetUniform1i(const std::string& name, const int& data)
+void Shader::SetUniform1i(const std::string& name, const int& data) const
 {
 
 }
 
-void Shader::SetUniform1f(const std::string& name, const float& data)
+void Shader::SetUniform1f(const std::string& name, const float& data)const
 {
 
 }
 
-void Shader::SetUniform3f(const std::string& name, const glm::vec3& data)
+void Shader::SetUniform3f(const std::string& name, const glm::vec3& data)const
 {
 }
 
-void Shader::SetUniform4f(const std::string& name, const glm::vec4& data)
+void Shader::SetUniform4f(const std::string& name, const glm::vec4& data)const
 {
 }
 
-void Shader::SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix)
+void Shader::SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix ) 
 {
+	int location = GetUniformLocation(name);
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 uint32_t Shader::getProgram() const
@@ -68,14 +72,14 @@ uint32_t Shader::getProgram() const
 	return m_RenderID;
 }
 
-int Shader::GetUniformLocation(const std::string& name)
+int Shader::GetUniformLocation(const std::string& name) 
 {
 	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
 		return m_UniformLocationCache[name];
-	const int location = glGetUniformLocation(m_RenderID, name.c_str());
+	int location = glGetUniformLocation(m_RenderID, name.c_str());
 	if (location == -1)
 	{
-		ENGINE_LOG_ERROR("ERROR WITH GETTING UNIFORM ({0})", name.c_str());
+		ENGINE_CORE_ASSERT(false, "UNIFORM LOCATION \"{0}\" DOES NOT EXIST", name)
 		return -1;
 	}
 

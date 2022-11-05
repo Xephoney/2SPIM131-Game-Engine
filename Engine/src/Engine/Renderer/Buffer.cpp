@@ -13,11 +13,11 @@ namespace Engine
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RenderAPI::none :
+		case RendererAPI::API::none :
 			ENGINE_LOG_WARNING("No Render API selected | index buffer ");
 			return nullptr;
 
-		case RenderAPI::OpenGL :
+		case RendererAPI::API::OpenGL :
 			return new OpenGLVertexBuffer(vertices, size);
 
 		
@@ -31,11 +31,11 @@ namespace Engine
 	{
 		switch (Renderer::GetAPI())
 		{
-		case RenderAPI::none:
+		case RendererAPI::API::none:
 			ENGINE_LOG_WARNING("No Render API selected | index buffer");
 			return nullptr;
 
-		case RenderAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLIndexBuffer(indices, count);
 
 		default:

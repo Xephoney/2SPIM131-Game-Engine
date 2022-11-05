@@ -19,7 +19,12 @@ IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 IncludeDir["glm"] = "Engine/3rdParty/glm"
+IncludeDir["entt"] = "Engine/3rdParty/entt/include"
+IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
+
+LibraryDir = {}
+LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 
 include "Engine/3rdParty/GLFW"
 include "Engine/3rdParty/GLAD"
@@ -59,7 +64,13 @@ project "Engine"
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.FMOD}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.entt}"
+	}
+	libdirs
+	{
+		"%{LibraryDir.FMOD}"
 	}
 
 	links
@@ -67,8 +78,7 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
-		"opengl32.lib",
-		"fmod_vc.lib"
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
@@ -111,15 +121,24 @@ project "Sandbox"
 	{
 		"%{IncludeDir.spdlog}",
 		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.imgui}",
 		"%{IncludeDir.glm}",
-		"Engine/src",
-		"Engine/3rdParty",
-		"%{IncludeDir.FMOD}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.FMOD}",
+		"Engine/src"
 	}
-
+	libdirs
+	{
+		"%{LibraryDir.FMOD}"
+	}
 	links
 	{
+		"fmod_vc.lib",
 		"Engine"
+	}
+	postbuildcommands
+	{
+		("{COPY} Engine/3rdParty/FMOD/lib/fmod.dll ../bin/" .. outputdir .. "/%{prj.name}")
 	}
 
 	filter "system:windows"

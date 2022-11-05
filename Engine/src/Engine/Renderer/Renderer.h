@@ -1,22 +1,29 @@
 #pragma once
 
+#include "OrthographicCamera.h"
+#include "RenderCommand.h"
+#include "Shader.h"
+
 namespace Engine
 {
-	enum RenderAPI
-	{
-		none = 0,
-		OpenGL = 1,
-		DirectX12 = 2,
-		Vulkan = 3
-	};
-
 	class Renderer
 	{
 	public:
-		RenderAPI static GetAPI() { return s_api; };
+		static void NewFrame(OrthographicCamera& camera);
 
-		//TODO : Lag SetAPI() 
+		static void RenderFrame();
+
+		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
+		static void Submit(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.f));
+
+		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); };
+
 	private:
-		static RenderAPI s_api;
+		struct SceneData
+		{
+			glm::mat4 ViewProjectionMatrix;
+		};
+
+		static SceneData* m_SceneData;
 	};
 }
