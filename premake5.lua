@@ -138,7 +138,7 @@ project "Sandbox"
 	}
 	postbuildcommands
 	{
-		("{COPY} Engine/3rdParty/FMOD/lib/fmod.dll ../bin/" .. outputdir .. "/%{prj.name}")
+		
 	}
 
 	filter "system:windows"

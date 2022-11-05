@@ -141,6 +141,40 @@ public:
 	}
 };
 
+class SoundLayer : public Engine::Layer
+{
+public:
+	Engine::sound gameSound;
+
+
+	SoundLayer() : Layer("SoundLayer") {
+
+	}
+	void OnUpdate(const double& dt) override {
+		gameSound.update();
+	}
+	void OnEvent(Engine::Event& event) override
+	{
+		Engine::EventDispatcher dispatcher(event);
+
+		ENGINE_LOG_TRACE("{0}", event.ToString())
+
+			if (event.GetEventType() == Engine::EventType::KeyPressed)
+			{
+				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event);
+				if (newEvent.GetKeyCode() == KEY_SPACE)
+				{
+					gameSound.testSound();
+				}
+			}
+
+		if (Engine::Input::IsKeyPressed(KEY_SPACE))
+		{
+
+		}
+	}
+};
+
 class Sandbox : public Engine::Application
 {
 public:
@@ -148,6 +182,7 @@ public:
 	{
 		PushLayer(new ExampleLayer());
 		PushLayer(new GameLayer());
+		PushLayer(new SoundLayer());
 	}
 
 	~Sandbox()

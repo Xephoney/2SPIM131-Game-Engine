@@ -62,6 +62,10 @@ namespace Engine {
 				exit(-1);
 			ENGINE_LOG_INFO("played sound");
 		}
+
+		void update() {
+			system->update(); 
+		}
 		
 	};
 }

@@ -28,6 +28,9 @@
     <Filter Include="src\Engine">
       <UniqueIdentifier>{12A1320E-FE58-745B-6760-4DB753370F4C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Audio">
+      <UniqueIdentifier>{9334FCA7-7F2D-1BFA-A85F-007F94B7FA05}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Events">
       <UniqueIdentifier>{B624EAB0-223B-E846-6BB2-7368D707B9CE}</UniqueIdentifier>
     </Filter>
@@ -1299,6 +1302,9 @@
     <ClInclude Include="src\Engine\Application.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Audio\sound.h">
+      <Filter>src\Engine\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Core.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
@@ -1339,6 +1345,9 @@
       <Filter>src\Engine</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer\Buffer.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\OrthographicCamera.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer\RenderCamera.h">
@@ -1392,11 +1401,13 @@
     <ClInclude Include="src\Platform\WindowsInput.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Renderer\OrthographicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
       <Filter>src\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Audio\sound.cpp">
+      <Filter>src\Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\ImGui\ImGuiBuild.cpp">
       <Filter>src\Engine\ImGui</Filter>
@@ -1414,6 +1425,9 @@
       <Filter>src\Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Buffer.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\OrthographicCamera.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\RenderCommand.cpp">
@@ -1458,6 +1472,5 @@
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Renderer\OrthographicCamera.cpp" />
   </ItemGroup>
 </Project>
