@@ -19,6 +19,7 @@ IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
 IncludeDir["glm"] = "Engine/3rdParty/glm"
+IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 
 include "Engine/3rdParty/GLFW"
 include "Engine/3rdParty/GLAD"
@@ -57,7 +58,8 @@ project "Engine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.imgui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.FMOD}"
 	}
 
 	links
@@ -65,7 +67,8 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
-		"opengl32.lib"
+		"opengl32.lib",
+		"fmod_vc.lib"
 	}
 
 	filter "system:windows"
@@ -110,7 +113,8 @@ project "Sandbox"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
 		"Engine/src",
-		"Engine/3rdParty"
+		"Engine/3rdParty",
+		"%{IncludeDir.FMOD}"
 	}
 
 	links

@@ -7,6 +7,7 @@
 class ExampleLayer : public Engine::Layer
 {
 public:
+	Engine::sound sound;
 	ExampleLayer() : Layer("MyFirstLayer")
 	{
 		
@@ -14,7 +15,7 @@ public:
 
 	void OnUpdate() override
 	{
-
+		sound.system->update();
 	}
 	void OnImGuiRender() override
 	{
@@ -25,7 +26,21 @@ public:
 
 	void OnEvent(Engine::Event& event) override
 	{
-		//LOG_INFO("{0}", event.ToString())
+		Engine::EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<Engine::KeyPressedEvent>(BIND_EVENT_FN(ExampleLayer::OnSpacePressed));
+		//ENGINE_LOG_WARNING("{0}", event.ToString())
+	}
+
+	bool OnSpacePressed(Engine::Event& event)
+	{
+		if (event.GetEventType() == Engine::EventType::KeyPressed) {
+			Engine::KeyPressedEvent newEvent = (Engine::KeyPressedEvent&)event;
+			if (newEvent.GetKeyCode() == KEY_SPACE) {
+				// Space
+				sound.testSound();
+			}
+		}
+		return false;
 	}
 };
 
