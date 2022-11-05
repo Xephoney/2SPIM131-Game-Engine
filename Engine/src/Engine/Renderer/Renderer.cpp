@@ -1,7 +1,7 @@
+#include <engpch.h>
 
 #include "Renderer.h"
 
-#include <engpch.h>
 
 #include "Renderer.h"
 
@@ -10,7 +10,7 @@ namespace Engine
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
-	void Renderer::NewFrame(OrthographicCamera& camera)
+	void Renderer::NewFrame(const Camera& camera)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProj();
 	}

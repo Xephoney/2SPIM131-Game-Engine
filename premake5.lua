@@ -138,7 +138,7 @@ project "Sandbox"
 	}
 	postbuildcommands
 	{
-		
+		("{COPYFILE} %{wks.location}Engine/3rdParty/FMOD/lib/fmod.dll $(TargetDir)")
 	}
 
 	filter "system:windows"

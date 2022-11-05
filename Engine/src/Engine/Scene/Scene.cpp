@@ -35,15 +35,8 @@ namespace Engine
 			auto& [transform, mesh, material] = view.get<Transform, MeshRenderer, Material>(e);
 			Renderer::Submit(material, mesh, transform);
 		}
-		
 		auto group = m_Registry.group<Transform>(entt::get<MeshRenderer>);
-		// int counter = 0;
-		/*for(auto& entity : group)
-		{
-			auto& [transform, mesh] = group.get<Transform, MeshRenderer>(entity);
-			Renderer::Submit(mesh.vertexArray);
-			// counter++;
-		}*/
+
 		// ENGINE_LOG_INFO("entt's found {0} of {1} alive", counter, m_Registry.alive());
 		// Camera Movement
 

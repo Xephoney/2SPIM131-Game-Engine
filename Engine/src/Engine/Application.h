@@ -7,7 +7,7 @@
 #include "Engine/LayerStack.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Renderer/Buffer.h"
-#include "Renderer/OrthographicCamera.h"
+#include "Renderer/Camera.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
 

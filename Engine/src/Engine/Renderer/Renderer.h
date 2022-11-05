@@ -1,6 +1,6 @@
 #pragma once
 
-#include "OrthographicCamera.h"
+#include "Camera.h"
 #include "RenderCommand.h"
 #include "Shader.h"
 
@@ -9,8 +9,8 @@ namespace Engine
 	class Renderer
 	{
 	public:
-		static void NewFrame(OrthographicCamera& camera);
-
+		static void NewFrame(const Camera& camera);
+		
 		static void RenderFrame();
 
 		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);

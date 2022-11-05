@@ -95,12 +95,12 @@ public:
 		{
 			HelpMarker("Hold CTRL and click to select multiple items.");
 			static bool selection[8192];
-	
+			
 			for (int n = 0; n < entities.size(); n++)
 			{
 				char buf[32];
 				auto& tag = reg.get<Engine::Tag>(entities[n]).tag;
-				sprintf(buf, "%s(%d)", tag.c_str(), n);
+				sprintf(buf, "%s", tag.c_str(), n);
 				
 				if (ImGui::Selectable(buf, selection[n]))
 				{
@@ -109,8 +109,27 @@ public:
 					selection[n] ^= 1;
 				}
 			}
-			
+
 			ImGui::TreePop();
+			// ImGui::Separator();
+			// for (int n = 0; n < entities.size(); n++)
+			// {
+			// 	selection[n] ? ImGui::Text("TRUE") : ImGui::Text("FALSE");
+			// }
+			ImGui::Separator();
+			if (ImGui::Button("Delete"))
+			{
+				int size = entities.size()+1;
+				for(int i = size; i >= 0; i--)
+				{
+					if(selection[i] == true)
+					{
+						selection[i] = false;
+						reg.destroy(entities[i]);
+						cnt--;
+					}
+				}
+			}
 		}
 		
 					
@@ -132,7 +151,10 @@ public:
 				//Spawn Entity
 				float x = ((float)(rand() % 16) / 2.f ) - 4.f;
 				float y = ((float)(rand() % 16) / 2.f ) - 4.f;
-				Engine::Entity cube = scene->CreateEntity("Cube");
+				cnt++;
+				std::string name = "Cube ";
+				name += std::to_string(cnt);
+				Engine::Entity cube = scene->CreateEntity(name);
 				
 				cube.GetComponent<Engine::Transform>().transform = glm::translate(glm::mat4{ 1.f }, { x,y,0 });
 			}

@@ -33,6 +33,9 @@ namespace Engine
 	private:
 		entt::registry& m_Registry;
 		entt::entity m_Entity {entt::null};
+		
+		Entity* parent ;
+		std::vector<Entity*> children;
 	};
 
 	
