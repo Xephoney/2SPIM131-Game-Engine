@@ -131,4 +131,9 @@ namespace Engine
 		operator const Shader& () const { return *shader; }
 
 	};
+
+	struct AudioListener
+	{
+
+	};
 }

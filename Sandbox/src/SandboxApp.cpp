@@ -164,7 +164,11 @@ public:
 				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event);
 				if (newEvent.GetKeyCode() == KEY_SPACE)
 				{
-					gameSound.testSound();
+					gameSound.playSound("Trekant");
+				}
+				if (newEvent.GetKeyCode() == KEY_TAB)
+				{
+					gameSound.playSound("Pop");
 				}
 			}
 
