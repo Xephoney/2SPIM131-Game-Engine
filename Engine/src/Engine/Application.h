@@ -10,6 +10,7 @@
 #include "Renderer/Camera.h"
 #include "Renderer/Shader.h"
 #include "Renderer/VertexArray.h"
+#include "Scene/Scene.h"
 
 namespace Engine
 {
@@ -25,6 +26,7 @@ namespace Engine
 		static Application& GetApplication() { return *s_instance; }
 
 		Window& GetWindow() const { return *m_Window; }
+		std::shared_ptr<Scene> GetScene() const { return scene; }
 
 		void PushLayer(Layer* layer);
 		void PushOverLay(Layer* overlay);
@@ -39,7 +41,9 @@ namespace Engine
 
 		//Private Variables
 		std::unique_ptr<Window> m_Window;
-		OrthographicCamera camera; 
+
+		std::shared_ptr<Scene> scene; 
+
 		ImGuiLayer* m_ImGuiLayer { nullptr };
 		bool m_Running = true;
 		static Application* s_instance;

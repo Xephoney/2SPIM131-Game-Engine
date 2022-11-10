@@ -17,6 +17,16 @@ namespace Engine
 		void SetRotation(const glm::vec3& rotation) { m_rotation = rotation; RecalculateViewMatrix(); }
 		const glm::vec3& GetRotation() const { return m_rotation; }
 
+		glm::vec3& Direction() { return m_direction; }
+
+		void update(const float& dt);
+
+		const glm::vec3& Forward() const;
+		const glm::vec3& Right() const;
+		const glm::vec3& Up() const;
+
+		glm::vec3 m_movementDir{ 0, 0, 0 };
+
 	protected:
 
 		void RecalculateViewMatrix();
@@ -25,11 +35,13 @@ namespace Engine
 		glm::mat4 m_view_projection{ 1.f };
 		glm::mat4 m_transform{ 1.f };
 
+		glm::vec3 m_position	{ 0, 0, 0 };
+		glm::vec3 m_rotation	{ 0, 0, 0 };
+		glm::vec3 m_direction	{ 0, 0, 1 };
+		glm::vec3 m_right		{ 1, 0, 0 };
+		glm::vec3 m_up			{ 0, 1, 0 };
+
 	private:
-
-		glm::vec3 m_position;
-		glm::vec3 m_rotation;
-
 	};
 
 	class OrthographicCamera : public Camera
@@ -44,6 +56,6 @@ namespace Engine
 	class PerspectiveCamera : public Camera
 	{
 	public:
-		PerspectiveCamera(const float& fov, const float& aspectRation, const float& near, const float& far);
+		PerspectiveCamera(const float& fov, const float& aspectRation, const float& near_plane, const float& far_plane);
 	};
 }

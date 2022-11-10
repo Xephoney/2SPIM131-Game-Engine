@@ -39,6 +39,13 @@ public:
 		ImGui::Text("Deltatime = %f", _dt);
 
 		ImGui::Text("Elapsed Time = %f", _elapsed);
+		ImGui::Separator();
+		ImGui::CollapsingHeader("Movement Controls");
+		ImGui::Text("\t\t(while holding right-click)");
+		ImGui::BulletText("WASD - Move camera");
+		ImGui::BulletText("Q - Down");
+		ImGui::BulletText("E - Up");
+		ImGui::BulletText("Moving your mouse turns the camera");
 		ImGui::End();
 	}
 
@@ -71,19 +78,17 @@ class GameLayer : public Engine::Layer
 {
 	std::shared_ptr<Engine::Scene> scene;
 	double elapsedTime{ 0 };
-	int cnt = 0;
+	int entity_count = 0;
 public:
 	GameLayer() : Layer("GameLayer")
 	{
 		srand(static_cast<unsigned>(time(nullptr)));
-		scene = std::make_shared<Engine::Scene>();
+		scene = Engine::Application::GetApplication().GetScene();
 	}
 
 	void OnUpdate(const double& dt) override
 	{
 		elapsedTime += dt;
-		scene->OnUpdate(dt);
-
 	}
 	void OnImGuiRender() override
 	{
@@ -96,13 +101,13 @@ public:
 			HelpMarker("Hold CTRL and click to select multiple items.");
 			static bool selection[8192];
 			
-			for (int n = 0; n < entities.size(); n++)
+			for (int n = 0; n < static_cast<int>(entities.size()); n++)
 			{
-				char buf[32];
+				char buffer[32];
 				auto& tag = reg.get<Engine::Tag>(entities[n]).tag;
-				sprintf(buf, "%s", tag.c_str(), n);
+				sprintf(buffer, "%s", tag.c_str(), n);
 				
-				if (ImGui::Selectable(buf, selection[n]))
+				if (ImGui::Selectable(buffer, selection[n]))
 				{
 					if (!ImGui::GetIO().KeyCtrl)    // Clear selection when CTRL is not held
 						memset(selection, 0, sizeof(selection));
@@ -111,11 +116,7 @@ public:
 			}
 
 			ImGui::TreePop();
-			// ImGui::Separator();
-			// for (int n = 0; n < entities.size(); n++)
-			// {
-			// 	selection[n] ? ImGui::Text("TRUE") : ImGui::Text("FALSE");
-			// }
+
 			ImGui::Separator();
 			if (ImGui::Button("Delete"))
 			{
@@ -126,8 +127,7 @@ public:
 					{
 						selection[i] = false;
 						reg.destroy(entities[i]);
-						cnt--;
-						reg.get<Engine::AudioListener>(entities[i]).playSound("Delete");
+						entity_count--;
 					}
 				}
 			}
@@ -146,15 +146,16 @@ public:
 	{
 		if(event.GetEventType() == Engine::EventType::KeyPressed)
 		{
-			const auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event);
+			const auto& newEvent = dynamic_cast<Engine::KeyPressedEvent&>(event);
 			if(newEvent.GetKeyCode() == KEY_TAB)
 			{
 				//Spawn Entity
-				float x = ((float)(rand() % 16) / 2.f ) - 4.f;
-				float y = ((float)(rand() % 16) / 2.f ) - 4.f;
-				cnt++;
+				float x = (static_cast<float>(rand() % 16) / 2.f ) - 4.f;
+				float y = (static_cast<float>(rand() % 16) / 2.f ) - 4.f;
+
+				entity_count++;
 				std::string name = "Cube ";
-				name += std::to_string(cnt);
+				name += std::to_string(entity_count);
 				Engine::Entity cube = scene->CreateEntity(name);
 				
 				cube.GetComponent<Engine::Transform>().transform = glm::translate(glm::mat4{ 1.f }, { x,y,0 });
@@ -187,13 +188,14 @@ public:
 				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event);
 				if (newEvent.GetKeyCode() == KEY_SPACE)
 				{
-					gameSound.playSound("Trekant");
-				}
-				if (newEvent.GetKeyCode() == KEY_TAB)
-				{
-					gameSound.playSound("Pop");
+					gameSound.testSound();
 				}
 			}
+
+		if (Engine::Input::IsKeyPressed(KEY_SPACE))
+		{
+
+		}
 	}
 };
 
