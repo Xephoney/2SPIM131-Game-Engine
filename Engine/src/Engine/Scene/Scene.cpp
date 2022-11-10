@@ -23,6 +23,7 @@ namespace Engine
 		entity.AddComponent<Transform>(glm::mat4{1.f});
 		entity.AddComponent<MeshRenderer>();
 		entity.AddComponent<Material>();
+		entity.AddComponent<AudioListener>();
 		return entity;
 	}
 

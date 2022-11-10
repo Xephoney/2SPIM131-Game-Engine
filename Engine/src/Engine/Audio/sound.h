@@ -11,6 +11,8 @@
 namespace Engine {
 	class sound
 	{
+	private:
+		static sound& s_sound;
 	public:
 		FMOD::ChannelGroup* gameSound = nullptr;
 		FMOD::System* system = nullptr;
@@ -44,11 +46,12 @@ namespace Engine {
 				exit(-1);
 
 			//adding some basic sounds
-			addSound("../bin/Debug-windows-x86_64/Sandbox/Trekant.mp3", "Trekant", false);
-			addSound("../bin/Debug-windows-x86_64/Sandbox/pop.mp3", "Pop", false);
+			addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", false);
+			addSound("../Engine/Assets/Sound/pop.mp3", "Pop", false);
+			addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", false);
 
 #ifdef DEBUG
-			ENGINE_LOG_INFO("Sound should work");
+			ENGINE_LOG_INFO("Default sounds added, no issues reported.");
 #endif // DEBUG
 
 		};
@@ -68,6 +71,8 @@ namespace Engine {
 			ENGINE_LOG_INFO("Created new sound {0} and added to list of sounds", name);
 #endif //DEBUG
 		}
+
+
 		bool successCheck(FMOD_RESULT result) {
 			if (result != FMOD_OK) {
 				ENGINE_LOG_ERROR("FMOD error! ({0}) {1}", result, FMOD_ErrorString(result));
@@ -88,8 +93,9 @@ namespace Engine {
 				ENGINE_LOG_WARNING("NO SOUNDS LOADED TO PLAY!");
 				return;
 			}
-
-			for (int i = 0; i < mSounds.size(); i++) {
+			//Looking through mSounds to see if called sound exists
+			//TODO : maybe have a toUpper to avoid having to care about capital letters?
+			for (int i = 0; i < mSounds.size(); i++) { 
 				if (mSounds[i].second == name) {
 					FMOD::Sound* temp = mSounds[i].first;
 					result = system->playSound(temp, nullptr, false, &channel);
@@ -103,5 +109,13 @@ namespace Engine {
 			}
 			ENGINE_LOG_ERROR("{0} WAS NOT FOUND IN LIST OF LOADED SOUNDS!", name);
 		}
+		
+		static sound& getSoundManager();
+		
 	};
+
+	inline sound& sound::getSoundManager() {
+		static sound instance;
+		return instance;
+	}
 }

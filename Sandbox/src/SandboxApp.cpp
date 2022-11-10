@@ -127,6 +127,7 @@ public:
 						selection[i] = false;
 						reg.destroy(entities[i]);
 						cnt--;
+						reg.get<Engine::AudioListener>(entities[i]).playSound("Delete");
 					}
 				}
 			}
@@ -193,11 +194,6 @@ public:
 					gameSound.playSound("Pop");
 				}
 			}
-
-		if (Engine::Input::IsKeyPressed(KEY_SPACE))
-		{
-
-		}
 	}
 };
 

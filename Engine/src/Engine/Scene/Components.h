@@ -4,6 +4,8 @@
 
 #include "Engine/Renderer/Shader.h"
 #include "Engine/Renderer/VertexArray.h"
+#include "Engine/Audio/sound.h"
+
 
 
 namespace Engine
@@ -134,6 +136,14 @@ namespace Engine
 
 	struct AudioListener
 	{
+		sound mSound;
+		AudioListener() {
+			mSound = sound::getSoundManager();
+			
+		}
+		void playSound(std::string name) {
+			mSound.playSound(name);
+		}
 
 	};
 }
