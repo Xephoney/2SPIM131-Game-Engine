@@ -18,6 +18,7 @@ namespace Engine {
 		FMOD::System* system = nullptr;
 		
 		std::vector<std::pair<FMOD::Sound*, std::string>> mSounds;
+		std::vector<std::pair<FMOD_CHANNEL*, std::string >> mChannels;
 		sound() {
 			FMOD_RESULT result;
 			
@@ -111,11 +112,17 @@ namespace Engine {
 		}
 		
 		static sound& getSoundManager();
+
+		static FMOD_CHANNEL& createChannel(std::string name);
 		
 	};
 
 	inline sound& sound::getSoundManager() {
 		static sound instance;
 		return instance;
+	}
+
+	inline  sound& sound_createChannel(std::string name) {
+		
 	}
 }

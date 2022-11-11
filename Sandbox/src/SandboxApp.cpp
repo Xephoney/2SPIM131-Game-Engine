@@ -188,7 +188,7 @@ public:
 				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event);
 				if (newEvent.GetKeyCode() == KEY_SPACE)
 				{
-					gameSound.testSound();
+					
 				}
 			}
 
