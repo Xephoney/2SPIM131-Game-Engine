@@ -136,14 +136,21 @@ namespace Engine
 
 	struct AudioListener
 	{
-		FMOD_CHANNEL* mChannel;
-		
-		AudioListener() {
-			
-		}
-		void playSound(std::string name) {
+		FMOD_CHANNEL* mChannel=nullptr;
+
+		sound* mSound=nullptr;
+		AudioListener()
+		{
 			
 		}
 
+		//AudioListener(AudioListener&&) = default;
+		//AudioListener(const AudioListener&) = default;
+		//AudioListener(const FMOD_CHANNEL& channel);
+		
+		void playSound(std::string name) 
+		{
+			//mSound.playSound(name);
+		}
 	};
 }

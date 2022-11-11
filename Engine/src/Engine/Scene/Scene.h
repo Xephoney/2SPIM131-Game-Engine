@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include "Engine/Renderer/Camera.h"
+#include "Engine/Audio/sound.h"
 
 namespace Engine
 {
