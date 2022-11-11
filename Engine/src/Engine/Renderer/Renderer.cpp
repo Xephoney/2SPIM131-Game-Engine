@@ -28,8 +28,8 @@ namespace Engine
 	void Renderer::Submit(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader.Bind();
-		shader.SetUniformMatrix4fv("model", transform);
-		shader.SetUniformMatrix4fv("view_projection", m_SceneData->ViewProjectionMatrix);
+		shader.SetUniformMatrix4fv("u_model", transform);
+		shader.SetUniformMatrix4fv("u_view_projection", m_SceneData->ViewProjectionMatrix);
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 		shader.Unbind();

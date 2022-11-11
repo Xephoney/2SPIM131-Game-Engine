@@ -39,7 +39,7 @@ namespace Engine {
 				exit(-1);
 
 			//set up sound
-			system->createSound("../bin/Debug-windows-x86_64/Sandbox/Trekant.mp3", FMOD_DEFAULT, nullptr, &soundTest);
+			system->createSound("../Engine/Assets/Sound/Trekant.mp3", FMOD_DEFAULT, nullptr, &soundTest);
 
 			ENGINE_LOG_INFO("Sound should work");
 
@@ -59,7 +59,7 @@ namespace Engine {
 			
 			result = system->playSound(soundTest, nullptr, false, &channel);
 			if (!successCheck(result))
-				exit(-1);
+				//exit(-1);
 			ENGINE_LOG_INFO("played sound");
 		}
 

@@ -1,9 +1,6 @@
 #include <engpch.h>
 
-
 #include "Camera.h"
-
-
 #include "glm/glm.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -27,13 +24,12 @@ namespace Engine
 	PerspectiveCamera::PerspectiveCamera(const float& fov, const float& aspectRation, const float& near,
 	                                     const float& far)
 	{
-		m_projection = glm::perspective(fov, aspectRation, near, far);
-		m_position = glm::vec3{ 0,1,-5 };
-		
+		m_projection = glm::perspective(glm::radians(fov), aspectRation, near, far);
+		RecalculateViewMatrix();
 	}
 
 	Camera::Camera()
-		: m_position(glm::vec3{ 0.f }), m_rotation(glm::vec3{ 0.f })
+		: m_position(glm::vec3{ 0, 0, 10}), m_rotation(glm::vec3{ 0.f })
 	{
 		
 	}
@@ -43,24 +39,22 @@ namespace Engine
 		if(glm::length(m_movementDir) > 0)
 		{
 			m_position += m_movementDir * dt * 10.f;
-			
+			m_movementDir = glm::vec3{ 0.f };
 		}
 		RecalculateViewMatrix();
-		m_movementDir = glm::vec3{ 0.f };
-
 	}
 
-	const glm::vec3& Camera::Forward() const
+	const glm::vec3& Camera::Forward() 
 	{
 		return m_direction;
 	}
 
-	const glm::vec3& Camera::Right() const
+	glm::vec3 Camera::Right() 
 	{
-		return glm::normalize(glm::cross( m_direction , {0,1,0}));
+		return normalize(cross(m_direction, { 0,1,0 }));
 	}
 
-	const glm::vec3& Camera::Up() const
+	glm::vec3 Camera::Up() 
 	{
 		return glm::normalize(glm::cross(Right(), m_direction));
 	}

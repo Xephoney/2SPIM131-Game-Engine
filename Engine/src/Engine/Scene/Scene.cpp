@@ -16,7 +16,7 @@ namespace Engine
 	Scene::Scene() 
 	{
 		//orth_camera = std::make_shared<OrthographicCamera>((-SIZE / 2.f) * (16.f / 9.f), (SIZE / 2.f) * (16.f / 9.f), -(SIZE / 2.f), (SIZE / 2.f));
-		pers_camera = std::make_shared<PerspectiveCamera>(90.f, (16.f / 9.f), 0.05f, 1250.f);
+		pers_camera = std::make_shared<PerspectiveCamera>(50.f, (16.f / 9.f), 0.01f, 1000.f);
 	}
 
 	Scene::~Scene()
@@ -37,7 +37,7 @@ namespace Engine
 	{
 		deltaTime = dt;
 		MoveCamera();
-
+		GetActiveCamera()->update(dt);
 		auto view = m_Registry.view<Transform, MeshRenderer, Material>();
 		
 		for(const auto e : view)
@@ -49,39 +49,37 @@ namespace Engine
 
 		// ENGINE_LOG_INFO("entt's found {0} of {1} alive", counter, m_Registry.alive());
 		// Camera Movement
-		GetActiveCamera()->update(dt);
+		
 	}
 
 	void Scene::MoveCamera()
 	{
-
-
 		std::shared_ptr<Camera> camera = GetActiveCamera();
 
-		glm::vec3 direction {0,0,0};
+		glm::vec3 movement_direction {0,0,0};
 		if(Input::IsKeyPressed(KEY_W))
 		{
-			direction += camera->Forward();
+			movement_direction += camera->Forward();
 		}
 		if (Input::IsKeyPressed(KEY_A))
 		{
-			direction -= camera->Right();
+			movement_direction -= camera->Right();
 		}
 		if (Input::IsKeyPressed(KEY_S))
 		{
-			direction -= camera->Forward();
+			movement_direction -= camera->Forward();
 		}
 		if (Input::IsKeyPressed(KEY_D))
 		{
-			direction += camera->Right();
+			movement_direction += camera->Right();
 		}
 		if (Input::IsKeyPressed(KEY_Q))
 		{
-			direction -= camera->Up();
+			movement_direction -= camera->Up();
 		}
 		if (Input::IsKeyPressed(KEY_E))
 		{
-			direction += camera->Up();
+			movement_direction += camera->Up();
 		}
 
 
@@ -102,19 +100,21 @@ namespace Engine
 				glm::vec3 newDir = glm::rotate(camera->Direction(), glm::radians(-delta.y * cameraSensitivity * static_cast<float>(deltaTime)), GetActiveCamera()->Right());
 				if (!(glm::angle(newDir, { 0,1,0 }) <= glm::radians(5.f) || glm::angle(newDir, { 0,-1,0 }) <= glm::radians(5.f)))
 				{
-					camera->Direction() = newDir;
+					camera->Direction() = glm::normalize(newDir);
 				}
 
-				camera->Direction() = glm::rotate(camera->Direction(), glm::radians(-delta.x * cameraSensitivity * static_cast<float>(deltaTime)), { 0, 1, 0 });
-				if (glm::length(direction) > 0.01)
+				camera->Direction() = glm::normalize(glm::rotate(camera->Direction(), glm::radians(-delta.x * cameraSensitivity * static_cast<float>(deltaTime)), { 0, 1, 0 }));
+				if (glm::length(movement_direction) > 0.01)
 				{
-					direction = glm::normalize(direction);
-					camera->m_movementDir = direction;
+					movement_direction = glm::normalize(movement_direction);
+					camera->m_movementDir = movement_direction;
 				}
 			}
 
 			bFirstClick = false;
 			Input::SetMousePosition({ center.x, center.y });
 		}
+		else
+			bFirstClick = true;
 	}
 }

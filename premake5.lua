@@ -22,9 +22,12 @@ IncludeDir["glm"] = "Engine/3rdParty/glm"
 IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
+IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
+
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
+LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
 
 include "Engine/3rdParty/GLFW"
 include "Engine/3rdParty/GLAD"
@@ -70,7 +73,8 @@ project "Engine"
 	}
 	libdirs
 	{
-		"%{LibraryDir.FMOD}"
+		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.assimp}"
 	}
 
 	links
@@ -78,7 +82,8 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
-		"opengl32.lib"
+		"assimp-vc143-mt",
+		"opengl32"
 	}
 
 	filter "system:windows"

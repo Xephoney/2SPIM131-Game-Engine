@@ -29,6 +29,11 @@ namespace Engine
 		return glfwGetMouseButton(Window, keycode);
 	}
 
+	// bool WindowsInput::IsMouseButtonReleasedImpl(int keycode)
+	// {
+	// 	return glfwGet
+	// }
+
 	std::pair<float, float> WindowsInput::GetMousePositionImpl()
 	{
 		// Auto here is a GLFWwindow*

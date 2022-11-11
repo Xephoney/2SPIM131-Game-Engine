@@ -10,6 +10,7 @@ namespace Engine
 	protected :
 		bool IsKeyPressedImpl(int keycode) override;
 		bool IsMouseButtonPressedImpl(int keycode) override;
+		// bool IsMouseButtonReleasedImpl(int keycode) override;
 		float GetMouseXImpl() override;
 		float GetMouseYImpl() override;
 		virtual void SetMousePositionImpl(std::pair<float, float> newPos) override;

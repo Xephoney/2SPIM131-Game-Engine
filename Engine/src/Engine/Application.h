@@ -53,8 +53,6 @@ namespace Engine
 		std::shared_ptr<Shader> shader;
 
 		std::shared_ptr<VertexArray> m_SquareVertexArray;
-
-		
 	};
 
 	Application* CreateApplication();

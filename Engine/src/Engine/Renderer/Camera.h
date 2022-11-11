@@ -21,9 +21,9 @@ namespace Engine
 
 		void update(const float& dt);
 
-		const glm::vec3& Forward() const;
-		const glm::vec3& Right() const;
-		const glm::vec3& Up() const;
+		const glm::vec3& Forward() ;
+		glm::vec3 Right() ;
+		glm::vec3 Up() ;
 
 		glm::vec3 m_movementDir{ 0, 0, 0 };
 
@@ -35,11 +35,9 @@ namespace Engine
 		glm::mat4 m_view_projection{ 1.f };
 		glm::mat4 m_transform{ 1.f };
 
-		glm::vec3 m_position	{ 0, 0, 0 };
+		glm::vec3 m_position	{ 0, 0, 10 };
 		glm::vec3 m_rotation	{ 0, 0, 0 };
-		glm::vec3 m_direction	{ 0, 0, 1 };
-		glm::vec3 m_right		{ 1, 0, 0 };
-		glm::vec3 m_up			{ 0, 1, 0 };
+		glm::vec3 m_direction	{ 0, 0,-1 };
 
 	private:
 	};

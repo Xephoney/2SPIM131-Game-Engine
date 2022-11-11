@@ -42,13 +42,12 @@ namespace Engine
 
 			std::shared_ptr<Camera> camera = scene->GetActiveCamera();
 			Renderer::NewFrame(*camera);
-			//camera.SetPosition({sin(time*0.2) * 4, cos(time*0.2) * 4, 0});
 
 			for (Layer* l : m_LayerStack)
 				l->OnUpdate(dt);
 
 			scene->OnUpdate(dt);
-
+			
 			//Run IMGUI Rendering on all sub layers
 			m_ImGuiLayer->Begin();
 			for (Layer* l : m_LayerStack)

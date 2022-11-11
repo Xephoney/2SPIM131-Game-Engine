@@ -23,7 +23,7 @@ namespace Engine
 
 	struct Tag
 	{
-		std::string tag;
+		std::string tag = "";
 		Tag() = default;
 		Tag(const std::string& name)
 		{
@@ -96,14 +96,14 @@ namespace Engine
 				layout(location = 1) in vec4 a_Color;
 				layout(location = 2) in vec3 a_Normal;
 
-				uniform mat4 view_projection;
-				uniform mat4 model;
+				uniform mat4 u_view_projection;
+				uniform mat4 u_model;
 
 				out vec3 v_pos;
 				out vec4 v_color;
 				void main()
 				{
-					gl_Position = view_projection * model * vec4(a_Position,1);
+					gl_Position = u_view_projection * u_model * vec4(a_Position,1);
 					v_pos = a_Position;
 					v_color = a_Color;
 				}
