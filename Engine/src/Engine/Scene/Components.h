@@ -2,7 +2,7 @@
 #include "glm/glm.hpp"
 #include <string>
 
-#include "Engine/Renderer/Shader.h"
+#include "MeshManager.h"
 #include "Engine/Renderer/VertexArray.h"
 
 
@@ -78,57 +78,18 @@ namespace Engine
 		operator std::shared_ptr<VertexArray>& () { return vertexArray; }
 		operator const std::shared_ptr<VertexArray>& () const { return vertexArray; }
 	};
-
-	struct Material
+	struct StaticMeshRenderer
 	{
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
-		float shininess = 0.f;
-		Shader* shader;
-		Material() 
+		StaticMesh mesh;
+		StaticMeshRenderer() = default;
+		StaticMeshRenderer(const StaticMeshRenderer&) = default;
+		// StaticMeshRenderer(StaticMeshRenderer&& SMR) noexcept :
+		// 	mesh(std::move(SMR.mesh)) { }
+		StaticMeshRenderer(const std::string& filepath)
 		{
-			// Create Shader
-			std::string vertexShaderTemp = R"(
-
-				#version 410 core
-				layout(location = 0) in vec3 a_Position;
-				layout(location = 1) in vec4 a_Color;
-				layout(location = 2) in vec3 a_Normal;
-
-				uniform mat4 u_view_projection;
-				uniform mat4 u_model;
-
-				out vec3 v_pos;
-				out vec4 v_color;
-				void main()
-				{
-					gl_Position = u_view_projection * u_model * vec4(a_Position,1);
-					v_pos = a_Position;
-					v_color = a_Color;
-				}
-			)";
-			std::string fragmentShaderTemp = R"(
-
-				#version 410 core
-				layout(location = 0) out vec4 fragmentColor;
-				in vec3 v_pos;
-				in vec4 v_color;
-
-				void main()
-				{
-					fragmentColor = v_color;
-				}
-			)";
-
-			shader = new Shader{vertexShaderTemp, fragmentShaderTemp};
+			mesh = MeshManager::instance().GetMesh(filepath);
 		}
-		;
-		Material(const Shader& shader);
-		Material(const Material&) = default;
-
-		operator Shader& () { return *shader; }
-		operator const Shader& () const { return *shader; }
-
+		operator StaticMesh& () { return mesh; }
+		operator const StaticMesh& () const { return mesh; }
 	};
 }

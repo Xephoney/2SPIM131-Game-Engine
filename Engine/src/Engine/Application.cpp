@@ -1,4 +1,4 @@
-#include "engpch.h"
+﻿#include "engpch.h"
 #include "Engine/Events/ApplicationEvent.h"
 #include "Application.h"
 
@@ -33,6 +33,7 @@ namespace Engine
 	{
 		while (m_Running)
 		{
+			glCullFace(GL_FRONT_AND_BACK);
 			static double time = 0;
 			const auto dt = CalculateDeltaTime();
 			time += dt;

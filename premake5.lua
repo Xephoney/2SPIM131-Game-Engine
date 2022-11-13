@@ -53,7 +53,10 @@ project "Engine"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/3rdParty/glm/glm/**.hpp",
-		"%{prj.name}/3rdParty/glm/glm/**.inl"
+		"%{prj.name}/3rdParty/glm/glm/**.inl",
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.hpp",
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.cpp",
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.h"
 	}
 	defines
 	{
@@ -69,6 +72,7 @@ project "Engine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.assimp}",
 		"%{IncludeDir.entt}"
 	}
 	libdirs
@@ -130,20 +134,24 @@ project "Sandbox"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.assimp}",
 		"Engine/src"
 	}
 	libdirs
 	{
-		"%{LibraryDir.FMOD}"
+		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.assimp}"
 	}
 	links
 	{
 		"fmod_vc.lib",
+		"assimp-vc143-mt",
 		"Engine"
 	}
 	postbuildcommands
 	{
-		("{COPYFILE} %{wks.location}Engine/3rdParty/FMOD/lib/fmod.dll $(TargetDir)")
+		("{COPYFILE} %{wks.location}%{LibraryDir.FMOD}/fmod.dll $(TargetDir)"),
+		("{COPYFILE} %{wks.location}%{LibraryDir.assimp}/assimp-vc143-mt.dll $(TargetDir)")
 	}
 
 	filter "system:windows"

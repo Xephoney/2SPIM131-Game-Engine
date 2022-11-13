@@ -28,8 +28,8 @@ namespace Engine
 		Entity entity = { m_Registry.create(), m_Registry };
 		entity.AddComponent<Tag>(tagName);
 		entity.AddComponent<Transform>(glm::mat4{1.f});
-		entity.AddComponent<MeshRenderer>();
-		entity.AddComponent<Material>();
+		//entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/sphere.fbx");
+		entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/coin.gltf");
 		return entity;
 	}
 
@@ -38,15 +38,27 @@ namespace Engine
 		deltaTime = dt;
 		MoveCamera();
 		GetActiveCamera()->update(dt);
-		auto view = m_Registry.view<Transform, MeshRenderer, Material>();
-		
-		for(const auto e : view)
-		{
-			auto& [transform, mesh, material] = view.get<Transform, MeshRenderer, Material>(e);
-			Renderer::Submit(material, mesh, transform);
-		}
-		auto group = m_Registry.group<Transform>(entt::get<MeshRenderer>);
+		// auto view = m_Registry.view<Transform, MeshRenderer, Material>();
+		//
+		// for(const auto e : view)
+		// {
+		// 	auto& [transform, mesh, material] = view.get<Transform, MeshRenderer, Material>(e);
+		// 	Renderer::Submit(material, mesh, transform);
+		// }
+		// auto group = m_Registry.group<Transform>(entt::get<MeshRenderer>);
 
+
+		auto view2 = m_Registry.view<Transform, StaticMeshRenderer>();
+
+		for (auto entity : view2)
+		{
+			auto& [transform, staticmesh] = view2.get<Transform, StaticMeshRenderer>(entity);
+			for(int i = 0; i < staticmesh.mesh.meshes.size(); i++)
+			{
+				auto mesh = MeshManager::instance().GetMeshFromID(staticmesh.mesh.meshes[i]);
+				Renderer::Submit(mesh.material, mesh.vertexArray, transform);
+			}
+		}
 		// ENGINE_LOG_INFO("entt's found {0} of {1} alive", counter, m_Registry.alive());
 		// Camera Movement
 		

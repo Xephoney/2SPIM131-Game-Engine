@@ -5,6 +5,8 @@
 
 #include "Renderer.h"
 
+#include "Engine/Scene/Mesh.h"
+
 namespace Engine
 {
 
@@ -35,4 +37,12 @@ namespace Engine
 		shader.Unbind();
 		vertexArray->Unbind();
 	}
+
+	// void Renderer::SubmitInstanced(StaticMesh& staticMesh, const glm::mat4& transform)
+	// {
+	// 	for(int i = 0; i < staticMesh.meshes.size(); i++)
+	// 	{
+	// 		instanceQueue.push_back({staticMesh.meshes[i], transform});
+	// 	}
+	// }
 }

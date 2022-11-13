@@ -47,6 +47,19 @@ public:
 		ImGui::BulletText("E - Up");
 		ImGui::BulletText("Moving your mouse turns the camera");
 		ImGui::End();
+
+		ImGui::Begin("Debug Window");
+		ImGui::Text("| Camera Info |");
+
+		glm::vec3 f_dir = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->Forward();
+		glm::vec3 r_dir = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->Right();
+		glm::vec3 u_dir = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->Up();
+		glm::vec3 c_pos = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->GetPosition();
+		ImGui::BulletText("Camera Forward (%f, %f, %f) | %f", f_dir.x, f_dir.y, f_dir.z, glm::length(f_dir));
+		ImGui::BulletText("Camera Right (%f, %f, %f) | %f", r_dir.x, r_dir.y, r_dir.z, glm::length(r_dir));
+		ImGui::BulletText("Camera Up (%f, %f, %f) | %f", u_dir.x, u_dir.y, u_dir.z, glm::length(u_dir));
+		ImGui::BulletText("Camera Position (%f, %f, %f) ", c_pos.x, c_pos.y, c_pos.z);
+		ImGui::End();
 	}
 
 	void OnEvent(Engine::Event& event) override
@@ -145,18 +158,7 @@ public:
 
 		ImGui::End();
 
-		ImGui::Begin("Debug Window");
-		ImGui::Text("| Camera Info |");
-
-		glm::vec3 f_dir = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->Forward();
-		glm::vec3 r_dir = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->Right();
-		glm::vec3 u_dir = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->Up();
-		glm::vec3 c_pos = Engine::Application::GetApplication().GetScene()->GetActiveCamera()->GetPosition();
-		ImGui::BulletText("Camera Forward (%f, %f, %f) | %f", f_dir.x, f_dir.y, f_dir.z, glm::length(f_dir));
-		ImGui::BulletText("Camera Right (%f, %f, %f) | %f", r_dir.x, r_dir.y, r_dir.z, glm::length(r_dir));
-		ImGui::BulletText("Camera Up (%f, %f, %f) | %f", u_dir.x, u_dir.y, u_dir.z, glm::length(u_dir));
-		ImGui::BulletText("Camera Position (%f, %f, %f) ", c_pos.x, c_pos.y, c_pos.z);
-		ImGui::End();
+		
 	}
 	void OnEvent(Engine::Event& event) override
 	{
@@ -176,11 +178,23 @@ public:
 				float y = (static_cast<float>(rand() % 16) / 2.f ) - 4.f;
 
 				entity_count++;
-				std::string name = "Cube ";
+				std::string name = "Quad ";
 				name += std::to_string(entity_count);
 				Engine::Entity cube = scene->CreateEntity(name);
 				
 				cube.GetComponent<Engine::Transform>().transform = glm::translate(glm::mat4{ 1.f }, { x,y,0 });
+			}
+		}
+		if (event.GetEventType() == Engine::EventType::KeyPressed)
+		{
+			const auto& newEvent = dynamic_cast<Engine::KeyPressedEvent&>(event);
+			if (newEvent.GetKeyCode() == KEY_ENTER)
+			{
+				//Spawn Entity
+				entity_count++;
+				std::string name = "Cube ";
+				name += std::to_string(entity_count);
+				Engine::Entity cube = scene->CreateEntity(name);
 			}
 		}
 		return false;
