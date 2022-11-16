@@ -82,7 +82,9 @@
       <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -109,6 +111,7 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
@@ -131,7 +134,9 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
       <PreprocessorDefinitions>ENG_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
+      <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>

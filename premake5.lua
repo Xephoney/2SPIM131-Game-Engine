@@ -1,5 +1,5 @@
 workspace "Game Engine"
-	architecture "x64"
+	architecture "x86_64"
 	startproject "Sandbox"
 
 	configurations
@@ -9,12 +9,16 @@ workspace "Game Engine"
 		"Distribution"
 	}
 
+	flags
+	{
+		"MultiProcessorCompile"
+	}
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 --Include Directories relative to root folder 
 IncludeDir = {}
 IncludeDir["spdlog"] = "Engine/3rdParty/spdlog/include"
-
 IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
@@ -29,10 +33,11 @@ LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
 
-include "Engine/3rdParty/GLFW"
-include "Engine/3rdParty/GLAD"
-include "Engine/3rdParty/imgui"
-
+group "Dependencies"
+	include "Engine/3rdParty/GLFW"
+	include "Engine/3rdParty/GLAD"
+	include "Engine/3rdParty/imgui"
+group ""
 
 project "Engine"
 	location "Engine"

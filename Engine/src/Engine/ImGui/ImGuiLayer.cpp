@@ -31,7 +31,7 @@ namespace Engine
 		{
 			style.WindowRounding = 0.f;
 			// Bakgrunns-alpha til IMGUI Vindu. Hvor gjennomsiktig den skal være, 1 = Helt tett, 0 = helt gjennomsiktig
-			style.Colors[ImGuiCol_WindowBg].w = 1.f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
 		Application& app = Application::GetApplication();
@@ -43,8 +43,8 @@ namespace Engine
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		//static bool show = true;
+		//ImGui::ShowDemoWindow(&show);
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -77,10 +77,23 @@ namespace Engine
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
-
-		
 	}
 
+	void ImGuiLayer::OnUpdate(const double& dt)
+	{
+		Layer::OnUpdate(dt);
+		m_Time += dt;
 
+	}
 
+	void ImGuiLayer::OnEvent(Event& event)
+	{
+		Layer::OnEvent(event);
+		if (m_SkipEvents)
+			return;
+
+		ImGuiIO& io = ImGui::GetIO();
+		event.m_Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+		event.m_Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+	}
 }

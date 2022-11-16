@@ -20,6 +20,7 @@ namespace Engine
 		const std::string& GetName() const { return m_DebugName; }
 
 	private:
+		
 		std::string m_DebugName;
 	};
 }

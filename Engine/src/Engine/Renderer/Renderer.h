@@ -10,7 +10,8 @@ namespace Engine
 	{
 	public:
 		static void NewFrame(const Camera& camera);
-		
+		static void OnWindowResize(uint32_t width, uint32_t height);
+
 		static void RenderFrame();
 
 		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);

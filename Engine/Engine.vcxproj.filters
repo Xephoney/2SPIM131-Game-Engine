@@ -1605,13 +1605,13 @@
     <ClInclude Include="src\Engine\Log.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\MouseButtonCodes.h">
-      <Filter>src\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\Renderer\Buffer.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer\Camera.h">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Renderer\Framebuffer.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Renderer\RenderCamera.h">
@@ -1668,13 +1668,13 @@
     <ClInclude Include="src\Platform\OpenGLContext.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGLFramebuffer.h">
+      <Filter>src\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGLRendererAPI.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGLVertexArray.h">
-      <Filter>src\Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\WindowsInput.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1704,6 +1704,9 @@
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Camera.cpp">
+      <Filter>src\Engine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Renderer\Framebuffer.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\RenderCommand.cpp">
@@ -1740,6 +1743,9 @@
       <Filter>src\Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGLContext.cpp">
+      <Filter>src\Platform</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGLRendererAPI.cpp">

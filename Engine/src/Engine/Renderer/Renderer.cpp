@@ -15,6 +15,12 @@ namespace Engine
 	void Renderer::NewFrame(const Camera& camera)
 	{
 		m_SceneData->ViewProjectionMatrix = camera.GetViewProj();
+		RenderCommand::Init();
+	}
+
+	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+	{
+		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
 	void Renderer::RenderFrame()

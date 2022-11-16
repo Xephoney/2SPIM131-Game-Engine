@@ -5,6 +5,7 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
+
 namespace Engine
 {
 	OrthographicCamera::OrthographicCamera(const float& left, const float& right, const float& bottom, const float& top)
@@ -19,12 +20,26 @@ namespace Engine
 		m_projection = glm::ortho(size* aspectRation, size* aspectRation, size, size, static_cast<float>(near), static_cast<float>(far));
 	}
 
-	
+	void OrthographicCamera::Resize(uint32_t width, uint32_t height)
+	{
+		//m_projection = glm::ortho(size * aspectRation, size * aspectRation, size, size, static_cast<float>(near), static_cast<float>(far));
+	}
 
-	PerspectiveCamera::PerspectiveCamera(const float& fov, const float& aspectRation, const float& near,
+
+	PerspectiveCamera::PerspectiveCamera(const float& fov, const float& aspectRatio, const float& near,
 	                                     const float& far)
 	{
-		m_projection = glm::perspective(glm::radians(fov), aspectRation, near, far);
+		FOV_degrees = fov;
+		_near = near;
+		_far = far;
+		m_projection = glm::perspective(glm::radians(fov), aspectRatio, near, far);
+		RecalculateViewMatrix();
+	}
+
+	void PerspectiveCamera::Resize(uint32_t width, uint32_t height)
+	{
+		float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+		m_projection = glm::perspective(glm::radians(FOV_degrees), aspectRatio, _near, _far);
 		RecalculateViewMatrix();
 	}
 
@@ -33,12 +48,13 @@ namespace Engine
 	{
 		
 	}
-
-	void Camera::update(const float& dt)
+	
+	void Camera::update(const double& dt)
 	{
 		if(glm::length(m_movementDir) > 0)
 		{
-			m_position += m_movementDir * dt * 10.f;
+			m_movementSpeed = std::clamp(m_movementSpeed, 0.2f, FLT_MAX);
+			m_position += m_movementDir * static_cast<float>(dt) * m_movementSpeed;
 			m_movementDir = glm::vec3{ 0.f };
 		}
 		RecalculateViewMatrix();

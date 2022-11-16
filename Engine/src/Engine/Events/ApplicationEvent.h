@@ -4,7 +4,7 @@
 
 namespace Engine
 {
-	class  WindowResizeEvent : public Event
+	class WindowResizeEvent : public Event
 	{
 	public:
 		WindowResizeEvent(unsigned int width, unsigned int height)
