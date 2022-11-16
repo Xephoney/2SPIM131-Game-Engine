@@ -45,6 +45,8 @@ public:
 		camera = std::make_shared<Engine::PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
 
 		Engine::FramebufferSpesification fbs;
+		//						Vanlig Farge texture                       Mouse picking (Entity ID)             ( Depth Texture ) 
+		fbs.attachments = { Engine::FramebufferTextureFormat::RGBA8, Engine::FramebufferTextureFormat::RGBA8, Engine::FramebufferTextureFormat::Depth };
 		fbs.width = 1280;
 		fbs.height = 720;
 		fbs.samples = 1;
@@ -268,7 +270,7 @@ public:
 		const float cameraSensitivity = 55.f;
 		if (Engine::Input::IsMouseButtonPressed(MOUSE_BUTTON_2))
 		{
-			center = renderwindowCenter;
+			//center = renderwindowCenter;
 			if (!bFirstClick)
 			{
 				auto [x, y] = Engine::Input::GetMousePosition();

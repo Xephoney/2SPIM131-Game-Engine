@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Core.h"
+#include "Engine/Log.h"
 #include "Engine/Renderer/Framebuffer.h"
 
  
@@ -7,13 +9,13 @@ namespace Engine
 	class OpenGLFramebuffer : public Framebuffer
 	{
 	public:
-		OpenGLFramebuffer(const Engine::FramebufferSpesification& spec) : spesification(spec) { Invalidate(); }
+		OpenGLFramebuffer(const Engine::FramebufferSpesification& spec);
 		virtual ~OpenGLFramebuffer() override;
 
 		FramebufferSpesification& GetSpesification() override { return spesification; }
 		const FramebufferSpesification& GetSpesification() const override { return spesification; }
 
-		uint32_t GetColorAttachment() override { return m_ColorAttachment; }
+		uint32_t GetColorAttachment(uint32_t index = 0) const override { ENGINE_CORE_ASSERT(index < m_ColorAttachments.size(), "ColorAttachmentIndex is invalid") return m_ColorAttachments[index]; }
 
 		void Invalidate();
 
@@ -24,7 +26,12 @@ namespace Engine
 	private:
 
 		uint32_t m_RendererID = 0;
-		uint32_t m_ColorAttachment, m_DepthAttachment;
 		FramebufferSpesification spesification;
+
+		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecs{};
+		FramebufferTextureSpecification m_DepthAttachmentSpec;
+
+		std::vector<uint32_t> m_ColorAttachments {0,0};
+		uint32_t m_DepthAttachment{};
 	};
 }
