@@ -677,6 +677,7 @@
     <ClInclude Include="src\Platform\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGLVertexArray.h" />
     <ClInclude Include="src\Platform\WindowsInput.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp" />

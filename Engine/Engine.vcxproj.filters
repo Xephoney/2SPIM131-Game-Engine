@@ -64,6 +64,9 @@
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Profiling">
+      <UniqueIdentifier>{cba17bf1-ec47-4df7-ae5b-236f67220119}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\assimp\include\assimp\Base64.hpp">
@@ -1676,6 +1679,9 @@
     </ClInclude>
     <ClInclude Include="src\Platform\WindowsInput.h">
       <Filter>src\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>src\Engine\Profiling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
