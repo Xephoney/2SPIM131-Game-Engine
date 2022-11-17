@@ -1,4 +1,4 @@
-#include "engpch.h"
+﻿#include "engpch.h"
 #include "Engine/Events/ApplicationEvent.h"
 #include "Application.h"
 
@@ -24,7 +24,6 @@ namespace Engine
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverLay(m_ImGuiLayer);
-		scene = std::make_shared<Scene>();
 	}
 
 	Application::~Application() = default;
@@ -37,17 +36,11 @@ namespace Engine
 			const auto dt = CalculateDeltaTime();
 			time += dt;
 
-			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
-			RenderCommand::Clear();
-
-			std::shared_ptr<Camera> camera = scene->GetActiveCamera();
-			Renderer::NewFrame(*camera);
-			//camera.SetPosition({sin(time*0.2) * 4, cos(time*0.2) * 4, 0});
-
-			for (Layer* l : m_LayerStack)
-				l->OnUpdate(dt);
-
-			scene->OnUpdate(dt);
+			if(!m_Minimized)
+			{
+				for (Layer* l : m_LayerStack)
+					l->OnUpdate(dt);
+			}
 
 			//Run IMGUI Rendering on all sub layers
 			m_ImGuiLayer->Begin();
@@ -55,7 +48,6 @@ namespace Engine
 				l->OnImGuiRender();
 			m_ImGuiLayer->End();
 
-			Renderer::RenderFrame();
 			m_Window->OnUpdate();
 		}
 	}
@@ -64,6 +56,7 @@ namespace Engine
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 
 		for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
 		{
@@ -79,7 +72,20 @@ namespace Engine
 		return true;
 	}
 
-	double Application::CalculateDeltaTime() const
+	bool Application::OnWindowResize(WindowResizeEvent& event)
+	{
+		if(event.GetWidth() == 0 || event.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+
+		Renderer::OnWindowResize(event.GetWidth(), event.GetHeight());
+		return false;
+	}
+
+	const double& Application::CalculateDeltaTime() const
 	{
 		static std::chrono::steady_clock::time_point lastFrame = std::chrono::high_resolution_clock::now();
 		const std::chrono::steady_clock::time_point thisFrame = std::chrono::high_resolution_clock::now();
@@ -98,5 +104,16 @@ namespace Engine
 	void Application::PushOverLay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
+	}
+
+	ImGuiLayer* Application::GetImGuiLayer()
+	{
+		return m_ImGuiLayer;
+	}
+
+	void Application::Close()
+	{
+		m_Running = false;
+		//exit(0);
 	}
 }

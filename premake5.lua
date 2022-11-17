@@ -1,5 +1,5 @@
 workspace "Game Engine"
-	architecture "x64"
+	architecture "x86_64"
 	startproject "Sandbox"
 
 	configurations
@@ -9,12 +9,16 @@ workspace "Game Engine"
 		"Distribution"
 	}
 
+	flags
+	{
+		"MultiProcessorCompile"
+	}
+
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 --Include Directories relative to root folder 
 IncludeDir = {}
 IncludeDir["spdlog"] = "Engine/3rdParty/spdlog/include"
-
 IncludeDir["GLFW"] = "Engine/3rdParty/GLFW/include"
 IncludeDir["GLAD"] = "Engine/3rdParty/GLAD/include"
 IncludeDir["imgui"] = "Engine/3rdParty/imgui"
@@ -22,14 +26,18 @@ IncludeDir["glm"] = "Engine/3rdParty/glm"
 IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
+IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
+
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
+LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
 
-include "Engine/3rdParty/GLFW"
-include "Engine/3rdParty/GLAD"
-include "Engine/3rdParty/imgui"
-
+group "Dependencies"
+	include "Engine/3rdParty/GLFW"
+	include "Engine/3rdParty/GLAD"
+	include "Engine/3rdParty/imgui"
+group ""
 
 project "Engine"
 	location "Engine"
@@ -50,7 +58,10 @@ project "Engine"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/3rdParty/glm/glm/**.hpp",
-		"%{prj.name}/3rdParty/glm/glm/**.inl"
+		"%{prj.name}/3rdParty/glm/glm/**.inl",
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.hpp",
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.cpp",
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.h"
 	}
 	defines
 	{
@@ -66,11 +77,13 @@ project "Engine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.assimp}",
 		"%{IncludeDir.entt}"
 	}
 	libdirs
 	{
-		"%{LibraryDir.FMOD}"
+		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.assimp}"
 	}
 
 	links
@@ -78,7 +91,8 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
-		"opengl32.lib"
+		"assimp-vc143-mt",
+		"opengl32"
 	}
 
 	filter "system:windows"
@@ -125,20 +139,24 @@ project "Sandbox"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.assimp}",
 		"Engine/src"
 	}
 	libdirs
 	{
-		"%{LibraryDir.FMOD}"
+		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.assimp}"
 	}
 	links
 	{
 		"fmod_vc.lib",
+		"assimp-vc143-mt",
 		"Engine"
 	}
 	postbuildcommands
 	{
-		("{COPYFILE} %{wks.location}Engine/3rdParty/FMOD/lib/fmod.dll $(TargetDir)")
+		("{COPYFILE} %{wks.location}%{LibraryDir.FMOD}/fmod.dll $(TargetDir)"),
+		("{COPYFILE} %{wks.location}%{LibraryDir.assimp}/assimp-vc143-mt.dll $(TargetDir)")
 	}
 
 	filter "system:windows"

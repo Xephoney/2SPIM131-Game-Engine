@@ -74,7 +74,6 @@ namespace Engine
 
 				WindowResizeEvent event ( Width, Height);
 				data.EventCallback(event);
-
 			});
 
 		// Window Close Event
@@ -175,7 +174,6 @@ namespace Engine
 	Window::Window(const WindowProperties& properties)
 	{
 		Init(properties);
-		
 	}
 
 	void Window::OnUpdate()

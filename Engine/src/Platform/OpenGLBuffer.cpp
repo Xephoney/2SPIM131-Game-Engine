@@ -15,6 +15,14 @@ namespace Engine
 		
 	}
 
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const std::vector<Vertex>& verts, uint32_t size)
+	{
+		glCreateBuffers(1, &m_RendererID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+		glBufferData(GL_ARRAY_BUFFER, size, verts.data(), GL_STATIC_DRAW);
+
+	}
+
 	OpenGLVertexBuffer::~OpenGLVertexBuffer()
 	{
 		glDeleteBuffers(1, &m_RendererID);

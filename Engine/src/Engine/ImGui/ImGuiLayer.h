@@ -19,5 +19,14 @@ namespace Engine
 
 		void Begin();
 		void End();
+		void OnUpdate(const double& dt) override;
+		void OnEvent(Event& event) override;
+
+		void SetSkipEvent(bool b) { m_SkipEvents = b; }
+		void SetBlockEvents(bool b) { m_BlockImGuiEvents = b; }
+	private:
+		bool m_BlockImGuiEvents = true;
+		bool m_SkipEvents = false;
+		float m_Time = 0.f;
 	};
 }

@@ -40,6 +40,8 @@ namespace Engine
 	public:
 		friend class EventDispatcher;
 
+		virtual ~Event() = default;
+
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
@@ -60,7 +62,7 @@ namespace Engine
 			: m_Event(event)
 		{
 		}
-
+		~EventDispatcher() = default;
 		// F will be deduced by the compiler
 		template<typename T, typename F>
 		bool Dispatch(const F& func)
