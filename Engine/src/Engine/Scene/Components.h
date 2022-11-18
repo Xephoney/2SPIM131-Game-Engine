@@ -4,6 +4,8 @@
 
 #include "MeshManager.h"
 #include "Engine/Renderer/VertexArray.h"
+#include "Engine/Audio/sound.h"
+
 
 
 namespace Engine
@@ -91,5 +93,52 @@ namespace Engine
 		}
 		operator StaticMesh& () { return mesh; }
 		operator const StaticMesh& () const { return mesh; }
+	};
+
+	struct AudioListener
+	{
+		AudioListener(const AudioListener&) = default;
+		AudioListener() = default;
+		AudioListener(int i)
+		{
+			ENGINE_LOG_INFO("Created AudioListener component");
+		}
+		
+		void playSound(std::string name) 
+		{
+
+		}
+	};
+
+	struct AudioSource
+	{
+		sound* mSound = nullptr;
+		std::string mName = "DEFAULT NAME";
+		AudioSource()
+		{
+			ENGINE_LOG_WARNING("AUDIOSOURCE COMPONENT ADDED, BUT NO SOUND OR MANAGER WAS PASSED IN");
+		}
+		AudioSource(sound* inSound) 
+		{
+			mSound = inSound;
+			mName = mSound->getName();
+		}
+		AudioSource(std::string name)
+		{
+			mName = name;
+			mSound = new sound(name);
+		}
+		
+		void addSound(const char* file, std::string name)
+		{
+			mSound = new sound(file, name);
+			mName = name;
+		}
+
+
+		void playSound()
+		{
+			mSound->playSound(mName);
+		}
 	};
 }

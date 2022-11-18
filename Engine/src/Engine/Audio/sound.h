@@ -1,71 +1,77 @@
 #pragma once
+#include <utility>
 #include <fmod.hpp>
 #include <fmod_errors.h>
 #include <fmod_output.h>
 #include <engine/log.h>
+#include <vector>
+#include <string>
+
+#define DEBUG
+
 
 namespace Engine {
-	class sound
+
+	class SoundManager 
 	{
 	public:
-		FMOD::ChannelGroup* TEST = nullptr;
-		FMOD::Sound* soundTest = nullptr;
-		//FMOD::Channel* testChannel = nullptr;
+		std::unordered_map<std::string, FMOD::Sound*> mSounds;
+		FMOD::ChannelGroup* gameSound = nullptr;
 		FMOD::System* system = nullptr;
+	
+		SoundManager();
 
-		sound() {
-			FMOD_RESULT result;
-			
-			// INITIALIZATION CODE FROM FMOD STARTUP GUIDE //
-			result = FMOD::System_Create(&system);      // Create the main system object.
-			if (result != FMOD_OK)
-			{
-				ENGINE_LOG_ERROR("FMOD error! ({0}) {1}", result, FMOD_ErrorString(result));
-				exit(-1);
-			}
+		static SoundManager& getSoundManager();
+		
+		void addSound(const char* file, std::string name, bool in3DSpace); // creates an FMOD sound object from the given soundfile, adds it to list of working sounds
+		
+		bool successCheck(FMOD_RESULT result);
 
-			result = system->init(512, FMOD_INIT_NORMAL, 0);    // Initialize FMOD.
-			if (result != FMOD_OK)
-			{
-				ENGINE_LOG_ERROR("FMOD error! ({0}) {1}", result, FMOD_ErrorString(result));
-				exit(-1);
-			}
-			
-			ENGINE_LOG_INFO("Fmod Initialized");
+		void update();
 
-			//set up channel group
-			result = system->createChannelGroup("gameSounds", &TEST);
-			if (!successCheck(result))
-				exit(-1);
+		bool bSoundExists(std::string name);
 
-			//set up sound
-			system->createSound("../Engine/Assets/Sound/Trekant.mp3", FMOD_DEFAULT, nullptr, &soundTest);
+		void playSound(const std::string& name);
 
-			ENGINE_LOG_INFO("Sound should work");
-
-		};
-
-		bool successCheck(FMOD_RESULT result) {
-			if (result != FMOD_OK) {
-				ENGINE_LOG_ERROR("FMOD error! ({0}) {1}", result, FMOD_ErrorString(result));
-				return false;
-			}
-			return true;
-		}
-
-		void testSound() {
-			FMOD_RESULT  result;
-			FMOD::Channel* channel = nullptr;
-			
-			result = system->playSound(soundTest, nullptr, false, &channel);
-			if (!successCheck(result))
-				//exit(-1);
-			ENGINE_LOG_INFO("played sound");
-		}
-
-		void update() {
-			system->update(); 
-		}
 		
 	};
+
+	class sound
+	{
+	private:
+		static sound& s_sound;
+
+		std::string mName = "EMPTY";
+	public:
+		
+		sound() 
+		{
+#ifdef DEBUG
+			ENGINE_LOG_INFO("SOUND.H : Created sound object, but no sound was passed in")
+#endif // DEBUG
+		}
+		sound(std::string name);
+		sound(const char* file, std::string name);
+
+		std::string getName();
+		
+		void playSound(std::string name);
+		
+		static sound& getSoundManager();
+
+		bool bSoundExists();
+
+		static FMOD_CHANNEL& createChannel(std::string name);
+		
+	};
+
+	inline sound& sound::getSoundManager() {
+		static sound instance;
+		return instance;
+	}
+
+
+	inline  sound& sound_createChannel(std::string name) {
+		
+	}
 }
