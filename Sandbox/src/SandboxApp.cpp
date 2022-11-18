@@ -356,6 +356,7 @@ public:
 						if(selection[i] == true)
 						{
 							selection[i] = false;
+							reg.get<Engine::AudioSource>(entities[i]).playSound();
 							reg.destroy(entities[i]);
 							entity_count--;
 						}
@@ -364,12 +365,14 @@ public:
 				ImGui::SameLine();
 				if (ImGui::Button("Delete All"))
 				{
+					Engine::SoundManager::getSoundManager().playSound("DeleteAll");
 					memset(selection, 0, sizeof(selection));
 					for (auto entity : entities)
 					{
 						reg.destroy(entity);
 						entity_count--;
 					}
+
 				}
 			}
 
@@ -397,7 +400,8 @@ public:
 				std::string name = "Quad ";
 				name += std::to_string(entity_count);
 				Engine::Entity cube = scene->CreateEntity(name);
-				//cube.AddComponent<Engine::AudioListener() // test after!!
+				auto& thing = cube.AddComponent<Engine::AudioSource>("Delete"); // test after!!
+				//thing.addSound("dummy", "Delete");
 				cube.GetComponent<Engine::Transform>().transform = glm::translate(glm::mat4{ 1.f }, { x,y,0 });
 			}
 		}
@@ -420,14 +424,13 @@ public:
 class SoundLayer : public Engine::Layer
 {
 public:
-	Engine::SoundManager* gameSound=nullptr;
 
 
 	SoundLayer() : Layer("SoundLayer") {
-		gameSound = new Engine::SoundManager;
+		
 	}
 	void OnUpdate(const double& dt) override {
-		gameSound->update();
+		Engine::SoundManager::getSoundManager().update();
 	}
 	void OnEvent(Engine::Event& event) override
 	{
@@ -440,11 +443,11 @@ public:
 				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event); // sounds only work like this for now, but not correct way to do it!
 				if (newEvent.GetKeyCode() == KEY_SPACE)
 				{
-					gameSound->playSound("Trekant");
+					Engine::SoundManager::getSoundManager().playSound("Trekant");
 				}
 				if (newEvent.GetKeyCode() == KEY_TAB)
 				{
-					gameSound->playSound("Pop");
+					Engine::SoundManager::getSoundManager().playSound("Pop");
 				}
 			}
 
@@ -452,10 +455,6 @@ public:
 		{
 
 		}
-	}
-
-	Engine::SoundManager* getSound() {
-		return gameSound;
 	}
 };
 

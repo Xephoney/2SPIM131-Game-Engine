@@ -97,21 +97,48 @@ namespace Engine
 
 	struct AudioListener
 	{
-		FMOD_CHANNEL* mChannel=nullptr;
-
-		sound* mSound=nullptr;
-		AudioListener()
+		AudioListener(const AudioListener&) = default;
+		AudioListener() = default;
+		AudioListener(int i)
 		{
-			
+			ENGINE_LOG_INFO("Created AudioListener component");
 		}
-
-		//AudioListener(AudioListener&&) = default;
-		//AudioListener(const AudioListener&) = default;
-		//AudioListener(const FMOD_CHANNEL& channel);
 		
 		void playSound(std::string name) 
 		{
-			//mSound.playSound(name);
+
+		}
+	};
+
+	struct AudioSource
+	{
+		sound* mSound = nullptr;
+		std::string mName = "DEFAULT NAME";
+		AudioSource()
+		{
+			ENGINE_LOG_WARNING("AUDIOSOURCE COMPONENT ADDED, BUT NO SOUND OR MANAGER WAS PASSED IN");
+		}
+		AudioSource(sound* inSound) 
+		{
+			mSound = inSound;
+			mName = mSound->getName();
+		}
+		AudioSource(std::string name)
+		{
+			mName = name;
+			mSound = new sound(name);
+		}
+		
+		void addSound(const char* file, std::string name)
+		{
+			mSound = new sound(file, name);
+			mName = name;
+		}
+
+
+		void playSound()
+		{
+			mSound->playSound(mName);
 		}
 	};
 }
