@@ -638,6 +638,9 @@
     <ClInclude Include="3rdParty\glm\glm\vec3.hpp" />
     <ClInclude Include="3rdParty\glm\glm\vec4.hpp" />
     <ClInclude Include="3rdParty\glm\glm\vector_relational.hpp" />
+    <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="Random.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Engine\Application.h" />
     <ClInclude Include="src\Engine\Audio\sound.h" />
@@ -680,6 +683,8 @@
     <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="src\Engine\Application.cpp" />
     <ClCompile Include="src\Engine\Audio\sound.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiBuild.cpp" />
@@ -717,6 +722,13 @@
     <ProjectReference Include="3rdParty\imgui\imgui.vcxproj">
       <Project>{0098A80F-6CAC-D0C0-352E-7420A101CDF1}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Engine\Renderer\Shaders\ParticleShader.frag" />
+    <None Include="src\Engine\Renderer\Shaders\ParticleShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

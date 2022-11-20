@@ -67,6 +67,12 @@
     <Filter Include="src\Engine\Profiling">
       <UniqueIdentifier>{cba17bf1-ec47-4df7-ae5b-236f67220119}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Particle System">
+      <UniqueIdentifier>{bc6e4856-3ada-4203-8a60-22d5c81c3e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Renderer\Shaders">
+      <UniqueIdentifier>{0c67bf6d-fb98-4680-b0e8-bfaff008af13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdParty\assimp\include\assimp\Base64.hpp">
@@ -1683,6 +1689,13 @@
     <ClInclude Include="Timer.h">
       <Filter>src\Engine\Profiling</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1757,5 +1770,22 @@
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Engine\Renderer\Shaders\ParticleShader.vert">
+      <Filter>src\Engine\Renderer\Shaders</Filter>
+    </None>
+    <None Include="src\Engine\Renderer\Shaders\ParticleShader.frag">
+      <Filter>src\Engine\Renderer\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,7 +1,5 @@
 #include "engpch.h"
 
-#include "Engine/engpch.h"
-
 #include "Shader.h"
 
 #include <fstream>
