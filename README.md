@@ -2,6 +2,8 @@
  Game Engine Architecture @ HINN 2022
 
 
+THIS BRANCH REQUIRES PYTHON 3 TO BE INSTALLED LOCALLY ON YOUR COMPUTER
+
 Hans Ola and Kristian's Game Engine Project
 The code comes mostly from TheCherno's Game Engine Series, but with some modifications
 to suit our needs

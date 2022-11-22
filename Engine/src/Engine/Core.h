@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Engine/Log.h"
+
 #ifdef ENG_PLATFORM_WINDOWS
 #endif
 

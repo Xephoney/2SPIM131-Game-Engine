@@ -27,11 +27,13 @@ IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
+IncludeDir["scripting"] = "Engine/3rdParty/scripting/include"
 
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
+LibraryDir["scripting"] = "Engine/3rdParty/scripting/libs"
 
 group "Dependencies"
 	include "Engine/3rdParty/GLFW"
@@ -77,12 +79,14 @@ project "Engine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.scripting}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.entt}"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.scripting}",
 		"%{LibraryDir.assimp}"
 	}
 
@@ -108,11 +112,21 @@ project "Engine"
 		defines "ENG_DEBUG"
 		runtime "Debug"
 		symbols "on"
+		links
+		{
+			"python3_d",
+			"python311_d"
+		}
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
 		runtime "Release"
 		optimize "on"
+		links
+		{
+			"python3",
+			"python311"
+		}
 
 project "Sandbox"
 	location "Sandbox"
@@ -139,12 +153,14 @@ project "Sandbox"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
+		"%{IncludeDir.scripting}",
 		"%{IncludeDir.assimp}",
 		"Engine/src"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.scripting}",
 		"%{LibraryDir.assimp}"
 	}
 	links
@@ -171,11 +187,22 @@ project "Sandbox"
 		defines "ENG_DEBUG"
 		runtime "Debug"
 		symbols "on"
+		links
+		{
+			"python3_d",
+			"python311_d"
+		}
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
 		runtime "Release"
 		optimize "on"
+
+		links
+		{
+			"python3",
+			"python311"
+		}
 
 
 

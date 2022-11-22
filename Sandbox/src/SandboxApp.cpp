@@ -7,6 +7,8 @@
 #include "Engine/Scene/Components.h"
 
 #include <glm/glm.hpp>
+
+#include "Engine/Scripting/Scripting.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
@@ -311,6 +313,8 @@ public:
 	{
 		srand(static_cast<unsigned>(time(nullptr)));
 		scene = Engine::Application::GetApplication().GetScene();
+		Engine::PythonScript pyscript;
+
 	}
 
 	void OnUpdate(const double& dt) override

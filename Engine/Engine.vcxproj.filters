@@ -1677,6 +1677,8 @@
     <ClInclude Include="src\Platform\OpenGLVertexArray.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Scripting\Scripting.h" />
+    <ClInclude Include="src\Engine\Scripting\PyBind.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1757,5 +1759,10 @@
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Scripting\Scripting.cpp" />
+    <ClCompile Include="src\Engine\Scripting\PyBind.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="src\Engine\Scripting\ScriptTesting.py" />
   </ItemGroup>
 </Project>
