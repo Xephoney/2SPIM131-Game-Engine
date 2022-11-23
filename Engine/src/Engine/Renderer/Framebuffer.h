@@ -8,8 +8,9 @@ namespace Engine
 	enum class FramebufferTextureFormat
 	{
 		None = 0,
-		RGBA8 = 1,
-		RGBA16F = 2,
+		RGBA8,
+		RGBA16F,
+		RED_INTEGER,
 
 		DEPTH24STENCIL8,
 		Depth = DEPTH24STENCIL8
@@ -49,6 +50,8 @@ namespace Engine
 		virtual ~Framebuffer() = default;
 		virtual FramebufferSpesification& GetSpesification() = 0;
 		virtual const FramebufferSpesification& GetSpesification() const = 0;
+		
+
 
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
@@ -56,7 +59,7 @@ namespace Engine
 		static std::shared_ptr<Framebuffer> Create(const FramebufferSpesification& fbs);
 
 		virtual void Resize(uint32_t w, uint32_t h) = 0;
-		virtual void ReadPixel(uint32_t x, uint32_t y) = 0;
+		virtual int ReadPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) = 0;
 		[[nodiscard]] virtual uint32_t GetColorAttachment(uint32_t index = 0) const = 0;
 	};
 }

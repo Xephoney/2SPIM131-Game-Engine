@@ -1758,4 +1758,7 @@
       <Filter>src\Platform</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\Engine\Renderer\Shaders\Plainshader.glsl" />
+  </ItemGroup>
 </Project>

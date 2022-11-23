@@ -34,7 +34,7 @@ namespace Engine
 		{
 			glCreateTextures(TextureTarget(MultiSample), static_cast<GLsizei>(count), data);
 		}
-		static auto AttachColorTexture(uint32_t id, uint32_t samples, GLenum format, uint32_t width, uint32_t height, size_t index) -> void
+		static auto AttachColorTexture(uint32_t id, uint32_t samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, size_t index) -> void
 		{
 			bool multisampled = samples > 1;
 			if(multisampled)
@@ -43,7 +43,7 @@ namespace Engine
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
 
 				// TODO: Filtering
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -129,7 +129,10 @@ namespace Engine
 				switch (m_ColorAttachmentSpecs[i].TextureFormat)
 				{
 				case FramebufferTextureFormat::RGBA8:
-					Utils::AttachColorTexture(m_ColorAttachments[i], spesification.samples, GL_RGBA8, spesification.width, spesification.height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], spesification.samples, GL_RGBA8, GL_RGBA, spesification.width, spesification.height, i);
+					break;
+				case FramebufferTextureFormat::RED_INTEGER:
+					Utils::AttachColorTexture(m_ColorAttachments[i], spesification.samples, GL_R32I, GL_RED_INTEGER, spesification.width, spesification.height, i);
 					break;
 
 				default: 
@@ -182,8 +185,15 @@ namespace Engine
 		Invalidate();
 	}
 
-	void OpenGLFramebuffer::ReadPixel(uint32_t x, uint32_t y)
+	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y)
 	{
+		ENGINE_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Invalid pixel read! Attachment index does not match any attached attachents on this framebuffer");
 
+		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+		int pixelData;
+		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+
+		// Won't return any ID larger than 500 000 yet : TODO
+		return (pixelData < -1 || pixelData > 500000) ? -1 : pixelData;
 	}
 }

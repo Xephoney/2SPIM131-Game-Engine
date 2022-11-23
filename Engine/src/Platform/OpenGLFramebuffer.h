@@ -22,7 +22,7 @@ namespace Engine
 		virtual void Bind() override ;
 		virtual void Unbind() override ;
 		void Resize(uint32_t w, uint32_t h) override;
-		void ReadPixel(uint32_t x, uint32_t y) override;
+		int ReadPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) override;
 	private:
 
 		uint32_t m_RendererID = 0;

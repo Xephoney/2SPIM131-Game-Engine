@@ -20,14 +20,14 @@ namespace Engine
 		bool twoSided = false;
 		Shader* shader { nullptr };
 
-		Material() : ambient(glm::vec3(1.f)), diffuse(glm::vec3(0.f)), specular(glm::vec3(0.f)), roughness(),
+		Material() : ambient(glm::vec3(1.f)), diffuse(glm::vec3(0.f)), specular(glm::vec3(0.f)), roughness(1.f),
 		             emissive(0.f),
 		             emissive_color(0.f)
 		{
 			// Create Shader
 			std::string vertexShaderTemp = R"(
 
-				#version 410 core
+				#version 450 core
 				layout(location = 0) in vec3 a_Position;
 				layout(location = 1) in vec4 a_Color;
 				layout(location = 2) in vec3 a_Normal;
@@ -37,6 +37,7 @@ namespace Engine
 
 				out vec3 v_pos;
 				out vec4 v_color;
+
 				void main()
 				{
 					gl_Position = u_view_projection * u_model * vec4(a_Position,1);
@@ -46,14 +47,20 @@ namespace Engine
 			)";
 			std::string fragmentShaderTemp = R"(
 
-				#version 410 core
+				#version 450 core
 				layout(location = 0) out vec4 fragmentColor;
+				layout(location = 1) out int index;
+
 				in vec3 v_pos;
 				in vec4 v_color;
+			
+				uniform int u_ID;
+
 
 				void main()
 				{
 					fragmentColor = v_color;
+					index = u_ID;
 				}
 			)";
 

@@ -43,21 +43,22 @@ void Shader::Unbind() const
 	glUseProgram(0);
 }
 
-void Shader::SetUniform1i(const std::string& name, const int& data) const
+void Shader::SetUniform1i(const std::string& name, const int& data) 
+{
+	int location = GetUniformLocation(name);
+	glUniform1i(location, data);
+}
+
+void Shader::SetUniform1f(const std::string& name, const float& data)
 {
 
 }
 
-void Shader::SetUniform1f(const std::string& name, const float& data)const
-{
-
-}
-
-void Shader::SetUniform3f(const std::string& name, const glm::vec3& data)const
+void Shader::SetUniform3f(const std::string& name, const glm::vec3& data)
 {
 }
 
-void Shader::SetUniform4f(const std::string& name, const glm::vec4& data)const
+void Shader::SetUniform4f(const std::string& name, const glm::vec4& data)
 {
 }
 

@@ -30,6 +30,7 @@ public:
 	double _elapsed {0};
 	glm::vec2 renderwindowSize;
 	glm::vec2 renderwindowCenter;
+	glm::vec2 viewportBounds[2];
 	bool viewportFocused = false;
 	bool viewportHovered = false;
 	std::shared_ptr<Engine::Scene> activeScene;
@@ -45,8 +46,8 @@ public:
 		camera = std::make_shared<Engine::PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
 
 		Engine::FramebufferSpesification fbs;
-		//						Vanlig Farge texture                       Mouse picking (Entity ID)             ( Depth Texture ) 
-		fbs.attachments = { Engine::FramebufferTextureFormat::RGBA8, Engine::FramebufferTextureFormat::RGBA8, Engine::FramebufferTextureFormat::Depth };
+		//						Color Texture	                     Mouse picking (Entity ID)						( Depth Texture ) 
+		fbs.attachments = { Engine::FramebufferTextureFormat::RGBA8, Engine::FramebufferTextureFormat::RED_INTEGER, Engine::FramebufferTextureFormat::Depth };
 		fbs.width = 1280;
 		fbs.height = 720;
 		fbs.samples = 1;
@@ -54,26 +55,33 @@ public:
 		
 
 	}
-
+	bool bMB1Pressed{ false };
 	void OnUpdate(const double& dt) override
 	{
 		_dt = dt;
 		_elapsed += _dt;
 		//Frame setup
-		{
-			Engine::Renderer::NewFrame(*camera);
-			m_FrameBuffer->Bind();
-			Engine::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
-			Engine::RenderCommand::Clear();
-		}
-
+		
+		Engine::Renderer::NewFrame(*camera);
+		
 		//Normal loop
 		{
 			if(viewportFocused)
 				MoveEditorCamera();
 
 			camera->update(dt);
+
+			m_FrameBuffer->Bind();
+			Engine::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
+			Engine::RenderCommand::Clear();
+
 			activeScene->OnUpdate(dt);
+
+			if (Engine::Input::IsMouseButtonPressed(MOUSE_BUTTON_1) && !bMB1Pressed)
+			{
+				bMB1Pressed = true;
+				SampleViewportAtMouseLocation();
+			}
 		}
 
 		//Clean up
@@ -83,16 +91,16 @@ public:
 		}
 		
 	}
+
 	void OnImGuiRender() override
 	{
 
+		// IMGUI BOILERPLATE
 		static bool p_open = true;
 		static bool opt_fullscreen = true;
 		static bool opt_padding = false;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-		// because it would be confusing to have two docking targets within each others.
 		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 		if (opt_fullscreen)
 		{
@@ -110,16 +118,9 @@ public:
 			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
 		}
 
-		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-		// and handle the pass-thru hole, so we ask Begin() to not render a background.
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
 
-		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-		// all active windows docked into it will lose their parent and become undocked.
-		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		if (!opt_padding)
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &p_open, window_flags);
@@ -172,7 +173,7 @@ public:
 		ImGui::End();
 
 		ImGui::Begin("Test Window | EXAMPLE LAYER");
-		ImGui::Text("Deltatime = %f ms", _dt*1000);
+		ImGui::Text("Deltatime = %f ms", _dt * 1000);
 
 		ImGui::Text("Elapsed Time = %f", _elapsed);
 		ImGui::Separator();
@@ -190,6 +191,8 @@ public:
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Scene View");
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+		auto viewportOffset = ImGui::GetCursorPos(); //ImVec2
+		
 		viewportFocused = ImGui::IsWindowFocused();
 		viewportHovered = ImGui::IsWindowHovered();
 		if (viewportFocused)
@@ -199,16 +202,31 @@ public:
 		}
 		Engine::Application::GetApplication().GetImGuiLayer()->SetSkipEvent(viewportFocused || viewportHovered);
 		//Engine::Application::GetApplication().GetImGuiLayer()->SetBlockEvents(!viewportFocused || !viewportHovered);
-		if(static_cast<int>(viewportSize.x) != static_cast<int>(renderwindowSize.x) 
+		if (static_cast<int>(viewportSize.x) != static_cast<int>(renderwindowSize.x)
 			|| static_cast<int>(viewportSize.y) != static_cast<int>(renderwindowSize.y))
 		{
 			renderwindowSize = { viewportSize.x, viewportSize.y };
-			m_FrameBuffer->Resize(renderwindowSize.x, renderwindowSize.y);
-			camera->Resize(renderwindowSize.x, renderwindowSize.y);
+			m_FrameBuffer->Resize(
+				static_cast<uint32_t>(renderwindowSize.x),
+				static_cast<uint32_t>(renderwindowSize.y)
+			);
+			camera->Resize(
+				static_cast<uint32_t>(renderwindowSize.x),
+				static_cast<uint32_t>(renderwindowSize.y)
+			);
 		}
-		uint32_t textureID = m_FrameBuffer->GetColorAttachment();
-		ImGui::Image(reinterpret_cast<void*>(textureID), viewportSize,ImVec2{0,1}, ImVec2{ 1,0 });
+
+		uint32_t colorTextureID = m_FrameBuffer->GetColorAttachment();
+		ImGui::Image(reinterpret_cast<void*>(colorTextureID), viewportSize, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		ImVec2 windowSize = ImGui::GetWindowSize();
+		ImVec2 minBound = ImGui::GetWindowPos();
+		// minBound.x += viewportOffset.x;
+		// minBound.y += viewportOffset.y;
+		ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
+		viewportBounds[0] = { minBound.x, minBound.y };
+		viewportBounds[1] = { maxBound.x, maxBound.y };
 		ImGui::End();
+
 		ImGui::PopStyleVar();
 	}
 
@@ -225,6 +243,13 @@ public:
 			{
 				// SPACE IS BEING PRESSED <3 
 			}
+		}
+
+		if (event.GetEventType() == Engine::EventType::MouseButtonReleased)
+		{
+			const auto& newEvent = dynamic_cast<Engine::MouseButtonReleasedEvent&> (event);
+			if(newEvent.GetMouseButton() == MOUSE_BUTTON_1)
+				bMB1Pressed = false;
 		}
 
 		if (event.GetEventType() == Engine::EventType::MouseScrolled && Engine::Input::IsMouseButtonPressed(MOUSE_BUTTON_2))
@@ -298,7 +323,28 @@ public:
 		else
 			bFirstClick = true;
 	}
-	
+
+	int SampleViewportAtMouseLocation() const
+	{
+		//Check mouse input
+		
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= viewportBounds[0].x;
+		my -= viewportBounds[0].y;
+		glm::vec2 viewportSize = viewportBounds[1] - viewportBounds[0];
+		my = viewportSize.y - my;
+		int moX = (int)mx;
+		int moY = (int)my;
+		
+		if (moX >= 0 && moY >= 0 && moX < (int)viewportSize.x && moY < (int)viewportSize.y)
+		{
+			int data = m_FrameBuffer->ReadPixel(1, moX, moY);
+			ENGINE_LOG_INFO("Pixel Data at [{0},{1}] = {2}", moX, moY, data)
+			return data;
+		}
+		
+		return -10;
+	}
 };
 
 class GameLayer : public Engine::Layer

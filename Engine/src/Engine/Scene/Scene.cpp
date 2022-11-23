@@ -34,15 +34,14 @@ namespace Engine
 
 	void Scene::OnUpdate(const double& dt)
 	{
-		auto view2 = m_Registry.view<Transform, StaticMeshRenderer>();
-
-		for (auto entity : view2)
+		auto view = m_Registry.view<Transform, StaticMeshRenderer>();
+		for (auto& entity : view)
 		{
-			auto& [transform, staticmesh] = view2.get<Transform, StaticMeshRenderer>(entity);
+			auto& [transform, staticmesh] = view.get<Transform, StaticMeshRenderer>(entity);
 			for(int i = 0; i < staticmesh.mesh.meshes.size(); i++)
 			{
 				auto mesh = MeshManager::instance().GetMeshFromID(staticmesh.mesh.meshes[i]);
-				Renderer::Submit(mesh.material, mesh.vertexArray, transform);
+				Renderer::Submit(mesh.material, mesh.vertexArray, transform, static_cast<int>(entity));
 			}
 		}
 	}
