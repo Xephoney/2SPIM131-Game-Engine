@@ -6,6 +6,7 @@
 #include <engine/log.h>
 #include <vector>
 #include <string>
+#include "Engine/Renderer/Renderer.h"
 
 #define DEBUG
 
@@ -18,7 +19,7 @@ namespace Engine {
 		std::unordered_map<std::string, FMOD::Sound*> mSounds;
 		FMOD::ChannelGroup* gameSound = nullptr;
 		FMOD::System* system = nullptr;
-	
+		//FMOD::ChannelGroup mChannels[4]; COME BACK TO THIS LATER
 		SoundManager();
 
 		static SoundManager& getSoundManager();
@@ -33,6 +34,8 @@ namespace Engine {
 
 		void playSound(const std::string& name);
 
+		FMOD_VECTOR* ToFMODVec(glm::vec3 in);
+
 		
 	};
 
@@ -40,7 +43,7 @@ namespace Engine {
 	{
 	private:
 		static sound& s_sound;
-
+		bool is3D = false;
 		std::string mName = "EMPTY";
 	public:
 		
@@ -51,7 +54,7 @@ namespace Engine {
 #endif // DEBUG
 		}
 		sound(std::string name);
-		sound(const char* file, std::string name);
+		sound(const char* file, std::string name, bool is3D);
 
 		std::string getName();
 		
@@ -74,4 +77,12 @@ namespace Engine {
 	inline  sound& sound_createChannel(std::string name) {
 		
 	}
+
+	enum SoundChannel
+	{
+		MAIN=0, 
+		GAMEPLAY=1,
+		MUSIC=2,
+		MISC=3
+	};
 }

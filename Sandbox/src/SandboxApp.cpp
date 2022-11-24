@@ -61,7 +61,7 @@ public:
 		_elapsed += _dt;
 		//Frame setup
 		{
-			Engine::Renderer::NewFrame(*camera);
+			Engine::Renderer::NewFrame(camera);
 			m_FrameBuffer->Bind();
 			Engine::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 			Engine::RenderCommand::Clear();

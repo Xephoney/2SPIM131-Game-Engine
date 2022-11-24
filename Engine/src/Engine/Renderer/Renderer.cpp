@@ -12,9 +12,10 @@ namespace Engine
 
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
-	void Renderer::NewFrame(const Camera& camera)
+	void Renderer::NewFrame(std::shared_ptr<Camera>camera)
 	{
-		m_SceneData->ViewProjectionMatrix = camera.GetViewProj();
+		m_SceneData->ViewProjectionMatrix = camera->GetViewProj();
+		m_SceneData->render_camera = camera;
 		RenderCommand::Init();
 	}
 

@@ -21,16 +21,20 @@ namespace Engine {
 		result = system->createChannelGroup("gameSounds", &gameSound);
 		if (!successCheck(result))
 			exit(-1);
+		system->setSoftwareFormat(0, FMOD_SPEAKERMODE_5POINT1, 0);
+		system->setOutput(FMOD_OUTPUTTYPE_WINSONIC);
 
 		//adding some basic sounds
-		addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", false);
-		addSound("../Engine/Assets/Sound/pop.mp3", "Pop", false);
-		addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", false);
-		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAll", false);
+		addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", true);
+		addSound("../Engine/Assets/Sound/pop.mp3", "Pop", true);
+		addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", true);
+		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAll", true);
 
 #ifdef DEBUG
 		ENGINE_LOG_INFO("Default sounds added, no issues reported.");
 #endif // DEBUG
+
+
 
 	}
 
@@ -55,13 +59,17 @@ namespace Engine {
 		}
 
 		if (!in3DSpace) //3D spacing to be tested out when sources and listeners are set up
+		{
 			system->createSound(file, FMOD_DEFAULT, nullptr, &tempSound);
+		}
 		else
-			system->createSound(file, FMOD_3D, nullptr, &tempSound);
+			system->createSound(file, FMOD_3D, 0, &tempSound);
 		mSounds.insert(std::pair(name, tempSound));
 
 #ifdef DEBUG
 		ENGINE_LOG_INFO("Created new sound '{0}' and added to list of sounds", name);
+		if (in3DSpace)
+			ENGINE_LOG_INFO("Sound '{0}' is created in 3D space", name);
 #endif //DEBUG
 	}
 
@@ -77,7 +85,20 @@ namespace Engine {
 
 	void SoundManager::update() 
 	{
+		//using scene camera for testing, will change to using listener components after
+		glm::vec3 CamPos = Renderer::GetRenderCamera()->GetPosition();
+		glm::vec3 CamFwd = Renderer::GetRenderCamera()->Forward();
+		glm::vec3 CamUp = Renderer::GetRenderCamera()->Up();
+		glm::vec3 CamVel = glm::vec3(0.f, 0.f, 0.f);
+
+		FMOD_VECTOR* EarPos=ToFMODVec(CamPos);
+		FMOD_VECTOR* EarVel=ToFMODVec(CamVel);
+		FMOD_VECTOR* EarUp=ToFMODVec(CamUp);
+		FMOD_VECTOR* EarFwd = ToFMODVec(CamFwd);
+		
+		system->set3DListenerAttributes(0, EarPos, 0, EarFwd, EarUp);
 		system->update();
+
 	}
 
 	bool SoundManager::bSoundExists(std::string name)
@@ -100,8 +121,8 @@ namespace Engine {
 
 		//Looking through mSounds to see if called sound exists
 		//TODO : maybe have a toUpper to avoid having to care about capital letters?
-		auto CUM = mSounds.find(name);
-		if (CUM == mSounds.end())
+		auto current = mSounds.find(name);
+		if (current == mSounds.end())
 		{
 			ENGINE_LOG_ERROR("Sound '{0}' not found in list of sounds!", name);
 			return;
@@ -115,6 +136,16 @@ namespace Engine {
 		return;
 	}
 
+	FMOD_VECTOR* SoundManager::ToFMODVec(glm::vec3 in)
+	{
+		FMOD_VECTOR* result=new FMOD_VECTOR();
+		result->x = in.x;
+		result->y = in.y;
+		result->z = in.z;
+		ENGINE_LOG_INFO("CameraPos:{0},{1},{2}", in.x, in.y, in.z);
+		return result;
+	}
+
 	sound::sound(std::string name)
 	{
 		mName = name;
@@ -122,7 +153,7 @@ namespace Engine {
 			ENGINE_LOG_WARNING("NEW SOUND {0} CREATED, BUT FILE NAME NOT FOUND IN MEMORY!", name);
 	}
 
-	sound::sound(const char* file, std::string name)
+	sound::sound(const char* file, std::string name, bool is3D)
 	{
 	
 		if (!SoundManager::getSoundManager().bSoundExists(name))

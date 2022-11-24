@@ -131,7 +131,13 @@ namespace Engine
 		
 		void addSound(const char* file, std::string name)
 		{
-			mSound = new sound(file, name);
+			mSound = new sound(file, name, false);
+			mName = name;
+		}
+
+		void add3DSound(const char* file, std::string name)
+		{
+			mSound = new sound(file, name, true);
 			mName = name;
 		}
 
