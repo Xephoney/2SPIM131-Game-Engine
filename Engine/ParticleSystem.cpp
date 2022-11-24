@@ -6,7 +6,7 @@ ParticleSystem::ParticleSystem()
 	m_ParticlePool.resize(1000);
 }
 
-void ParticleSystem::OnUpdate(float ts) // @Param GLCore::Timestep ts
+void ParticleSystem::OnUpdate(float ts) 
 {
 	for (auto& particle : m_ParticlePool)
 	{
@@ -25,7 +25,7 @@ void ParticleSystem::OnUpdate(float ts) // @Param GLCore::Timestep ts
 	}
 }
 
-void ParticleSystem::OnRender(Engine::Camera& camera) // @Param GLCore::Utils::OrthographicCamera& camera
+void ParticleSystem::OnRender(Engine::OrthographicCamera& camera) 
 {
 	if (!m_QuadVA)
 	{
@@ -71,7 +71,7 @@ void ParticleSystem::OnRender(Engine::Camera& camera) // @Param GLCore::Utils::O
 
 		// Fade away particles
 		float life = particle.LifeRemaining / particle.LifeTime;
-		glm::vec4 color = (particle.ColorEnd * (1.0f - life)) + (particle.ColorEnd * life);// a, b c ... a * (1.0 - f) + (b* f)
+		glm::vec4 color = (particle.ColorEnd * (1.0f - life)) + (particle.ColorEnd * life); // a, b c ... a * (1.0 - f) + (b* f)
 		color.a = color.a * life;
 
 		float size = (particle.SizeEnd * (1.0f - life)) + (particle.SizeBegin * life);
@@ -87,7 +87,7 @@ void ParticleSystem::OnRender(Engine::Camera& camera) // @Param GLCore::Utils::O
 	}
 }
 
-void ParticleSystem::Emit(const ParticleProps& particleProps)
+void ParticleSystem::Emit(const Engine::ParticleProperties& particleProps)
 {
 	Particle& particle = m_ParticlePool[m_PoolIndex];
 	particle.Active = true;

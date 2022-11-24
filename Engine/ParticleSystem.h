@@ -12,25 +12,16 @@
 #include "Engine/Renderer/Shader.h"
 #include "Random.h"
 #include "glm/ext/matrix_transform.hpp"
-
-
-struct ParticleProps
-{
-	glm::vec2 Position;
-	glm::vec2 Velocity, VelocityVariation;
-	glm::vec4 ColorBegin, ColorEnd;
-	float SizeBegin, SizeEnd, SizeVariation;
-	float LifeTime = 1.0f;
-};
+#include "Engine/Scene/Components.h"
 
 class ParticleSystem
 {
 	ParticleSystem();
 
-	void OnUpdate(float ts); // @Param GLCore::Timestep ts
-	void OnRender(Engine::Camera& camera); // @Param GLCore::Utils::OrthographicCamera& camera
+	void OnUpdate(float ts); 
+	void OnRender(Engine::OrthographicCamera& camera); 
 
-	void Emit(const ParticleProps& particleProps); 
+	void Emit(const Engine::ParticleProperties& particleProps); 
 
 private:
 	struct Particle

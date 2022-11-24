@@ -92,4 +92,12 @@ namespace Engine
 		operator StaticMesh& () { return mesh; }
 		operator const StaticMesh& () const { return mesh; }
 	};
+	struct ParticleProperties // Used to set the properties for a given particle.
+	{
+		glm::vec2 Position;
+		glm::vec2 Velocity, VelocityVariation;
+		glm::vec4 ColorBegin, ColorEnd;
+		float SizeBegin, SizeEnd, SizeVariation;
+		float LifeTime = 1.0f;
+	};
 }
