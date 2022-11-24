@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Audio/sound.h"
+#include "Engine/Physics/PhysicsWorld.h"
 
 namespace Engine
 {
@@ -21,6 +22,7 @@ namespace Engine
 	private:
 		entt::registry m_Registry;
 		double deltaTime;
+		PhysicsWorld* physicsWorld;
 	};
 
 }

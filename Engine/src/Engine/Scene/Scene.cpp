@@ -15,7 +15,7 @@ namespace Engine
 {
 	Scene::Scene() 
 	{
-		
+		physicsWorld = new PhysicsWorld();
 	}
 
 	Scene::~Scene()

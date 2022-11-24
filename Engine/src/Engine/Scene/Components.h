@@ -141,4 +141,12 @@ namespace Engine
 			mSound->playSound(mName);
 		}
 	};
+
+	struct Rigidbody
+	{
+		
+		int physxIndex;
+		Rigidbody() = default;
+		Rigidbody(const Rigidbody&) = default;
+	};
 }

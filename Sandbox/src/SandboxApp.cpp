@@ -62,7 +62,7 @@ public:
 		_elapsed += _dt;
 		//Frame setup
 		
-		Engine::Renderer::NewFrame(*camera);
+		Engine::Renderer::NewFrame(camera);
 		
 		//Normal loop
 		{

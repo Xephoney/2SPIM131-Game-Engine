@@ -27,11 +27,12 @@ IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
-
+IncludeDir["PhysX"] = "Engine/3rdParty/PhysX/include"
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
+LibraryDir["PhysX"] = "Engine/3rdParty/PhysX/libs"
 
 group "Dependencies"
 	include "Engine/3rdParty/GLFW"
@@ -78,12 +79,14 @@ project "Engine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.PhysX}"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
-		"%{LibraryDir.assimp}"
+		"%{LibraryDir.assimp}",
+		"%{LibraryDir.PhysX}"
 	}
 
 	links
@@ -91,6 +94,7 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
+		"PhysX_64.lib",
 		"assimp-vc143-mt",
 		"opengl32"
 	}
@@ -140,17 +144,20 @@ project "Sandbox"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
+		"%{IncludeDir.PhysX}",
 		"Engine/src"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.PhysX}",
 		"%{LibraryDir.assimp}"
 	}
 	links
 	{
 		"fmod_vc.lib",
 		"assimp-vc143-mt",
+		"PhysX_64.lib",
 		"Engine"
 	}
 	postbuildcommands
