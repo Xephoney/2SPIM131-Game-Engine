@@ -1696,6 +1696,12 @@
       <Filter>src\Engine\Particle System</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Particle.h">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClInclude>
+    <ClInclude Include="Emitter.h">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1774,6 +1780,12 @@
       <Filter>src\Engine\Particle System</Filter>
     </ClCompile>
     <ClCompile Include="Random.cpp">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
+      <Filter>src\Engine\Particle System</Filter>
+    </ClCompile>
+    <ClCompile Include="Emitter.cpp">
       <Filter>src\Engine\Particle System</Filter>
     </ClCompile>
   </ItemGroup>

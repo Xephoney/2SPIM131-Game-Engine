@@ -100,4 +100,9 @@ namespace Engine
 		float SizeBegin, SizeEnd, SizeVariation;
 		float LifeTime = 1.0f;
 	};
+	struct EmitterProperties // Used to set the properties for a given emitter
+	{
+		glm::vec2 position;
+		float lifeTime;
+	};
 }

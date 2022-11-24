@@ -13,35 +13,24 @@
 #include "Random.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "Engine/Scene/Components.h"
+#include "Particle.h"
+#include "Emitter.h"
 
 class ParticleSystem
 {
 	ParticleSystem();
 
-	void OnUpdate(float ts); 
-	void OnRender(Engine::OrthographicCamera& camera); 
-
-	void Emit(const Engine::ParticleProperties& particleProps); 
+	void Update(float ts); 
+	void Render(Engine::OrthographicCamera& camera); 
+	void Emit(Emitter& emitter);
 
 private:
-	struct Particle
-	{
-		glm::vec2 Position;
-		glm::vec2 Velocity;
-		glm::vec4 ColorBegin, ColorEnd;
-		float Rotation = 0.0f;
-		float SizeBegin, SizeEnd;
-
-		float LifeTime = 1.0f;
-		float LifeRemaining = 0.0f;
-
-		bool Active = false;
-	};
-	std::vector<Particle> m_ParticlePool;
-	uint32_t m_PoolIndex = 999;
+	std::vector<Emitter> m_EmitterPool; // pool of all particles
 
 	GLuint m_QuadVA = 0;
-	std::unique_ptr<Shader> m_ParticleShader;
-	GLint m_ParticleShaderViewProj, m_ParticleShaderTransform, m_ParticleShaderColor;
+	std::unique_ptr<Shader> m_ParticleShader; // pointer to the shader program
+	GLint m_ParticleShaderViewProj, m_ParticleShaderTransform, m_ParticleShaderColor; // opengl variables
+
+	int numOfEmitters = 10;
 };
 
