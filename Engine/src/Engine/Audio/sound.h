@@ -15,11 +15,14 @@ namespace Engine {
 
 	class SoundManager 
 	{
-	public:
+	private:
 		std::unordered_map<std::string, FMOD::Sound*> mSounds;
+		std::vector<class sound*> soundList;
 		FMOD::ChannelGroup* gameSound = nullptr;
 		FMOD::System* system = nullptr;
+		FMOD::Reverb3D* reverb;
 		//FMOD::ChannelGroup mChannels[4]; COME BACK TO THIS LATER
+	public:
 		SoundManager();
 
 		static SoundManager& getSoundManager();
@@ -34,8 +37,12 @@ namespace Engine {
 
 		void playSound(const std::string& name);
 
-		FMOD_VECTOR* ToFMODVec(glm::vec3 in);
+		void addToSoundlist(class sound* inSound);
 
+		FMOD_VECTOR ToFMODVec(glm::vec3 in);
+
+		FMOD::Reverb3D* getReverb();
+		FMOD::System* getSystem();
 		
 	};
 
@@ -45,8 +52,11 @@ namespace Engine {
 		static sound& s_sound;
 		bool is3D = false;
 		std::string mName = "EMPTY";
+		FMOD_VECTOR mPos = { 0.f,0.f,0.f };
+		float minDist = 10.f;
+		float maxDist = 20.f;
 	public:
-		
+		// constructors
 		sound() 
 		{
 #ifdef DEBUG
@@ -56,15 +66,25 @@ namespace Engine {
 		sound(std::string name);
 		sound(const char* file, std::string name, bool is3D);
 
-		std::string getName();
-		
+		// sound functions
 		void playSound(std::string name);
-		
 		static sound& getSoundManager();
-
+		//static FMOD_CHANNEL& createChannel(std::string name);
 		bool bSoundExists();
+		bool bSoundExists(std::string name);
+		bool swapSound(std::string name);
+		void update();
 
-		static FMOD_CHANNEL& createChannel(std::string name);
+		// get values
+		std::string getName();
+		FMOD_VECTOR getPos();
+
+
+		// set values
+		void setPos(glm::vec3 pos);
+		void setPos(FMOD_VECTOR pos);
+		void setMinDist(float dist);
+		void setMaxDist(float dist);
 		
 	};
 

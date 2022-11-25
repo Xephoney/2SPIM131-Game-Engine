@@ -21,6 +21,14 @@ namespace Engine {
 		result = system->createChannelGroup("gameSounds", &gameSound);
 		if (!successCheck(result))
 			exit(-1);
+
+		//set up reverb
+		
+		result = system->createReverb3D(&reverb);
+		FMOD_REVERB_PROPERTIES reverbProp = FMOD_PRESET_CONCERTHALL;
+		reverb->setProperties(&reverbProp);
+
+		//set up 3D sound
 		system->setSoftwareFormat(0, FMOD_SPEAKERMODE_5POINT1, 0);
 		system->setOutput(FMOD_OUTPUTTYPE_WINSONIC);
 
@@ -63,7 +71,7 @@ namespace Engine {
 			system->createSound(file, FMOD_DEFAULT, nullptr, &tempSound);
 		}
 		else
-			system->createSound(file, FMOD_3D, 0, &tempSound);
+			system->createSound(file, FMOD_3D_LINEARROLLOFF, 0, &tempSound);
 		mSounds.insert(std::pair(name, tempSound));
 
 #ifdef DEBUG
@@ -90,13 +98,15 @@ namespace Engine {
 		glm::vec3 CamFwd = Renderer::GetRenderCamera()->Forward();
 		glm::vec3 CamUp = Renderer::GetRenderCamera()->Up();
 		glm::vec3 CamVel = glm::vec3(0.f, 0.f, 0.f);
-
-		FMOD_VECTOR* EarPos=ToFMODVec(CamPos);
-		FMOD_VECTOR* EarVel=ToFMODVec(CamVel);
-		FMOD_VECTOR* EarUp=ToFMODVec(CamUp);
-		FMOD_VECTOR* EarFwd = ToFMODVec(CamFwd);
 		
-		system->set3DListenerAttributes(0, EarPos, 0, EarFwd, EarUp);
+		FMOD_VECTOR earPos = ToFMODVec(CamVel);
+		FMOD_VECTOR earUp = ToFMODVec(CamUp);
+		FMOD_VECTOR earfwd = ToFMODVec(CamFwd);
+
+		for (int i = 0; i < soundList.size(); i++)
+			soundList[i]->update();
+
+		system->set3DListenerAttributes(0, &earPos, 0, &earfwd, &earUp);
 		system->update();
 
 	}
@@ -136,14 +146,30 @@ namespace Engine {
 		return;
 	}
 
-	FMOD_VECTOR* SoundManager::ToFMODVec(glm::vec3 in)
+	void SoundManager::addToSoundlist(sound* inSound)
 	{
-		FMOD_VECTOR* result=new FMOD_VECTOR();
-		result->x = in.x;
-		result->y = in.y;
-		result->z = in.z;
-		ENGINE_LOG_INFO("CameraPos:{0},{1},{2}", in.x, in.y, in.z);
+		soundList.push_back(inSound);
+		ENGINE_LOG_INFO("Added sound to soundlist");
+	}
+
+	FMOD_VECTOR SoundManager::ToFMODVec(glm::vec3 in)
+	{
+		FMOD_VECTOR result;
+		result.x = in.x;
+		result.y = in.y;
+		result.z = in.z;
+//		ENGINE_LOG_INFO("CameraPos:{0},{1},{2}", result->x, result->y, result->z);
 		return result;
+	}
+
+	FMOD::Reverb3D* SoundManager::getReverb()
+	{
+		return reverb;
+	}
+
+	FMOD::System* SoundManager::getSystem()
+	{
+		return system;
 	}
 
 	sound::sound(std::string name)
@@ -168,6 +194,11 @@ namespace Engine {
 		return mName;
 	}
 
+	FMOD_VECTOR sound::getPos()
+	{
+		return mPos;
+	}
+
 	void sound::playSound(std::string name)
 	{
 		if(bSoundExists())
@@ -177,6 +208,48 @@ namespace Engine {
 	bool sound::bSoundExists()
 	{
 		return SoundManager::getSoundManager().bSoundExists(mName);
+	}
+
+	bool sound::bSoundExists(std::string name)
+	{
+		return SoundManager::getSoundManager().bSoundExists(name);
+	}
+
+	bool sound::swapSound(std::string name)
+	{
+		if (bSoundExists(name)) {
+			mName = name;
+			return true;
+		}
+		return false;
+	}
+
+	void sound::update()
+	{
+		SoundManager::getSoundManager().getReverb()->set3DAttributes(&mPos, minDist, maxDist);
+		ENGINE_LOG_WARNING("MIN DIST: {0}   MAX DIST: {1}", minDist, maxDist);
+	}
+
+	void sound::setPos(glm::vec3 pos)
+	{
+		mPos.x = pos.x;
+		mPos.y = pos.y;
+		mPos.z = pos.z;
+	}
+
+	void sound::setPos(FMOD_VECTOR pos)
+	{
+		mPos = pos;
+	}
+
+	void sound::setMinDist(float dist)
+	{
+		minDist = dist;
+	}
+
+	void sound::setMaxDist(float dist)
+	{
+		maxDist = dist;
 	}
 
 }
