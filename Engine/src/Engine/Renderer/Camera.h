@@ -25,6 +25,10 @@ namespace Engine
 		glm::vec3 Right() ;
 		glm::vec3 Up() ;
 
+		glm::vec3 Velocity() const;
+		glm::vec3 VelocityNormalized() const;
+		float VelocityUnit() const;
+
 		glm::vec3 m_movementDir{ 0, 0, 0 };
 		float m_movementSpeed = 10.f;
 	protected:
@@ -38,6 +42,7 @@ namespace Engine
 		glm::vec3 m_position	{ 0, 0, 10 };
 		glm::vec3 m_rotation	{ 0, 0, 0 };
 		glm::vec3 m_direction	{ 0, 0,-1 };
+		glm::vec3 m_velocity	{ 0, 0, 0 };
 
 	private:
 	};

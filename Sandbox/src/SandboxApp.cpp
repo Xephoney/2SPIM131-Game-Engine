@@ -51,8 +51,6 @@ public:
 		fbs.height = 720;
 		fbs.samples = 1;
 		m_FrameBuffer = Engine::Framebuffer::Create(fbs);
-		
-
 	}
 
 	void OnUpdate(const double& dt) override
