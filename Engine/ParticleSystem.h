@@ -21,8 +21,9 @@ class ParticleSystem
 	ParticleSystem();
 
 	void Update(float ts); 
-	void Render(Engine::OrthographicCamera& camera); 
+	void Render(); 
 	void Emit(Emitter& emitter);
+	void init(Engine::OrthographicCamera& camera);
 
 private:
 	std::vector<Emitter> m_EmitterPool; // pool of all particles
