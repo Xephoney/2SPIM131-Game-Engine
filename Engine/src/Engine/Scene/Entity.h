@@ -3,11 +3,14 @@
 
 namespace Engine
 {
+	class Scene;
+
 	class Entity
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, entt::registry& registry);
+		Entity(entt::entity handle, entt::registry& registry, Scene* scene);
+		
 		Entity(const Entity& other) = default;
 
 		template <typename T, typename ... Args>
@@ -33,8 +36,8 @@ namespace Engine
 	private:
 		entt::registry& m_Registry;
 		entt::entity m_Entity {entt::null};
-		
-		Entity* parent ;
+		Scene* m_scene{ nullptr };
+		Entity* parent { nullptr };
 		std::vector<Entity*> children;
 	};
 

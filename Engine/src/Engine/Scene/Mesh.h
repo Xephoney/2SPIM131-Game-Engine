@@ -18,7 +18,7 @@ namespace Engine
 
 		float shininess = 0.f;
 		bool twoSided = false;
-		Shader* shader { nullptr };
+		std::shared_ptr<Shader> shader;
 
 		Material() : ambient(glm::vec3(1.f)), diffuse(glm::vec3(0.f)), specular(glm::vec3(0.f)), roughness(1.f),
 		             emissive(0.f),
@@ -26,7 +26,6 @@ namespace Engine
 		{
 			// Create Shader
 			std::string vertexShaderTemp = R"(
-
 				#version 450 core
 				layout(location = 0) in vec3 a_Position;
 				layout(location = 1) in vec4 a_Color;
@@ -46,7 +45,6 @@ namespace Engine
 				}
 			)";
 			std::string fragmentShaderTemp = R"(
-
 				#version 450 core
 				layout(location = 0) out vec4 fragmentColor;
 				layout(location = 1) out int index;
@@ -64,12 +62,21 @@ namespace Engine
 				}
 			)";
 
-			//TODO: Fjerne shader creation herfra, og heller hente fra ShaderManager::instance.fallback()
-			shader = new Shader{vertexShaderTemp, fragmentShaderTemp};
+			//shader = Shader::Create("plainShader", vertexShaderTemp, fragmentShaderTemp);
+			shader = Shader::Create("../Engine/Assets/Shaders/PlainShader.glsl");
 		}
-		;
-		Material(const Shader& shader);
+
 		Material(const Material&) = default;
+		Material(const std::string& ShaderFilePath) :
+			ambient(glm::vec3(1.f)),
+			diffuse(glm::vec3(0.f)),
+			specular(glm::vec3(0.f)),
+			roughness(1.f),
+			emissive(0.f),
+			emissive_color(0.f)
+		{
+			shader = Shader::Create(ShaderFilePath);
+		}
 
 		operator Shader& () { return *shader; }
 		operator const Shader& () const { return *shader; }
@@ -79,6 +86,7 @@ namespace Engine
 	{
 		std::vector<uint32_t> meshes;
 	};
+
 	class Mesh
 	{
 	public:
@@ -87,7 +95,6 @@ namespace Engine
 		~Mesh();
 		std::shared_ptr<VertexArray> vertexArray;
 		Material material;
-		std::string directoryPath;
 	};
 
 	inline Mesh::Mesh(const std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)

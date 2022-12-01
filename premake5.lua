@@ -27,12 +27,12 @@ IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
-IncludeDir["PhysX"] = "Engine/3rdParty/PhysX/include"
+IncludeDir["bullet3"] = "Engine/3rdParty/bullet3/include"
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
-LibraryDir["PhysX"] = "Engine/3rdParty/PhysX/libs"
+LibraryDir["bullet3"] = "Engine/3rdParty/bullet3/libs"
 
 group "Dependencies"
 	include "Engine/3rdParty/GLFW"
@@ -79,14 +79,14 @@ project "Engine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.entt}",
-		"%{IncludeDir.PhysX}"
+		"%{IncludeDir.bullet3}",
+		"%{IncludeDir.entt}"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
-		"%{LibraryDir.assimp}",
-		"%{LibraryDir.PhysX}"
+		"%{LibraryDir.bullet3}",
+		"%{LibraryDir.assimp}"
 	}
 
 	links
@@ -94,7 +94,6 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
-		"PhysX_64.lib",
 		"assimp-vc143-mt",
 		"opengl32"
 	}
@@ -105,6 +104,8 @@ project "Engine"
 		defines
 		{
 			"ENG_PLATFORM_WINDOWS",
+			"BT_USE_DOUBLE_PRECISION",
+			"BT_THREADSAFE=1",
 			"GLFW_INCLUCE_NONE"
 		}
 
@@ -112,11 +113,23 @@ project "Engine"
 		defines "ENG_DEBUG"
 		runtime "Debug"
 		symbols "on"
+		links
+		{
+			"BulletDynamics_vs2010_x64_debug",
+			"BulletCollision_vs2010_x64_debug",
+			"LinearMath_vs2010_x64_debug",
+		}
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
 		runtime "Release"
 		optimize "on"
+		links
+		{
+			"BulletDynamics_vs2010_x64_release",
+			"BulletCollision_vs2010_x64_release",
+			"LinearMath_vs2010_x64_release",
+		}
 
 project "Sandbox"
 	location "Sandbox"
@@ -134,7 +147,10 @@ project "Sandbox"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.hpp"
 	}
-
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
 	includedirs
 	{
 		"%{IncludeDir.spdlog}",
@@ -144,20 +160,19 @@ project "Sandbox"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.PhysX}",
+		"%{IncludeDir.bullet3}",
 		"Engine/src"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
-		"%{LibraryDir.PhysX}",
+		"%{LibraryDir.bullet3}",
 		"%{LibraryDir.assimp}"
 	}
 	links
 	{
 		"fmod_vc.lib",
 		"assimp-vc143-mt",
-		"PhysX_64.lib",
 		"Engine"
 	}
 	postbuildcommands
@@ -171,18 +186,32 @@ project "Sandbox"
 
 		defines
 		{
-			"ENG_PLATFORM_WINDOWS"
+			"ENG_PLATFORM_WINDOWS",
+			"BT_USE_DOUBLE_PRECISION",
+			"BT_THREADSAFE=1"
 		}
 
 	filter "configurations:Debug"
 		defines "ENG_DEBUG"
 		runtime "Debug"
 		symbols "on"
+		links
+		{
+			"BulletDynamics_vs2010_x64_debug",
+			"BulletCollision_vs2010_x64_debug",
+			"LinearMath_vs2010_x64_debug",
+		}
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
 		runtime "Release"
 		optimize "on"
+		links
+		{
+			"BulletDynamics_vs2010_x64_release",
+			"BulletCollision_vs2010_x64_release",
+			"LinearMath_vs2010_x64_release",
+		}
 
 
 

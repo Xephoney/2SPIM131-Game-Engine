@@ -19,6 +19,12 @@ namespace Engine
 		RenderCommand::Init();
 	}
 
+	void Renderer::NewFrame(const glm::mat4& projection, const glm::mat4& transform)
+	{
+		m_SceneData->ViewProjectionMatrix = projection * glm::inverse(transform);
+		m_SceneData->render_camera = nullptr;
+	}
+
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
 	{
 		RenderCommand::SetViewport(0, 0, width, height);
@@ -37,9 +43,9 @@ namespace Engine
 	void Renderer::Submit(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform, int ID)
 	{
 		shader.Bind();
-		shader.SetUniformMatrix4fv("u_model", transform);
-		shader.SetUniformMatrix4fv("u_view_projection", m_SceneData->ViewProjectionMatrix);
-		shader.SetUniform1i("u_ID", ID);
+		shader.SetMat4("u_model", transform);
+		shader.SetMat4("u_view_projection", m_SceneData->ViewProjectionMatrix);
+		shader.SetInt("u_ID", ID);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

@@ -5,7 +5,7 @@
 #include "MeshManager.h"
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Audio/sound.h"
-
+#include "glm/gtx/transform.hpp"
 
 
 namespace Engine
@@ -13,14 +13,33 @@ namespace Engine
 
 	struct Transform
 	{
-		glm::mat4 transform{ 1.f };
+		glm::mat4 transform			{ 1.f  };
+		glm::vec3 position			{ 0.f };
+		glm::vec3 euler_rotation	{ 0.f };
+		glm::vec3 scale				{ 1.f };
 		Transform() = default;
 		Transform(const Transform&) = default;
 		Transform(const glm::mat4& _transform)
 			: transform(_transform) { }
 
-		operator glm::mat4& () { return transform; }
-		operator const glm::mat4& () const { return transform; }
+		operator glm::mat4& ()
+		{
+			CalculateTransform();
+			return transform;
+		}
+		operator const glm::mat4& () const
+		{
+			return transform;
+		}
+	private:
+		inline void CalculateTransform()
+		{
+			transform = glm::translate(glm::mat4{ 1.f }, position);
+			transform = glm::rotate(transform, euler_rotation.x, { 1,0,0 });
+			transform = glm::rotate(transform, euler_rotation.y, { 0,1,0 });
+			transform = glm::rotate(transform, euler_rotation.z, { 0,0,1 });
+			transform = glm::scale(transform, scale);
+		}
 	};
 
 	struct Tag
@@ -144,9 +163,37 @@ namespace Engine
 
 	struct Rigidbody
 	{
-		
-		int physxIndex;
-		Rigidbody() = default;
+		Rigidbody()
+		{
+
+		}
 		Rigidbody(const Rigidbody&) = default;
+
+		bool dynamic{ false };
+		btRigidBody* rigidBody	{ nullptr };
+
+		void AddForce(const glm::vec3& force)
+		{
+			rigidBody->applyCentralForce(btVector3(force.x, force.y, force.z));
+		}
+		
+		void SetMass()
+		{
+			
+		}
+	};
+
+	struct CameraComponent
+	{
+		glm::mat4 Projection;
+		std::shared_ptr<Camera> camera;
+		bool Main = false;
+		bool FixedAspectRatio = false;
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
+		CameraComponent(const glm::mat4& proj) : Projection(proj)
+		{
+			
+		}
 	};
 }

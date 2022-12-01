@@ -31,6 +31,7 @@ public:
 	glm::vec2 renderwindowSize;
 	glm::vec2 renderwindowCenter;
 	glm::vec2 viewportBounds[2];
+	glm::vec2 viewportSize;
 	bool viewportFocused = false;
 	bool viewportHovered = false;
 	std::shared_ptr<Engine::Scene> activeScene;
@@ -61,7 +62,17 @@ public:
 		_dt = dt;
 		_elapsed += _dt;
 		//Frame setup
-		
+
+		if(Engine::FramebufferSpesification spec = m_FrameBuffer->GetSpesification(); viewportSize.x > 0.0f && viewportSize.y > 0.0f && (spec.width != static_cast<uint32_t>(viewportSize.x) || spec.height != static_cast<uint32_t>(viewportSize.y)))
+		{
+			uint32_t x = static_cast<uint32_t>(viewportSize.x);
+			uint32_t y = static_cast<uint32_t>(viewportSize.y);
+			m_FrameBuffer->Resize(x, y);
+			camera->Resize(x, y);
+			activeScene->OnViewportResize(x, y);
+		}
+
+
 		Engine::Renderer::NewFrame(camera);
 		
 		//Normal loop
@@ -202,19 +213,6 @@ public:
 		}
 		Engine::Application::GetApplication().GetImGuiLayer()->SetSkipEvent(viewportFocused || viewportHovered);
 		//Engine::Application::GetApplication().GetImGuiLayer()->SetBlockEvents(!viewportFocused || !viewportHovered);
-		if (static_cast<int>(viewportSize.x) != static_cast<int>(renderwindowSize.x)
-			|| static_cast<int>(viewportSize.y) != static_cast<int>(renderwindowSize.y))
-		{
-			renderwindowSize = { viewportSize.x, viewportSize.y };
-			m_FrameBuffer->Resize(
-				static_cast<uint32_t>(renderwindowSize.x),
-				static_cast<uint32_t>(renderwindowSize.y)
-			);
-			camera->Resize(
-				static_cast<uint32_t>(renderwindowSize.x),
-				static_cast<uint32_t>(renderwindowSize.y)
-			);
-		}
 
 		uint32_t colorTextureID = m_FrameBuffer->GetColorAttachment();
 		ImGui::Image(reinterpret_cast<void*>(colorTextureID), viewportSize, ImVec2{ 0,1 }, ImVec2{ 1,0 });
@@ -331,7 +329,7 @@ public:
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= viewportBounds[0].x;
 		my -= viewportBounds[0].y;
-		glm::vec2 viewportSize = viewportBounds[1] - viewportBounds[0];
+		viewportSize = viewportBounds[1] - viewportBounds[0];
 		my = viewportSize.y - my;
 		int moX = (int)mx;
 		int moY = (int)my;
@@ -448,7 +446,7 @@ public:
 				Engine::Entity cube = scene->CreateEntity(name);
 				auto& thing = cube.AddComponent<Engine::AudioSource>("Delete"); // test after!!
 				//thing.addSound("dummy", "Delete");
-				cube.GetComponent<Engine::Transform>().transform = glm::translate(glm::mat4{ 1.f }, { x,y,0 });
+				cube.GetComponent<Engine::Transform>().position = { x, y,0 };
 			}
 		}
 		if (event.GetEventType() == Engine::EventType::KeyPressed)

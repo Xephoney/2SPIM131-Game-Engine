@@ -10,6 +10,7 @@ namespace Engine
 	{
 	public:
 		static void NewFrame(std::shared_ptr<Camera> camera);
+		static void NewFrame(const glm::mat4& projection, const glm::mat4& transform);
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void RenderFrame();
@@ -19,12 +20,14 @@ namespace Engine
 		// static void SubmitInstanced(struct StaticMesh& staticMesh, const glm::mat4& transform = glm::mat4(1.f));
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); };
-		inline static std::shared_ptr<Camera> GetRenderCamera() { return m_SceneData->render_camera; }
+		inline static std::shared_ptr<Camera> GetRenderCamera()  { return m_SceneData->render_camera; }
+		inline static ShaderLibrary& GetShaderLibrary() { return m_SceneData->shader_library; }
 	private:
 		struct SceneData
 		{
 			glm::mat4 ViewProjectionMatrix;
 			std::shared_ptr<Camera> render_camera;
+			ShaderLibrary shader_library;
 		};
 
 		static SceneData* m_SceneData;
