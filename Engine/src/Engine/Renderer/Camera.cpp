@@ -65,12 +65,13 @@ namespace Engine
 		return m_direction;
 	}
 
-	glm::vec3 Camera::Right() 
+	
+	const glm::vec3& Camera::Right()
 	{
 		return normalize(cross(m_direction, { 0,1,0 }));
 	}
 
-	glm::vec3 Camera::Up() 
+	const glm::vec3& Camera::Up() 
 	{
 		return glm::normalize(glm::cross(Right(), m_direction));
 	}

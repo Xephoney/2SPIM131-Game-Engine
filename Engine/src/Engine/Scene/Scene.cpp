@@ -62,7 +62,6 @@ namespace Engine
 			}
 		}
 
-
 		{
 			auto view = m_Registry.view<Transform, StaticMeshRenderer>();
 			for (auto& entity : view)

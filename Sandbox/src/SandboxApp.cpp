@@ -201,7 +201,9 @@ public:
 		// ------------------------------ RENDER WINDOW ------------------------------
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("Scene View");
-		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+		ImVec2 _viewportSize = ImGui::GetContentRegionAvail();
+		viewportSize.x = _viewportSize.x;
+		viewportSize.y = _viewportSize.y;
 		auto viewportOffset = ImGui::GetCursorPos(); //ImVec2
 		
 		viewportFocused = ImGui::IsWindowFocused();
@@ -215,7 +217,7 @@ public:
 		//Engine::Application::GetApplication().GetImGuiLayer()->SetBlockEvents(!viewportFocused || !viewportHovered);
 
 		uint32_t colorTextureID = m_FrameBuffer->GetColorAttachment();
-		ImGui::Image(reinterpret_cast<void*>(colorTextureID), viewportSize, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		ImGui::Image(reinterpret_cast<void*>(colorTextureID), _viewportSize, ImVec2{ 0,1 }, ImVec2{ 1,0 });
 		ImVec2 windowSize = ImGui::GetWindowSize();
 		ImVec2 minBound = ImGui::GetWindowPos();
 		// minBound.x += viewportOffset.x;
@@ -329,12 +331,13 @@ public:
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= viewportBounds[0].x;
 		my -= viewportBounds[0].y;
-		viewportSize = viewportBounds[1] - viewportBounds[0];
-		my = viewportSize.y - my;
+		glm::vec2 _viewportSize = viewportBounds[1] - viewportBounds[0];
+
+		my = _viewportSize.y - my;
 		int moX = (int)mx;
 		int moY = (int)my;
 		
-		if (moX >= 0 && moY >= 0 && moX < (int)viewportSize.x && moY < (int)viewportSize.y)
+		if (moX >= 0 && moY >= 0 && moX < (int)_viewportSize.x && moY < (int)_viewportSize.y)
 		{
 			int data = m_FrameBuffer->ReadPixel(1, moX, moY);
 			ENGINE_LOG_INFO("Pixel Data at [{0},{1}] = {2}", moX, moY, data)
