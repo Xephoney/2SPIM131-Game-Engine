@@ -10,6 +10,7 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
+#include "Panels/SceneHierarchyPanel.h"
 
 static void HelpMarker(const char* desc)
 {
@@ -28,7 +29,7 @@ class EditorLayer : public Engine::Layer
 public:
 	double _dt;
 	double _elapsed {0};
-	glm::vec2 renderwindowSize;
+	glm::vec2 renderwindowSize {1280, 720};
 	glm::vec2 renderwindowCenter;
 	glm::vec2 viewportBounds[2];
 	glm::vec2 viewportSize;
@@ -37,6 +38,7 @@ public:
 	std::shared_ptr<Engine::Scene> activeScene;
 	std::shared_ptr<Engine::Camera> camera;
 	std::shared_ptr<Engine::Framebuffer> m_FrameBuffer;
+	Engine::SceneHierarchyPanel m_SceneGraph;
 
 
 	EditorLayer() : Layer("MyFirstLayer")
@@ -102,7 +104,11 @@ public:
 		}
 		
 	}
+	void OnAttach() override
+	{
+		m_SceneGraph.SetContext(activeScene);
 
+	}
 	void OnImGuiRender() override
 	{
 
@@ -228,6 +234,8 @@ public:
 		ImGui::End();
 
 		ImGui::PopStyleVar();
+
+		m_SceneGraph.OnImGuiRender();
 	}
 
 	void OnEvent(Engine::Event& event) override
@@ -366,7 +374,7 @@ public:
 	}
 	void OnImGuiRender() override
 	{
-		if (scene)
+		if (!scene)
 		{
 			ImGui::Begin("Scene Viewer | GAME LAYER");
 		

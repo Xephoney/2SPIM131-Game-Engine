@@ -1677,10 +1677,12 @@
     <ClInclude Include="src\Platform\OpenGLRendererAPI.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\OpenGLShader.h">
+      <Filter>src\Platform</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\OpenGLVertexArray.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\OpenGLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -1758,15 +1760,14 @@
     <ClCompile Include="src\Platform\OpenGLRendererAPI.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGLShader.cpp">
+      <Filter>src\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGLVertexArray.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\OpenGLShader.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Shaders\PlainShader.glsl" />
   </ItemGroup>
 </Project>

@@ -29,6 +29,9 @@ namespace Engine
 
 		uint32_t viewportWidth {0};
 		uint32_t viewportHeight {0};
+
+		friend class SceneHierarchyPanel;
+		friend class Entity;
 	};
 
 }

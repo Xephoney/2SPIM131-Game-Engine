@@ -727,9 +727,6 @@
       <Project>{0098A80F-6CAC-D0C0-352E-7420A101CDF1}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Shaders\PlainShader.glsl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
