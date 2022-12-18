@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entity.h"
+#include "entt.hpp"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Audio/sound.h"
 #include "Engine/Physics/PhysicsWorld.h"
@@ -9,6 +9,7 @@ namespace Engine
 {
 	class Scene
 	{
+		friend class Entity;
 	public:
 		Scene();
 		~Scene();

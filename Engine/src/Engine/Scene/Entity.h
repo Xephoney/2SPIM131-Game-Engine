@@ -1,53 +1,75 @@
 #pragma once
 #include "entt.hpp"
+#include "Scene.h"
 
 namespace Engine
 {
-	class Scene;
-
 	class Entity
 	{
 	public:
 		Entity() = default;
-		Entity(entt::entity handle, entt::registry& registry, Scene* scene);
+
+		Entity(entt::entity handle, Scene* scene)
+			: m_EntityHandle(handle), m_Scene(scene)
+		{
+
+		}
 		Entity(const Entity& other) = default;
 
 		template <typename T, typename ... Args>
 		T& AddComponent(Args&&... _args)
 		{
-			return m_Registry.emplace<T>(m_Entity, std::forward<Args>(_args)...);
+			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(_args)...);
 		}
 
 		template <typename T>
 		T& GetComponent()
 		{
-			return m_Registry.get<T>(m_Entity);
+			ENGINE_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			return m_Scene->m_Registry.get<T>(m_EntityHandle);
 		}
 
 		template <typename T>
 		bool HasComponent() const
 		{
-			return m_Registry.any_of<T>(m_Entity);
-		}
-		
-		operator bool() const { return m_Entity != entt::null; }
-
-		bool operator ==(const Entity& cmp) const
-		{
-			return m_Entity == cmp.m_Entity && m_scene == cmp.m_scene;
-		}
-		bool operator !=(const Entity& cmp) const
-		{
-			return !(*this == cmp);
+			if(m_EntityHandle != entt::null)
+				return m_Scene->m_Registry.any_of<T>(m_EntityHandle);
+			return false;
 		}
 
-		operator uint32_t() const { return static_cast<uint32_t>(m_Entity); }
+		template <typename T>
+		void RemoveComponent() const
+		{
+			ENGINE_CORE_ASSERT(HasComponent<T>(), "Entity does not have component!");
+			m_Scene->m_Registry.remove<T>(m_EntityHandle);
+		}
+
+		bool Destroy()
+		{
+			m_Scene->m_Registry.destroy(m_EntityHandle);
+			m_EntityHandle = entt::null;
+			return true;
+		}
+
+		bool operator==(const Entity& other) const
+		{
+			return m_EntityHandle == other.m_EntityHandle && m_Scene == other.m_Scene;
+		}
+
+		bool operator!=(const Entity& other) const
+		{
+			return !(*this == other);
+		}
+
+
+		operator bool() const { return m_EntityHandle != entt::null; }
+		operator entt::entity() const { return m_EntityHandle; }
+		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
+	
+		entt::entity m_EntityHandle {entt::null};
 	private:
-		entt::registry& m_Registry;
-		entt::entity m_Entity {entt::null};
-		Scene* m_scene{ nullptr };
-		Entity* parent { nullptr };
-		std::vector<Entity*> children;
+
+		Scene* m_Scene { nullptr };
 	};
 
 	

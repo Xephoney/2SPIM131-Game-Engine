@@ -6,6 +6,7 @@ namespace Engine
 	class Camera
 	{
 	public :
+		virtual ~Camera() = default;
 		Camera();
 		const glm::mat4& GetViewMatrix() const { return m_view; };
 		const glm::mat4& GetProjectionMatrix() const { return m_projection; };
@@ -22,9 +23,9 @@ namespace Engine
 		virtual void update(const double& dt);
 
 		glm::vec3& Direction() { return m_direction; }
-		const glm::vec3& Forward();
-		const glm::vec3& Right();
-		const glm::vec3& Up();
+		glm::vec3 Forward();
+		glm::vec3 Right();
+		glm::vec3 Up();
 
 		glm::vec3 m_movementDir{ 0, 0, 0 };
 		float m_movementSpeed = 10.f;
@@ -38,6 +39,8 @@ namespace Engine
 		glm::vec3 m_position	{ 0, 0, 10 };
 		glm::vec3 m_rotation	{ 0, 0, 0 };
 		glm::vec3 m_direction	{ 0, 0,-1 };
+		glm::vec3 m_right		{ 1, 0,0 };
+		glm::vec3 m_up			{ 0, 1,0 };
 
 	private:
 	};

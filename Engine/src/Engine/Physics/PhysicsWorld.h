@@ -9,7 +9,7 @@ namespace Engine
 	public:
 		PhysicsWorld();
 		void Initialize();
-		void Tick(const double& timeStep);
+		void Tick(const double& timeStep) const;
 
 		btRigidBody* AddRigidbody();
 

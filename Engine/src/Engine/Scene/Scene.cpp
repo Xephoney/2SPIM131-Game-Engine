@@ -25,7 +25,7 @@ namespace Engine
 
 	Entity Scene::CreateEntity(const std::string& tagName)
 	{
-		Entity entity = { m_Registry.create(), m_Registry , this};
+		Entity entity = { m_Registry.create(), this};
 		entity.AddComponent<Tag>(tagName);
 		entity.AddComponent<Transform>(glm::mat4{1.f});
 		// entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/sphere.gltf");
@@ -78,12 +78,18 @@ namespace Engine
 
 	void Scene::OnFixedUpdate(const double& dt)
 	{
+		physicsWorld->Tick(dt);
 		auto view = m_Registry.view<Transform, Rigidbody>();
 		for (auto& entt : view)
 		{
 			auto& [transform, rigidbody] = view.get<Transform, Rigidbody>(entt);
-			btVector3 vec = rigidbody.rigidBody->getWorldTransform().getOrigin();
-			transform.position = { vec.x(), vec.y(), vec.z()};
+			btVector3 vec = rigidbody.internal_rb->getWorldTransform().getOrigin();
+			transform.position = { vec.x(), vec.y(), vec.z() };
+			btScalar rot[3];
+			rigidbody.internal_rb->getWorldTransform().getRotation().getEulerZYX(rot[2],rot[1],rot[0]);
+			transform.euler_rotation.x = rot[0];
+			transform.euler_rotation.y = rot[1];
+			transform.euler_rotation.z = rot[2];
 		}
 	}
 }

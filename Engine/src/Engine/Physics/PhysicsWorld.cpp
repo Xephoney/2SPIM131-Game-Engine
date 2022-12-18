@@ -48,7 +48,7 @@ namespace Engine
 		return nullptr;
 	}
 
-	void PhysicsWorld::Tick(const double& timeStep)
+	void PhysicsWorld::Tick(const double& timeStep) const
 	{
 		dynamics_world->stepSimulation(1.0 / 120.0);
 

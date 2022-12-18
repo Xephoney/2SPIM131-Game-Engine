@@ -20,7 +20,10 @@ namespace Engine
 		Transform() = default;
 		Transform(const Transform&) = default;
 		Transform(const glm::mat4& _transform)
-			: transform(_transform) { }
+			: transform(_transform)
+		{
+			CalculateTransform();
+		}
 
 		operator glm::mat4& ()
 		{
@@ -31,13 +34,12 @@ namespace Engine
 		{
 			return transform;
 		}
-	private:
 		inline void CalculateTransform()
 		{
 			transform = glm::translate(glm::mat4{ 1.f }, position);
-			transform = glm::rotate(transform, euler_rotation.x, { 1,0,0 });
-			transform = glm::rotate(transform, euler_rotation.y, { 0,1,0 });
-			transform = glm::rotate(transform, euler_rotation.z, { 0,0,1 });
+			transform = glm::rotate(transform, glm::radians(euler_rotation.x), { 1,0,0 });
+			transform = glm::rotate(transform, glm::radians(euler_rotation.y), { 0,1,0 });
+			transform = glm::rotate(transform, glm::radians(euler_rotation.z), { 0,0,1 });
 			transform = glm::scale(transform, scale);
 		}
 	};
@@ -165,22 +167,28 @@ namespace Engine
 	{
 		Rigidbody()
 		{
-
+			mass = 1;
+			velocity = 0;
 		}
 		Rigidbody(const Rigidbody&) = default;
 
 		bool dynamic{ false };
-		btRigidBody* rigidBody	{ nullptr };
 
+		float mass {1.0};
+		float velocity {0.0};
+		
 		void AddForce(const glm::vec3& force)
 		{
-			rigidBody->applyCentralForce(btVector3(force.x, force.y, force.z));
+			internal_rb->applyCentralForce(btVector3(force.x, force.y, force.z));
 		}
 		
-		void SetMass()
+		void SetMass(const float& newMass)
 		{
-			
+			mass = newMass;
+			if(internal_rb)
+				internal_rb->setMassProps(mass, btVector3(0, 0, 0));
 		}
+		btRigidBody* internal_rb{ nullptr };
 	};
 
 	struct CameraComponent

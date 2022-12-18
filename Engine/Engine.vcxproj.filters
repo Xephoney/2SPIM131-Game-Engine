@@ -1733,9 +1733,6 @@
     <ClCompile Include="src\Engine\Renderer\VertexArray.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Scene\Entity.cpp">
-      <Filter>src\Engine\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Scene\MeshManager.cpp">
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
