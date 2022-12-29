@@ -5,7 +5,8 @@
 #include "Engine/Scene/Entity.h"
 #include <glm/glm.hpp>
 #include "glm/gtc/type_ptr.hpp"
-
+#include "Engine/Physics/PhysicsWorld.h"
+#include "Engine/Random.h"
 
 namespace Engine
 {
@@ -26,7 +27,7 @@ namespace Engine
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		ImGui::ShowDemoWindow();
+		/*ImGui::ShowDemoWindow();*/
 		ImGui::Begin("Scene Graph");
 		m_scene->m_Registry.each([&](entt::entity entity)
 		{
@@ -63,10 +64,11 @@ namespace Engine
 			//DrawEntityNode()
 		}
 	}
-
+	bool positionDirtyFlag = true;
+	bool rotationDirtyFlag = true;
+	
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		static bool op = true;
 		
 		if (entity.HasComponent<Tag>())
 		{
@@ -91,9 +93,9 @@ namespace Engine
 			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(Transform).hash_code()),ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
 			{
 				ImGui::Text("Position"); ImGui::SameLine();
-				ImGui::DragFloat3(" ", value_ptr(transform.position), 0.1f);
+				positionDirtyFlag = ImGui::DragFloat3(" ", value_ptr(transform.position), 0.1f);
 				ImGui::Text("Rotation"); ImGui::SameLine();
-				ImGui::DragFloat3("\t", value_ptr(transform.euler_rotation), 0.05f);
+				rotationDirtyFlag = ImGui::DragFloat3("\t", value_ptr(transform.euler_rotation), 0.05f); ImGui::SameLine(); ImGui::Checkbox("                ", &rotationDirtyFlag);
 				ImGui::Text("Scale   "); ImGui::SameLine();
 				static bool uniformScale = false;
 				if(!uniformScale)
@@ -120,7 +122,7 @@ namespace Engine
 		if(entity.HasComponent<AudioSource>())
 		{
 			auto& audioCmp = entity.GetComponent<AudioSource>();
-			if(ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(AudioSource).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Audio Source"))
+			if(ImGui::TreeNodeEx((void*)(typeid(AudioSource).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Audio Source"))
 			{
 				if (ImGui::Button("Play Sound"))
 					audioCmp.playSound();
@@ -132,16 +134,40 @@ namespace Engine
 
 		if (entity.HasComponent<Rigidbody>())
 		{
-			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(Rigidbody).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Rigidbody"))
+			if (ImGui::TreeNodeEx((void*)(typeid(Rigidbody).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Rigidbody"))
 			{
 				auto& rb = entity.GetComponent<Rigidbody>();
+				
+				if (positionDirtyFlag)
+					rb.internal_rb->getWorldTransform().setOrigin({ entity.GetComponent<Transform>().position.x,entity.GetComponent<Transform>().position.y,entity.GetComponent<Transform>().position.z });
+				if(rotationDirtyFlag)
+					rb.internal_rb->getWorldTransform().setRotation(btQuaternion{ glm::radians(entity.GetComponent<Transform>().euler_rotation.z),glm::radians(entity.GetComponent<Transform>().euler_rotation.y), glm::radians(entity.GetComponent<Transform>().euler_rotation.x)});
+				if(ImGui::Checkbox("Dynamic", &rb.dynamic))
+				{
+					if(rb.mass > 0.0 && rb.dynamic)
+					{
+						btVector3 localinert = rb.internal_rb->getLocalInertia();
+						rb.internal_rb->getCollisionShape()->calculateLocalInertia(rb.mass, localinert);
+						rb.internal_rb->setMassProps(rb.mass, localinert);
+						//rb.internal_rb->setAngularVelocity(btVector3{ 0,10,0 });
+					}
+					else
+					{
+						rb.internal_rb->setMassProps(0, btVector3(0,0,0));
+					}
+				}
 
-				ImGui::Checkbox("Dynamic", &rb.dynamic);
+				ImGui::Text("Mass  "); ImGui::SameLine();
+				
+				if (ImGui::DragFloat(" ##kjdsafjlkdsafdsa", &rb.mass, 1.f, 0.f, 200000.f))
+					rb.internal_rb->setMassProps(rb.mass, { 0,0,0 });
 
-				static float mass = rb.mass;
-				if (ImGui::InputFloat("", &mass, 0.1f, 1.f))
-					rb.SetMass(mass);
-
+				if(ImGui::Button("Reset Motion"))
+				{
+					rb.internal_rb->clearForces();
+					rb.internal_rb->setLinearVelocity({ 0,0,0 });
+					rb.internal_rb->setAngularVelocity({ 0,0,0 });
+				}
 
 				ImGui::TreePop();
 			}
@@ -149,8 +175,10 @@ namespace Engine
 		}
 		else if (ImGui::Button("Add RigidBody"))
 		{
-			entity.AddComponent<Rigidbody>();
-			ImGui::Separator();
+			auto& tf =  entity.GetComponent<Transform>();
+			auto rb= m_scene->physicsWorld->NewRigidBody(1.f, tf.position, tf.euler_rotation, CollisionShape::Box);
+			entity.AddComponent<Rigidbody>(rb);
 		}
+		ImGui::Separator();
 	}
 }

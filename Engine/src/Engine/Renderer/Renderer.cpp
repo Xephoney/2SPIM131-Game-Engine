@@ -53,6 +53,20 @@ namespace Engine
 		vertexArray->Unbind();
 	}
 
+	void Renderer::SubmitLines(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray,
+		const glm::mat4& transform, int ID)
+	{
+		shader.Bind();
+		shader.SetMat4("u_model", transform);
+		shader.SetMat4("u_view_projection", m_SceneData->ViewProjectionMatrix);
+		shader.SetInt("u_ID", ID);
+
+		vertexArray->Bind();
+		RenderCommand::DrawLinesIndexed(vertexArray);
+		shader.Unbind();
+		vertexArray->Unbind();
+	}
+
 	// void Renderer::SubmitInstanced(StaticMesh& staticMesh, const glm::mat4& transform)
 	// {
 	// 	for(int i = 0; i < staticMesh.meshes.size(); i++)

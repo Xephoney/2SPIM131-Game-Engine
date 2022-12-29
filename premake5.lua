@@ -28,6 +28,7 @@ IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
 IncludeDir["bullet3"] = "Engine/3rdParty/bullet3/include"
+--IncludeDir["yaml_cpp"] = "Engine/3rdParty/yaml-cpp/include"
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
@@ -38,6 +39,7 @@ group "Dependencies"
 	include "Engine/3rdParty/GLFW"
 	include "Engine/3rdParty/GLAD"
 	include "Engine/3rdParty/imgui"
+--	include "Engine/3rdParty/yaml-cpp"
 group ""
 
 project "Engine"
@@ -81,6 +83,7 @@ project "Engine"
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.bullet3}",
 		"%{IncludeDir.entt}"
+		--"%{IncludeDir.yaml_cpp}"
 	}
 	libdirs
 	{
@@ -94,6 +97,7 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
+		--"yaml-cpp",
 		"assimp-vc143-mt",
 		"opengl32"
 	}
@@ -143,6 +147,7 @@ project "Sandbox"
 	
 	files
 	{
+		"%{IncludeDir.yaml_cpp}",
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.hpp"
@@ -161,6 +166,7 @@ project "Sandbox"
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.bullet3}",
+		--"%{IncludeDir.yaml_cpp}",
 		"Engine/src"
 	}
 	libdirs
@@ -188,7 +194,8 @@ project "Sandbox"
 		{
 			"ENG_PLATFORM_WINDOWS",
 			"BT_USE_DOUBLE_PRECISION",
-			"BT_THREADSAFE=1"
+			"BT_THREADSAFE=1",
+
 		}
 
 	filter "configurations:Debug"

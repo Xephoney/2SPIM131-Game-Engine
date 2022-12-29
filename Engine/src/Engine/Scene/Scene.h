@@ -21,18 +21,23 @@ namespace Engine
 		void OnViewportResize(uint32_t w, uint32_t h);
 		void OnUpdate(const double& dt);
 		void OnFixedUpdate(const double& dt);
-	
+
+		void SetSimulationState(bool bSimulate) { simulate = bSimulate; }
+		bool IsSimulating() const { return simulate; }
 	private:
 		entt::registry m_Registry;
 		double deltaTime;
 		PhysicsWorld* physicsWorld;
 
+		bool simulate { false };
+		double fixedDTCounter {0};
 
 		uint32_t viewportWidth {0};
 		uint32_t viewportHeight {0};
 
 		friend class SceneHierarchyPanel;
 		friend class Entity;
+		friend class SceneSerializer;
 	};
 
 }

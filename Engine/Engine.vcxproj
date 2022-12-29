@@ -659,6 +659,7 @@
     <ClInclude Include="src\Engine\LayerStack.h" />
     <ClInclude Include="src\Engine\Log.h" />
     <ClInclude Include="src\Engine\Physics\PhysicsWorld.h" />
+    <ClInclude Include="src\Engine\Random.h" />
     <ClInclude Include="src\Engine\Renderer\Buffer.h" />
     <ClInclude Include="src\Engine\Renderer\Camera.h" />
     <ClInclude Include="src\Engine\Renderer\Framebuffer.h" />
@@ -674,6 +675,7 @@
     <ClInclude Include="src\Engine\Scene\Mesh.h" />
     <ClInclude Include="src\Engine\Scene\MeshManager.h" />
     <ClInclude Include="src\Engine\Scene\Scene.h" />
+    <ClInclude Include="src\Engine\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Engine\Scene\Vertex.h" />
     <ClInclude Include="src\Engine\Window.h" />
     <ClInclude Include="src\Engine\engpch.h" />
@@ -703,6 +705,7 @@
     <ClCompile Include="src\Engine\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Engine\Scene\MeshManager.cpp" />
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
+    <ClCompile Include="src\Engine\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Engine\Window.cpp" />
     <ClCompile Include="src\Engine\engpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

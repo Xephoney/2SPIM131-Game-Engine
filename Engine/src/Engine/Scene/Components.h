@@ -56,51 +56,7 @@ namespace Engine
 		operator const std::string& () const { return tag; }
 	};
 
-	struct MeshRenderer
-	{
-		//Mesh m_Mesh;
-		MeshRenderer()
-		{
-			vertexArray.reset(VertexArray::Create());
-			float vertices[7 * 4]
-			{
-				-0.5f, -0.5f, 0.0f, 0.0f, 0.2f, 0.8f, 1.f,
-				 0.5f, -0.5f, 0.0f, 0.9f, 0.0f, 0.3f, 1.f,
-				 0.5f,  0.5f, 0.0f, 0.1f, 0.8f, 0.1f, 1.f,
-				-0.5f,  0.5f, 0.0f, 0.0f, 0.2f, 0.8f, 1.f
-			};
-
-			// Vertex Buffer Stuff 
-			std::shared_ptr<VertexBuffer> vertexBuffer;
-			vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-			vertexBuffer->SetLayout({
-				{ShaderDataType::Float3, "a_Position"},
-				{ShaderDataType::Float4, "a_Color"}
-			});
-			vertexArray->AddVertexBuffer(vertexBuffer);
-
-			
-			// Index Buffer Stuff
-			unsigned int indices[3 * 2]
-			{ 0, 1, 2, 2, 3, 0 };
-
-			std::shared_ptr<IndexBuffer> indexBuffer;
-			indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int)));
-			vertexArray->SetIndexBuffer(indexBuffer);
-
-
-		};
-		MeshRenderer(const MeshRenderer&) = default;
-		//MeshRenderer(const Mesh& mesh) : m_Mesh(mesh) {};
-		MeshRenderer(const std::string& filePath)
-		{
-
-		};
-
-		std::shared_ptr<VertexArray> vertexArray;
-		operator std::shared_ptr<VertexArray>& () { return vertexArray; }
-		operator const std::shared_ptr<VertexArray>& () const { return vertexArray; }
-	};
+	
 	struct StaticMeshRenderer
 	{
 		StaticMesh mesh;
@@ -114,6 +70,87 @@ namespace Engine
 		}
 		operator StaticMesh& () { return mesh; }
 		operator const StaticMesh& () const { return mesh; }
+
+		std::vector<Mesh> GetMeshes()
+		{
+			std::vector<Mesh> meshes;
+			for(auto& s_mesh : mesh.meshes)
+			{
+				auto& mesh = MeshManager::instance().GetMeshFromID(s_mesh);
+				
+				meshes.emplace_back(mesh);
+			}
+		}
+	};
+
+	struct DebugBox
+	{
+		std::shared_ptr<VertexArray> va;
+		DebugBox() = default;
+		DebugBox(glm::vec4 color) : va(VertexArray::Create())
+		{
+			std::vector<Vertex> verts;
+			std::vector<unsigned int> indices;
+			verts.emplace_back(Vertex({  0.505,-0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -0.505,-0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -0.505, 0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ 0.505, 0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ 0.505,-0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -0.505,-0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -0.505, 0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ 0.505, 0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
+
+			indices.push_back(0);
+			indices.push_back(1);
+
+			indices.push_back(0);
+			indices.push_back(3);
+
+			indices.push_back(0);
+			indices.push_back(4);
+
+			indices.push_back(1);
+			indices.push_back(2);
+
+			indices.push_back(1);
+			indices.push_back(5);
+
+			indices.push_back(5);
+			indices.push_back(6);
+
+			indices.push_back(5);
+			indices.push_back(4);
+
+			indices.push_back(4);
+			indices.push_back(7);
+
+			indices.push_back(7);
+			indices.push_back(3);
+
+			indices.push_back(3);
+			indices.push_back(2);
+
+			indices.push_back(2);
+			indices.push_back(6);
+
+			indices.push_back(6);
+			indices.push_back(7);
+			std::shared_ptr<VertexBuffer> vb;
+			vb.reset(VertexBuffer::Create(verts));
+			vb->SetLayout({
+				{ShaderDataType::Float3, "a_Position"},
+				{ShaderDataType::Float3, "a_Normal"},
+				{ShaderDataType::Float4, "a_Color"},
+				{ShaderDataType::Float2, "a_UV"}
+				});
+			va->AddVertexBuffer(vb);
+
+			std::shared_ptr<IndexBuffer> ib;
+			ib.reset(IndexBuffer::Create(indices.data(), indices.size()));
+			va->SetIndexBuffer(ib);
+		}
+		Material mat;
+		DebugBox(const DebugBox&) = default;
 	};
 
 	struct AudioListener
@@ -170,6 +207,14 @@ namespace Engine
 			mass = 1;
 			velocity = 0;
 		}
+		Rigidbody(btRigidBody* rb)
+			: internal_rb(rb)
+		{
+			mass = (float)rb->getMass();
+			if (mass > 0.0)
+				dynamic = true;
+
+		}
 		Rigidbody(const Rigidbody&) = default;
 
 		bool dynamic{ false };
@@ -185,8 +230,18 @@ namespace Engine
 		void SetMass(const float& newMass)
 		{
 			mass = newMass;
-			if(internal_rb)
-				internal_rb->setMassProps(mass, btVector3(0, 0, 0));
+			btVector3 inertia(0,0,0);
+			if (mass > 0.f)
+			{
+				dynamic = true;
+				internal_rb->setMassProps(mass, inertia);
+			}
+			else
+			{
+				
+			}
+			
+				
 		}
 		btRigidBody* internal_rb{ nullptr };
 	};

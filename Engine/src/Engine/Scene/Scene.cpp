@@ -16,6 +16,8 @@ namespace Engine
 	Scene::Scene() 
 	{
 		physicsWorld = new PhysicsWorld();
+
+		CreateEntity("Box");
 	}
 
 	Scene::~Scene()
@@ -29,7 +31,11 @@ namespace Engine
 		entity.AddComponent<Tag>(tagName);
 		entity.AddComponent<Transform>(glm::mat4{1.f});
 		// entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/sphere.gltf");
-		entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/Cube_HP.gltf");
+		entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/split_cube.gltf");
+#ifdef _DEBUG
+		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 1.0, 0.1, 1 });
+#endif
+
 		return entity;
 	}
 
@@ -62,6 +68,17 @@ namespace Engine
 			}
 		}
 
+		// CHECK SIMULATION STATE
+		if(simulate)
+		{
+			fixedDTCounter += dt;
+			if (fixedDTCounter >= 0.005)
+			{
+				OnFixedUpdate(fixedDTCounter);
+				fixedDTCounter = 0;
+			}
+		}		
+
 		{
 			auto view = m_Registry.view<Transform, StaticMeshRenderer>();
 			for (auto& entity : view)
@@ -74,6 +91,19 @@ namespace Engine
 				}
 			}
 		}
+#ifdef _DEBUG
+		{
+			auto view = m_Registry.view<Transform, DebugBox>();
+			for (auto& entity : view)
+			{
+				auto& [transform, DebugComp] = view.get<Transform, DebugBox>(entity);
+				Renderer::SubmitLines(DebugComp.mat, DebugComp.va, transform, static_cast<int>(entity));
+				
+			}
+		}
+#endif
+
+		
 	}
 
 	void Scene::OnFixedUpdate(const double& dt)
@@ -82,14 +112,22 @@ namespace Engine
 		auto view = m_Registry.view<Transform, Rigidbody>();
 		for (auto& entt : view)
 		{
+			btTransform btransform;
+			
 			auto& [transform, rigidbody] = view.get<Transform, Rigidbody>(entt);
-			btVector3 vec = rigidbody.internal_rb->getWorldTransform().getOrigin();
+			rigidbody.internal_rb->getMotionState()->getWorldTransform(btransform);
+			//rigidbody.internal_rb->transform
+			btVector3 vec = btransform.getOrigin();
 			transform.position = { vec.x(), vec.y(), vec.z() };
 			btScalar rot[3];
-			rigidbody.internal_rb->getWorldTransform().getRotation().getEulerZYX(rot[2],rot[1],rot[0]);
-			transform.euler_rotation.x = rot[0];
-			transform.euler_rotation.y = rot[1];
-			transform.euler_rotation.z = rot[2];
+			btransform.getRotation().getEulerZYX(rot[1], rot[0], rot[2]);
+			transform.euler_rotation.x = glm::degrees(rot[0]);
+			transform.euler_rotation.y = glm::degrees(rot[1]);
+			transform.euler_rotation.z = glm::degrees(rot[2]);
+
 		}
 	}
+
+	
+	
 }

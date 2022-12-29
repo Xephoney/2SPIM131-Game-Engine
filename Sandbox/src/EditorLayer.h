@@ -10,6 +10,7 @@
 #include "Engine/Renderer/Framebuffer.h"
 #include "Engine/Renderer/Renderer.h"
 #include "Engine/Scene/Scene.h"
+//#include "Engine/Scene/SceneSerializer.h"
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/gtx/vector_angle.hpp"
 #include "Panels/SceneHierarchyPanel.h"
@@ -33,16 +34,18 @@ namespace Engine
 		SceneHierarchyPanel m_SceneGraph;
 
 
-		EditorLayer() : Layer("MyFirstLayer")
+
+		EditorLayer() : Layer("EditorLayer")
 		{
 			activeScene = std::make_shared<Scene>();
+			auto& ent = activeScene->CreateEntity("Ground");
 			Application::GetApplication().loadedScene = activeScene;
 
 			camera = std::make_shared<PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
 
 			FramebufferSpesification fbs;
 			//						Color Texture	                     Mouse picking (Entity ID)						( Depth Texture ) 
-			fbs.attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+			fbs.attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth, FramebufferTextureFormat::RGBA16F };
 			fbs.width = 1280;
 			fbs.height = 720;
 			fbs.samples = 1;
@@ -104,11 +107,15 @@ namespace Engine
 		void OnAttach() override
 		{
 			m_SceneGraph.SetContext(activeScene);
+			Entity entity = activeScene->CreateEntity("My Fellow Serializer");
+			entity.GetComponent<Transform>().position = { 0, 10, 0 };
+			
+			/*SceneSerializer serializer(activeScene);
+			serializer.SerializeText("../Engine/Assets/Scenes/EditorExample.lvl");*/
 
 		}
 		void OnImGuiRender() override
 		{
-
 			// IMGUI BOILERPLATE
 			static bool p_open = true;
 			static bool opt_fullscreen = true;
@@ -231,6 +238,23 @@ namespace Engine
 			ImGui::PopStyleVar();
 
 			m_SceneGraph.OnImGuiRender();
+
+			ImGui::Begin("##Toolbar",nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			if(!activeScene->IsSimulating())
+			{
+				if(ImGui::Button("Start Simulation"))
+				{
+					activeScene->SetSimulationState(true);
+				}
+			}
+			else
+			{
+				if (ImGui::Button("Pause Simulation"))
+				{
+					activeScene->SetSimulationState(false);
+				}
+			}
+			ImGui::End();
 		}
 
 		void OnEvent(Event& event) override
