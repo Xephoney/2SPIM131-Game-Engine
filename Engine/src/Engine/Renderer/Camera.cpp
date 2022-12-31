@@ -60,30 +60,31 @@ namespace Engine
 		RecalculateViewMatrix();
 	}
 
-	const glm::vec3& Camera::Forward() 
+	glm::vec3 Camera::Forward() 
 	{
 		return m_direction;
 	}
 
-	glm::vec3 Camera::Right() 
+	
+	glm::vec3 Camera::Right()
 	{
-		return normalize(cross(m_direction, { 0,1,0 }));
+		m_right = normalize(cross(m_direction, { 0,1,0 }));
+		return m_right;
 	}
 
 	glm::vec3 Camera::Up() 
 	{
-		return glm::normalize(glm::cross(Right(), m_direction));
+		m_up = glm::normalize(cross(m_right, m_direction));
+		return m_up;
 	}
 
 	void Camera::RecalculateViewMatrix()
 	{
-		m_transform = glm::translate(glm::mat4{ 1.f }, m_position);
-		m_transform = glm::rotate(m_transform, m_rotation.x, glm::vec3(1, 0, 0));
-		m_transform = glm::rotate(m_transform, m_rotation.y, glm::vec3(0, 1, 0));
-		m_transform = glm::rotate(m_transform, m_rotation.z, glm::vec3(0, 0, 1));
-
-		//m_view = glm::inverse(m_transform);
-		m_view = glm::lookAt(m_position, m_position + m_direction, { 0,1,0 });
+		m_transform = translate(glm::mat4{ 1.f }, m_position);
+		m_transform = rotate(m_transform, m_rotation.x, glm::vec3(1, 0, 0));
+		m_transform = rotate(m_transform, m_rotation.y, glm::vec3(0, 1, 0));
+		m_transform = rotate(m_transform, m_rotation.z, glm::vec3(0, 0, 1));
+		m_view = lookAt(m_position, m_position + m_direction, { 0,1,0 });
 
 		m_view_projection = m_projection * m_view;
 	}

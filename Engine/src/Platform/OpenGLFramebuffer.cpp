@@ -134,7 +134,9 @@ namespace Engine
 				case FramebufferTextureFormat::RED_INTEGER:
 					Utils::AttachColorTexture(m_ColorAttachments[i], spesification.samples, GL_R32I, GL_RED_INTEGER, spesification.width, spesification.height, i);
 					break;
-
+				case FramebufferTextureFormat::RGBA16F:
+					Utils::AttachColorTexture(m_ColorAttachments[i], spesification.samples, GL_RGBA16F, GL_RGBA, spesification.width, spesification.height, i);
+					break;
 				default: 
 					break;
 				}

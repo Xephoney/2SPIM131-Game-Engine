@@ -30,6 +30,10 @@ namespace Engine
 		{
 			s_RendererAPI->DrawIndexed(data);
 		}
+		inline static void DrawLinesIndexed(const std::shared_ptr<VertexArray>& data)
+		{
+			s_RendererAPI->DrawLinesIndexed(data);
+		}
 
 	private:
 		static RendererAPI* s_RendererAPI;

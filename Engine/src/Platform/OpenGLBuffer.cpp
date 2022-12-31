@@ -1,6 +1,6 @@
 #include <engpch.h>
 #include "OpenGLBuffer.h"
-
+#include "Engine/Scene/Vertex.h"
 #include <glad/glad.h>
 
 
@@ -15,11 +15,11 @@ namespace Engine
 		
 	}
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(const std::vector<Vertex>& verts, uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const std::vector<Vertex>& verts)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-		glBufferData(GL_ARRAY_BUFFER, size, verts.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * verts.size(), verts.data(), GL_STATIC_DRAW);
 
 	}
 

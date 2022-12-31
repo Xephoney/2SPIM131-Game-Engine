@@ -29,7 +29,7 @@ namespace Engine
 	}
 
 
-	VertexBuffer* VertexBuffer::Create(const std::vector<Vertex>& verts, uint32_t size)
+	VertexBuffer* VertexBuffer::Create(const std::vector<Vertex>& verts)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -38,7 +38,7 @@ namespace Engine
 			return nullptr;
 
 		case RendererAPI::API::OpenGL:
-			return new OpenGLVertexBuffer(verts, size);
+			return new OpenGLVertexBuffer(verts);
 
 
 		default:

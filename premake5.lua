@@ -27,16 +27,22 @@ IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
-
+IncludeDir["Jolt"] = "Engine/3rdParty/jolt/include"
+--IncludeDir["bullet3"] = "Engine/3rdParty/bullet3/include"
+--IncludeDir["yaml_cpp"] = "Engine/3rdParty/yaml-cpp/include"
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
+--LibraryDir["bullet3"] = "Engine/3rdParty/bullet3/libs"
+LibraryDir["Jolt"] = "Engine/3rdParty/jolt/bin/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
 	include "Engine/3rdParty/GLFW"
 	include "Engine/3rdParty/GLAD"
 	include "Engine/3rdParty/imgui"
+	include "Engine/3rdParty/Jolt"
+--	include "Engine/3rdParty/yaml-cpp"
 group ""
 
 project "Engine"
@@ -78,12 +84,18 @@ project "Engine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.entt}"
+		--"%{IncludeDir.bullet3}",
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.Jolt}"
+		--"%{IncludeDir.yaml_cpp}"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
-		"%{LibraryDir.assimp}"
+		--"%{LibraryDir.bullet3}",
+		"%{LibraryDir.Jolt}",
+		"%{LibraryDir.assimp}",
+		
 	}
 
 	links
@@ -91,8 +103,10 @@ project "Engine"
 		"GLFW",
 		"GLAD",
 		"imgui",
+		--"yaml-cpp",
 		"assimp-vc143-mt",
-		"opengl32"
+		"opengl32",
+		"Jolt"
 	}
 
 	filter "system:windows"
@@ -101,6 +115,8 @@ project "Engine"
 		defines
 		{
 			"ENG_PLATFORM_WINDOWS",
+			"BT_USE_DOUBLE_PRECISION",
+			"BT_THREADSAFE=1",
 			"GLFW_INCLUCE_NONE"
 		}
 
@@ -114,6 +130,7 @@ project "Engine"
 		runtime "Release"
 		optimize "on"
 
+
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
@@ -126,11 +143,15 @@ project "Sandbox"
 	
 	files
 	{
+		"%{IncludeDir.yaml_cpp}",
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.hpp"
 	}
-
+	defines
+	{
+		"_CRT_SECURE_NO_WARNINGS"
+	}
 	includedirs
 	{
 		"%{IncludeDir.spdlog}",
@@ -140,17 +161,24 @@ project "Sandbox"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
+		"%{IncludeDir.Jolt}",
+		"Engine/3rdParty/jolt/src",
+		--"%{IncludeDir.bullet3}",
+		--"%{IncludeDir.yaml_cpp}",
 		"Engine/src"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
+		"%{LibraryDir.Jolt}",
+		--"%{LibraryDir.bullet3}",
 		"%{LibraryDir.assimp}"
 	}
 	links
 	{
 		"fmod_vc.lib",
 		"assimp-vc143-mt",
+		"Jolt",
 		"Engine"
 	}
 	postbuildcommands
@@ -165,6 +193,9 @@ project "Sandbox"
 		defines
 		{
 			"ENG_PLATFORM_WINDOWS"
+			--"BT_USE_DOUBLE_PRECISION",
+			--"BT_THREADSAFE=1",
+
 		}
 
 	filter "configurations:Debug"

@@ -13,3 +13,6 @@
 [submodule "Engine/3rdParty/GLFW"]
 	path = Engine/3rdParty/GLFW
 	url = https://github.com/TheCherno/glfw.git
+[submodule "Engine/3rdParty/yaml-cpp"]
+	path = Engine/3rdParty/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git

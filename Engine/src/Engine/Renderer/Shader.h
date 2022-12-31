@@ -1,39 +1,56 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
+#include <memory>
 #include <unordered_map>
 
-class Shader 
+
+namespace Engine
 {
-public:
-    // Constructor generates the shader on the fly
-    Shader() = default;
-    Shader(const std::string& shaderPath);
-    Shader(const std::string& vertexPath, const std::string& fragmentPath);
-    ~Shader();
+	class Shader 
+	{
+		
+	public:
+		virtual ~Shader() = default;
 
-    ///Use the current shader
-    void Bind() const;
-    void Unbind() const;
+		static std::shared_ptr<Shader> Create(const std::string& filepath);
+		static std::shared_ptr<Shader> Create(const std::string& name, const std::string& vertex, const std::string& fragment);
 
+	    ///Use the current shader
+	    virtual void Bind() const = 0;
+	    virtual void Unbind() const = 0;
 
-    void SetUniform1i(const std::string& name, const int& data) ;
-    void SetUniform1f(const std::string& name, const float& data) ;
-    void SetUniform3f(const std::string& name, const glm::vec3& data) ;
-    void SetUniform4f(const std::string& name, const glm::vec4& data) ;
-    void SetUniformMatrix4fv(const std::string& name, const glm::mat4& matrix) ;
-    ///Returns the program number for this shader
-    uint32_t getProgram() const;
+		virtual void SetInt(const std::string& name, int value) = 0;
+		virtual void SetIntArray(const std::string& name, int* values, uint32_t count) = 0;
+		virtual void SetFloat(const std::string& name, float value) = 0;
+		virtual void SetFloat2(const std::string& name, const glm::vec2& value) = 0;
+		virtual void SetFloat3(const std::string& name, const glm::vec3& value) = 0;
+		virtual void SetFloat4(const std::string& name, const glm::vec4& value) = 0;
+		virtual void SetMat3(const std::string& name, const glm::mat3& value) = 0;
+		virtual void SetMat4(const std::string& name, const glm::mat4& value) = 0;
 
-    int GetUniformLocation(const std::string& name);
+	    ///Returns the program number for this shader
+	    
+		virtual const std::string& GetName() const = 0;
 
-private:
-    ///The int OpenGL gives as a reference to this shader
-    uint32_t m_RenderID;
-    std::string m_filePath;
-    std::string shaderNavn;
-    std::unordered_map<std::string, int> m_UniformLocationCache;
+	private:
+	    std::string m_filePath;
+	};
 
-    void CompileShader(const std::string& vertexPath, const std::string& fragmentPath);
-    void CompileShaderFromFile(const std::string& vertexPath, const std::string& fragmentPath);
-};
+	class ShaderLibrary
+	{
+	public:
+		void Add(const std::string& name, const std::shared_ptr<Shader>& shader);
+		void Add(const std::shared_ptr<Shader>& shader);
+
+		std::shared_ptr<Shader> Load(const std::string& filepath);
+		std::shared_ptr<Shader> Load(const std::string& name, const std::string& filepath);
+
+		std::shared_ptr<Shader> Get(const std::string& name);
+
+		bool Exists(const std::string& name) const;
+	private:
+		std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders { };
+	};
+	
+}

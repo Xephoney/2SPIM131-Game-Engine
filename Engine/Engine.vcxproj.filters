@@ -55,6 +55,9 @@
     <Filter Include="src\Engine\ImGui">
       <UniqueIdentifier>{BC1B88A8-A814-A7FA-D146-8C7FBD9E8606}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Engine\Physics">
+      <UniqueIdentifier>{8496B3FD-707A-7453-D9DA-6EA6C5DD5ED5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Renderer">
       <UniqueIdentifier>{F838018B-649A-DE98-ED07-254B59681558}</UniqueIdentifier>
     </Filter>
@@ -1605,6 +1608,15 @@
     <ClInclude Include="src\Engine\Log.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Physics\PhysicsWorld.h">
+      <Filter>src\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Physics\PhysicsWorld_bt.h">
+      <Filter>src\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Random.h">
+      <Filter>src\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Renderer\Buffer.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
@@ -1632,9 +1644,6 @@
     <ClInclude Include="src\Engine\Renderer\Shader.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine\Renderer\ShaderManager.h">
-      <Filter>src\Engine\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="src\Engine\Renderer\VertexArray.h">
       <Filter>src\Engine\Renderer</Filter>
     </ClInclude>
@@ -1651,6 +1660,9 @@
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Scene\Scene.h">
+      <Filter>src\Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Scene\SceneSerializer.h">
       <Filter>src\Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\Engine\Scene\Vertex.h">
@@ -1672,6 +1684,9 @@
       <Filter>src\Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGLRendererAPI.h">
+      <Filter>src\Platform</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGLShader.h">
       <Filter>src\Platform</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGLVertexArray.h">
@@ -1700,6 +1715,12 @@
     <ClCompile Include="src\Engine\Log.cpp">
       <Filter>src\Engine</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\Physics\PhysicsWorld.cpp">
+      <Filter>src\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\PhysicsWorld_bt.cpp">
+      <Filter>src\Engine\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Buffer.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
@@ -1724,13 +1745,13 @@
     <ClCompile Include="src\Engine\Renderer\VertexArray.cpp">
       <Filter>src\Engine\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine\Scene\Entity.cpp">
-      <Filter>src\Engine\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Scene\MeshManager.cpp">
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Scene\Scene.cpp">
+      <Filter>src\Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Scene\SceneSerializer.cpp">
       <Filter>src\Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Window.cpp">
@@ -1751,14 +1772,14 @@
     <ClCompile Include="src\Platform\OpenGLRendererAPI.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGLShader.cpp">
+      <Filter>src\Platform</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGLVertexArray.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\WindowsInput.cpp">
       <Filter>src\Platform</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Engine\Renderer\Shaders\Plainshader.glsl" />
   </ItemGroup>
 </Project>

@@ -76,8 +76,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>engpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;GLFW_INCLUCE_NONE;ENG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;3rdParty\spdlog\include;3rdParty\GLFW\include;3rdParty\GLAD\include;3rdParty\imgui;3rdParty\glm;3rdParty\stb_image\include;3rdParty\FMOD\inc;3rdParty\assimp\include;3rdParty\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;BT_USE_DOUBLE_PRECISION;BT_THREADSAFE=1;GLFW_INCLUCE_NONE;ENG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;3rdParty\spdlog\include;3rdParty\GLFW\include;3rdParty\GLAD\include;3rdParty\imgui;3rdParty\glm;3rdParty\stb_image\include;3rdParty\FMOD\inc;3rdParty\assimp\include;3rdParty\entt\include;3rdParty\jolt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -92,7 +92,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>3rdParty\FMOD\lib;3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>3rdParty\FMOD\lib;3rdParty\jolt\bin\Debug-windows-x86_64;3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -100,8 +100,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>engpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;GLFW_INCLUCE_NONE;ENG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;3rdParty\spdlog\include;3rdParty\GLFW\include;3rdParty\GLAD\include;3rdParty\imgui;3rdParty\glm;3rdParty\stb_image\include;3rdParty\FMOD\inc;3rdParty\assimp\include;3rdParty\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;BT_USE_DOUBLE_PRECISION;BT_THREADSAFE=1;GLFW_INCLUCE_NONE;ENG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;3rdParty\spdlog\include;3rdParty\GLFW\include;3rdParty\GLAD\include;3rdParty\imgui;3rdParty\glm;3rdParty\stb_image\include;3rdParty\FMOD\inc;3rdParty\assimp\include;3rdParty\entt\include;3rdParty\jolt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -119,7 +119,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>3rdParty\FMOD\lib;3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>3rdParty\FMOD\lib;3rdParty\jolt\bin\Release-windows-x86_64;3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
@@ -127,8 +127,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>engpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;GLFW_INCLUCE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;3rdParty\spdlog\include;3rdParty\GLFW\include;3rdParty\GLAD\include;3rdParty\imgui;3rdParty\glm;3rdParty\stb_image\include;3rdParty\FMOD\inc;3rdParty\assimp\include;3rdParty\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;BT_USE_DOUBLE_PRECISION;BT_THREADSAFE=1;GLFW_INCLUCE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;3rdParty\spdlog\include;3rdParty\GLFW\include;3rdParty\GLAD\include;3rdParty\imgui;3rdParty\glm;3rdParty\stb_image\include;3rdParty\FMOD\inc;3rdParty\assimp\include;3rdParty\entt\include;3rdParty\jolt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -141,7 +141,7 @@
     </Link>
     <Lib>
       <AdditionalDependencies>assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>3rdParty\FMOD\lib;3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>3rdParty\FMOD\lib;3rdParty\jolt\bin\Distribution-windows-x86_64;3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -658,6 +658,9 @@
     <ClInclude Include="src\Engine\Layer.h" />
     <ClInclude Include="src\Engine\LayerStack.h" />
     <ClInclude Include="src\Engine\Log.h" />
+    <ClInclude Include="src\Engine\Physics\PhysicsWorld.h" />
+    <ClInclude Include="src\Engine\Physics\PhysicsWorld_bt.h" />
+    <ClInclude Include="src\Engine\Random.h" />
     <ClInclude Include="src\Engine\Renderer\Buffer.h" />
     <ClInclude Include="src\Engine\Renderer\Camera.h" />
     <ClInclude Include="src\Engine\Renderer\Framebuffer.h" />
@@ -667,13 +670,13 @@
     <ClInclude Include="src\Engine\Renderer\Renderer.h" />
     <ClInclude Include="src\Engine\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Engine\Renderer\Shader.h" />
-    <ClInclude Include="src\Engine\Renderer\ShaderManager.h" />
     <ClInclude Include="src\Engine\Renderer\VertexArray.h" />
     <ClInclude Include="src\Engine\Scene\Components.h" />
     <ClInclude Include="src\Engine\Scene\Entity.h" />
     <ClInclude Include="src\Engine\Scene\Mesh.h" />
     <ClInclude Include="src\Engine\Scene\MeshManager.h" />
     <ClInclude Include="src\Engine\Scene\Scene.h" />
+    <ClInclude Include="src\Engine\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Engine\Scene\Vertex.h" />
     <ClInclude Include="src\Engine\Window.h" />
     <ClInclude Include="src\Engine\engpch.h" />
@@ -681,6 +684,7 @@
     <ClInclude Include="src\Platform\OpenGLContext.h" />
     <ClInclude Include="src\Platform\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Platform\OpenGLRendererAPI.h" />
+    <ClInclude Include="src\Platform\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGLVertexArray.h" />
   </ItemGroup>
   <ItemGroup>
@@ -691,6 +695,8 @@
     <ClCompile Include="src\Engine\Layer.cpp" />
     <ClCompile Include="src\Engine\LayerStack.cpp" />
     <ClCompile Include="src\Engine\Log.cpp" />
+    <ClCompile Include="src\Engine\Physics\PhysicsWorld.cpp" />
+    <ClCompile Include="src\Engine\Physics\PhysicsWorld_bt.cpp" />
     <ClCompile Include="src\Engine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Engine\Renderer\Camera.cpp" />
     <ClCompile Include="src\Engine\Renderer\Framebuffer.cpp" />
@@ -699,9 +705,9 @@
     <ClCompile Include="src\Engine\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Engine\Renderer\Shader.cpp" />
     <ClCompile Include="src\Engine\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\Engine\Scene\Entity.cpp" />
     <ClCompile Include="src\Engine\Scene\MeshManager.cpp" />
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
+    <ClCompile Include="src\Engine\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Engine\Window.cpp" />
     <ClCompile Include="src\Engine\engpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -710,6 +716,7 @@
     <ClCompile Include="src\Platform\OpenGLContext.cpp" />
     <ClCompile Include="src\Platform\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGLRendererAPI.cpp" />
+    <ClCompile Include="src\Platform\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\WindowsInput.cpp" />
   </ItemGroup>
@@ -723,9 +730,9 @@
     <ProjectReference Include="3rdParty\imgui\imgui.vcxproj">
       <Project>{0098A80F-6CAC-D0C0-352E-7420A101CDF1}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Engine\Renderer\Shaders\Plainshader.glsl" />
+    <ProjectReference Include="3rdParty\Jolt\Jolt.vcxproj">
+      <Project>{1E8A877C-0AC1-880D-B3AD-6E109FC3040F}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

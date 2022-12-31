@@ -20,6 +20,11 @@ namespace Engine
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
+	void OpenGLRendererAPI::DrawLinesIndexed(const std::shared_ptr<VertexArray>& data)
+	{
+		glDrawElements(GL_LINES, data->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
 	void OpenGLRendererAPI::Init()
 	{
 		glEnable(GL_DEPTH_TEST);
