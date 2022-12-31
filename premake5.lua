@@ -27,18 +27,21 @@ IncludeDir["entt"] = "Engine/3rdParty/entt/include"
 IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
-IncludeDir["bullet3"] = "Engine/3rdParty/bullet3/include"
+IncludeDir["Jolt"] = "Engine/3rdParty/jolt/include"
+--IncludeDir["bullet3"] = "Engine/3rdParty/bullet3/include"
 --IncludeDir["yaml_cpp"] = "Engine/3rdParty/yaml-cpp/include"
 
 LibraryDir = {}
 LibraryDir["FMOD"] = "Engine/3rdParty/FMOD/lib"
 LibraryDir["assimp"] = "Engine/3rdParty/assimp/lib"
-LibraryDir["bullet3"] = "Engine/3rdParty/bullet3/libs"
+--LibraryDir["bullet3"] = "Engine/3rdParty/bullet3/libs"
+LibraryDir["Jolt"] = "Engine/3rdParty/jolt/bin/%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 group "Dependencies"
 	include "Engine/3rdParty/GLFW"
 	include "Engine/3rdParty/GLAD"
 	include "Engine/3rdParty/imgui"
+	include "Engine/3rdParty/Jolt"
 --	include "Engine/3rdParty/yaml-cpp"
 group ""
 
@@ -81,15 +84,18 @@ project "Engine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.bullet3}",
-		"%{IncludeDir.entt}"
+		--"%{IncludeDir.bullet3}",
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.Jolt}"
 		--"%{IncludeDir.yaml_cpp}"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
-		"%{LibraryDir.bullet3}",
-		"%{LibraryDir.assimp}"
+		--"%{LibraryDir.bullet3}",
+		"%{LibraryDir.Jolt}",
+		"%{LibraryDir.assimp}",
+		
 	}
 
 	links
@@ -99,7 +105,8 @@ project "Engine"
 		"imgui",
 		--"yaml-cpp",
 		"assimp-vc143-mt",
-		"opengl32"
+		"opengl32",
+		"Jolt"
 	}
 
 	filter "system:windows"
@@ -117,23 +124,12 @@ project "Engine"
 		defines "ENG_DEBUG"
 		runtime "Debug"
 		symbols "on"
-		links
-		{
-			"BulletDynamics_vs2010_x64_debug",
-			"BulletCollision_vs2010_x64_debug",
-			"LinearMath_vs2010_x64_debug",
-		}
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
 		runtime "Release"
 		optimize "on"
-		links
-		{
-			"BulletDynamics_vs2010_x64_release",
-			"BulletCollision_vs2010_x64_release",
-			"LinearMath_vs2010_x64_release",
-		}
+
 
 project "Sandbox"
 	location "Sandbox"
@@ -165,20 +161,24 @@ project "Sandbox"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.FMOD}",
 		"%{IncludeDir.assimp}",
-		"%{IncludeDir.bullet3}",
+		"%{IncludeDir.Jolt}",
+		"Engine/3rdParty/jolt/src",
+		--"%{IncludeDir.bullet3}",
 		--"%{IncludeDir.yaml_cpp}",
 		"Engine/src"
 	}
 	libdirs
 	{
 		"%{LibraryDir.FMOD}",
-		"%{LibraryDir.bullet3}",
+		"%{LibraryDir.Jolt}",
+		--"%{LibraryDir.bullet3}",
 		"%{LibraryDir.assimp}"
 	}
 	links
 	{
 		"fmod_vc.lib",
 		"assimp-vc143-mt",
+		"Jolt",
 		"Engine"
 	}
 	postbuildcommands
@@ -192,9 +192,9 @@ project "Sandbox"
 
 		defines
 		{
-			"ENG_PLATFORM_WINDOWS",
-			"BT_USE_DOUBLE_PRECISION",
-			"BT_THREADSAFE=1",
+			"ENG_PLATFORM_WINDOWS"
+			--"BT_USE_DOUBLE_PRECISION",
+			--"BT_THREADSAFE=1",
 
 		}
 
@@ -202,23 +202,11 @@ project "Sandbox"
 		defines "ENG_DEBUG"
 		runtime "Debug"
 		symbols "on"
-		links
-		{
-			"BulletDynamics_vs2010_x64_debug",
-			"BulletCollision_vs2010_x64_debug",
-			"LinearMath_vs2010_x64_debug",
-		}
 
 	filter "configurations:Release"
 		defines "ENG_RELEASE"
 		runtime "Release"
 		optimize "on"
-		links
-		{
-			"BulletDynamics_vs2010_x64_release",
-			"BulletCollision_vs2010_x64_release",
-			"LinearMath_vs2010_x64_release",
-		}
 
 
 

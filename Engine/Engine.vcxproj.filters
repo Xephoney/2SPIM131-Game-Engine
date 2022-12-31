@@ -1611,6 +1611,9 @@
     <ClInclude Include="src\Engine\Physics\PhysicsWorld.h">
       <Filter>src\Engine\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Physics\PhysicsWorld_bt.h">
+      <Filter>src\Engine\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Engine\Random.h">
       <Filter>src\Engine</Filter>
     </ClInclude>
@@ -1713,6 +1716,9 @@
       <Filter>src\Engine</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Physics\PhysicsWorld.cpp">
+      <Filter>src\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Physics\PhysicsWorld_bt.cpp">
       <Filter>src\Engine\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Renderer\Buffer.cpp">

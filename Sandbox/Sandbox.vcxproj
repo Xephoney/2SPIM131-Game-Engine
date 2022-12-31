@@ -78,8 +78,8 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;BT_USE_DOUBLE_PRECISION;BT_THREADSAFE=1;ENG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\3rdParty\bullet3\include;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;ENG_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\3rdParty\jolt\include;..\Engine\3rdParty\jolt\src;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -91,8 +91,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>fmod_vc.lib;assimp-vc143-mt.lib;BulletDynamics_vs2010_x64_debug.lib;BulletCollision_vs2010_x64_debug.lib;LinearMath_vs2010_x64_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Engine\3rdParty\FMOD\lib;..\Engine\3rdParty\bullet3\libs;..\Engine\3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Engine\3rdParty\FMOD\lib;..\Engine\3rdParty\jolt\bin\Debug-windows-x86_64;..\Engine\3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /B /Y $(SolutionDir)Engine\3rdParty\FMOD\lib\fmod.dll $(TargetDir)
@@ -103,8 +103,8 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;BT_USE_DOUBLE_PRECISION;BT_THREADSAFE=1;ENG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\3rdParty\bullet3\include;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;ENG_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\3rdParty\jolt\include;..\Engine\3rdParty\jolt\src;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -119,8 +119,8 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>fmod_vc.lib;assimp-vc143-mt.lib;BulletDynamics_vs2010_x64_release.lib;BulletCollision_vs2010_x64_release.lib;LinearMath_vs2010_x64_release.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Engine\3rdParty\FMOD\lib;..\Engine\3rdParty\bullet3\libs;..\Engine\3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Engine\3rdParty\FMOD\lib;..\Engine\3rdParty\jolt\bin\Release-windows-x86_64;..\Engine\3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /B /Y $(SolutionDir)Engine\3rdParty\FMOD\lib\fmod.dll $(TargetDir)
@@ -131,8 +131,8 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;BT_USE_DOUBLE_PRECISION;BT_THREADSAFE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\3rdParty\bullet3\include;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ENG_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Engine\3rdParty\spdlog\include;..\Engine\3rdParty\GLFW\include;..\Engine\3rdParty\imgui;..\Engine\3rdParty\glm;..\Engine\3rdParty\entt\include;..\Engine\3rdParty\FMOD\inc;..\Engine\3rdParty\assimp\include;..\Engine\3rdParty\jolt\include;..\Engine\3rdParty\jolt\src;..\Engine\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -143,7 +143,7 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
     <Link>
       <SubSystem>Console</SubSystem>
       <AdditionalDependencies>fmod_vc.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Engine\3rdParty\FMOD\lib;..\Engine\3rdParty\bullet3\libs;..\Engine\3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Engine\3rdParty\FMOD\lib;..\Engine\3rdParty\jolt\bin\Distribution-windows-x86_64;..\Engine\3rdParty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /B /Y $(SolutionDir)Engine\3rdParty\FMOD\lib\fmod.dll $(TargetDir)
@@ -162,6 +162,9 @@ copy /B /Y $(SolutionDir)Engine\3rdParty\assimp\lib\assimp-vc143-mt.dll $(Target
     <None Include=".." />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Engine\3rdParty\Jolt\Jolt.vcxproj">
+      <Project>{1E8A877C-0AC1-880D-B3AD-6E109FC3040F}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Engine\Engine.vcxproj">
       <Project>{DBC7D3B0-C769-FE86-B024-12DB9C6585D7}</Project>
     </ProjectReference>

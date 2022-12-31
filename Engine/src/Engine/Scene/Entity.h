@@ -70,6 +70,7 @@ namespace Engine
 	private:
 
 		Scene* m_Scene { nullptr };
+		
 	};
 
 	

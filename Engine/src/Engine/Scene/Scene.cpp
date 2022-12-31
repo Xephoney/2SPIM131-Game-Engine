@@ -15,9 +15,11 @@ namespace Engine
 {
 	Scene::Scene() 
 	{
-		physicsWorld = new PhysicsWorld();
+		//physicsWorld = new PhysicsWorld();
 
-		CreateEntity("Box");
+		physicsWorld = new PhysicsWorld();
+		physicsWorld->Initialize();
+
 	}
 
 	Scene::~Scene()
@@ -72,10 +74,10 @@ namespace Engine
 		if(simulate)
 		{
 			fixedDTCounter += dt;
-			if (fixedDTCounter >= 0.005)
+			while(fixedDTCounter >= 0.005)
 			{
 				OnFixedUpdate(fixedDTCounter);
-				fixedDTCounter = 0;
+				fixedDTCounter -= 0.005;
 			}
 		}		
 
@@ -88,11 +90,19 @@ namespace Engine
 				{
 					auto mesh = MeshManager::instance().GetMeshFromID(staticmesh.mesh.meshes[i]);
 					Renderer::Submit(mesh.material, mesh.vertexArray, transform, static_cast<int>(entity));
+#ifdef _DEBUG
+					Entity ent{ entity, this };
+					if(ent.HasComponent<DebugBox>())
+					{
+						auto& DebugComp = ent.GetComponent<DebugBox>();
+						Renderer::SubmitLines(DebugComp.mat, DebugComp.va, transform, static_cast<int>(entity));
+					}
+#endif
 				}
 			}
 		}
 #ifdef _DEBUG
-		{
+		/*{
 			auto view = m_Registry.view<Transform, DebugBox>();
 			for (auto& entity : view)
 			{
@@ -100,7 +110,7 @@ namespace Engine
 				Renderer::SubmitLines(DebugComp.mat, DebugComp.va, transform, static_cast<int>(entity));
 				
 			}
-		}
+		}*/
 #endif
 
 		
@@ -109,22 +119,15 @@ namespace Engine
 	void Scene::OnFixedUpdate(const double& dt)
 	{
 		physicsWorld->Tick(dt);
-		auto view = m_Registry.view<Transform, Rigidbody>();
-		for (auto& entt : view)
+		auto view = m_Registry.view<Transform, RigidBody>();
+		
+		for (auto& entity : view)
 		{
-			btTransform btransform;
-			
-			auto& [transform, rigidbody] = view.get<Transform, Rigidbody>(entt);
-			rigidbody.internal_rb->getMotionState()->getWorldTransform(btransform);
-			//rigidbody.internal_rb->transform
-			btVector3 vec = btransform.getOrigin();
-			transform.position = { vec.x(), vec.y(), vec.z() };
-			btScalar rot[3];
-			btransform.getRotation().getEulerZYX(rot[1], rot[0], rot[2]);
-			transform.euler_rotation.x = glm::degrees(rot[0]);
-			transform.euler_rotation.y = glm::degrees(rot[1]);
-			transform.euler_rotation.z = glm::degrees(rot[2]);
+			auto& [transform, rb] = view.get<Transform, RigidBody>(entity);
 
+			physicsWorld->GetBodyPosition(rb.data, transform.position);
+			physicsWorld->GetBodyRotation(rb.data, transform.euler_rotation);
+						
 		}
 	}
 

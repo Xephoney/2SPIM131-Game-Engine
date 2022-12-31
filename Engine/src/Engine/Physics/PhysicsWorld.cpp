@@ -1,85 +1,234 @@
 #include <engpch.h>
 
+
 #include "PhysicsWorld.h"
-#include "Engine/Log.h"
-#include "glm/glm.hpp"
+
+#include "engine/log.h"
+
+using namespace JPH;
+
+using namespace JPH::literals;
+
+namespace Layers
+{
+	static constexpr uint8 NON_MOVING = 0;
+	static constexpr uint8 MOVING = 1;
+	static constexpr uint8 NUM_LAYERS = 2;
+};
+
+static bool MyObjectCanCollide(ObjectLayer inObject1, ObjectLayer inObject2)
+{
+	switch (inObject1)
+	{
+	case Layers::NON_MOVING:
+		return inObject2 == Layers::MOVING; // Non moving only collides with moving
+	case Layers::MOVING:
+		return true; // Moving collides with everything
+	default:
+		JPH_ASSERT(false);
+		return false;
+	}
+};
+
+namespace BroadPhaseLayers
+{
+	static constexpr BroadPhaseLayer NON_MOVING(0);
+	static constexpr BroadPhaseLayer MOVING(1);
+	static constexpr uint NUM_LAYERS(2);
+};
+
+class BPLayerInterfaceImpl final : public BroadPhaseLayerInterface
+{
+public:
+	BPLayerInterfaceImpl()
+	{
+		// Create a mapping table from object to broad phase layer
+		mObjectToBroadPhase[Layers::NON_MOVING] = BroadPhaseLayers::NON_MOVING;
+		mObjectToBroadPhase[Layers::MOVING] = BroadPhaseLayers::MOVING;
+	}
+
+	virtual uint					GetNumBroadPhaseLayers() const override
+	{
+		return BroadPhaseLayers::NUM_LAYERS;
+	}
+
+	virtual BroadPhaseLayer			GetBroadPhaseLayer(ObjectLayer inLayer) const override
+	{
+		JPH_ASSERT(inLayer < Layers::NUM_LAYERS);
+		return mObjectToBroadPhase[inLayer];
+	}
+
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+	virtual const char* GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override
+	{
+		switch ((BroadPhaseLayer::Type)inLayer)
+		{
+		case (BroadPhaseLayer::Type)BroadPhaseLayers::NON_MOVING:	return "NON_MOVING";
+		case (BroadPhaseLayer::Type)BroadPhaseLayers::MOVING:		return "MOVING";
+		default:													JPH_ASSERT(false); return "INVALID";
+		}
+	}
+#endif // JPH_EXTERNAL_PROFILE || JPH_PROFILE_ENABLED
+
+private:
+	BroadPhaseLayer					mObjectToBroadPhase[Layers::NUM_LAYERS];
+};
+
+class MyBodyActivationListener : public BodyActivationListener
+{
+public:
+	virtual void		OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
+	{
+		ENGINE_LOG_INFO("PHYSICS :: A body got activated");
+	}
+
+	virtual void		OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
+	{
+		ENGINE_LOG_INFO("PHYSICS :: A body went to sleep");
+	}
+};
+
+
+// Function that determines if two broadphase layers can collide
+static bool MyBroadPhaseCanCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2)
+{
+	switch (inLayer1)
+	{
+	case Layers::NON_MOVING:
+		return inLayer2 == BroadPhaseLayers::MOVING;
+	case Layers::MOVING:
+		return true;
+	default:
+		JPH_ASSERT(false);
+		return false;
+	}
+}
+static void TraceImpl(const char* inFMT, ...)
+{
+	ENGINE_LOG_TRACE(inFMT);
+}
+// An example contact listener
+class MyContactListener : public ContactListener
+{
+public:
+	// See: ContactListener
+	virtual ValidateResult	OnContactValidate(const Body& inBody1, const Body& inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override
+	{
+		ENGINE_LOG_INFO("Contact validate callback" );
+
+		// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
+		return ValidateResult::AcceptAllContactsForThisBodyPair;
+	}
+
+	virtual void			OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
+	{
+		ENGINE_LOG_INFO("A contact was added");
+	}
+
+	virtual void			OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
+	{
+		ENGINE_LOG_INFO("A contact was persisted");
+	}
+
+	virtual void			OnContactRemoved(const SubShapeIDPair& inSubShapePair) override
+	{
+		ENGINE_LOG_INFO("A contact was removed");
+	}
+};
 
 namespace Engine
 {
+	PhysicsWorld::PhysicsWorld() = default;
+	
 
-	PhysicsWorld::PhysicsWorld()
+	void PhysicsWorld::Initialize(bool withFloor)
 	{
-		if (_instance)
+		// Register allocation hook
+		RegisterDefaultAllocator();
+		Trace = TraceImpl;
+		Factory::sInstance = new Factory();
+		RegisterTypes();
+
+		constexpr uint cMaxBodies = 65536;
+
+		constexpr uint cNumMutexes = 0;
+
+		constexpr uint cMaxBodyPairs = 65536;
+
+		constexpr uint cMaxContactConstraints = 10240;
+
+		broad_phase_layer_interface = new BPLayerInterfaceImpl;
+		physics_system = new PhysicsSystem();
+		physics_system->Init(cMaxBodies,
+			cNumMutexes,
+			cMaxBodyPairs,
+			cMaxContactConstraints,
+			*broad_phase_layer_interface,
+			MyBroadPhaseCanCollide,
+			MyObjectCanCollide
+		);
+
+		body_activation_listener = new MyBodyActivationListener();
+		physics_system->SetBodyActivationListener(body_activation_listener);
+		physics_system->SetGravity({ 0,-10.0,0 });
+		// Used to interface with (Rigid)bodies
+		BodyInterface& body_interface = physics_system->GetBodyInterface();
+		if(withFloor)
 		{
-			delete this;
-			return;
+			BoxShapeSettings floor_shape_settings(Vec3(1000.0f, 1.0f, 1000.0f));
+
+			// Create the shape
+			ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
+			ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
+
+			BodyCreationSettings floor_settings(floor_shape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
+			body_interface.CreateAndAddBody(floor_settings, EActivation::DontActivate);
 		}
-		
-		_instance = this;
-		Initialize();
+		//physics_system.OptimizeBroadPhase();
+
+		temp_alloc = new TempAllocatorImpl(100 * 1024 * 1024);
+		job_system = new JobSystemThreadPool(2048, 8, thread::hardware_concurrency() - 1);
 	}
 
-	PhysicsWorld::~PhysicsWorld()
+	void PhysicsWorld::Tick(const double& timeStep)
 	{
-		delete overlappingPairCache;
-		delete collConfig;
-		delete dispatcher;
-		delete solver;
-		delete dynamics_world;
+		physics_system->Update(timeStep, 1, 1, temp_alloc, job_system);
 	}
 
-	void PhysicsWorld::Initialize()
+	auto PhysicsWorld::CreateBoxBody(bool dynamic, const glm::vec3& _position,
+		const glm::vec3& _eulRotation, const glm::vec3& halfExtent) -> BodyID
 	{
-		overlappingPairCache = new btDbvtBroadphase();
+		BodyInterface& interface = physics_system->GetBodyInterface();
+		EMotionType type;
+		dynamic ? type = EMotionType::Dynamic : type = EMotionType::Static;
 
-		collConfig = new btDefaultCollisionConfiguration();
-		dispatcher = new btCollisionDispatcher(collConfig);
-
-		solver = new btSequentialImpulseConstraintSolver();
-
-		dynamics_world = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collConfig);
-
-		dynamics_world->setGravity(btVector3{ 0.0,-10, 0.0 });
-
-
-
-
+		const BodyCreationSettings settings(
+			new BoxShape({ halfExtent.x,halfExtent.y,halfExtent.z }),
+			{_position.x, _position.y, _position.z},
+			Quat::sEulerAngles({ _eulRotation.x, _eulRotation.y, _eulRotation.z }),
+			type,
+			Layers::MOVING
+			);
+		Body* bdy = interface.CreateBody(settings);
+		
+		interface.AddBody(bdy->GetID(), EActivation::Activate);
+		return bdy->GetID();
 	}
 
-	btRigidBody* PhysicsWorld::NewRigidBody(float mass, const glm::vec3& position, const glm::vec3& rotation, CollisionShape collision_shape )
+	auto PhysicsWorld::CreateSphereBody(bool dynamic, const glm::vec3& _position, const glm::vec3& _eulRotation,
+		const float& radius) -> JPH::BodyID
 	{
-		btTransform _transform = btTransform{
-			btQuaternion(rotation.y, rotation.x, rotation.z),
-			btVector3(position.x, position.y, position.z) };
-		
-		
-		
-		auto motionState = new btDefaultMotionState(_transform);
-		btCollisionShape* col_shape {nullptr}; 
-		switch (collision_shape)
-		{
-			case CollisionShape::Box:			col_shape = new btBoxShape({0.5,0.5 ,0.5 });
-			case CollisionShape::Cylinder:		col_shape = new btCylinderShape({ 0.5,0.5,0.5 });
-			case CollisionShape::Sphere:		col_shape = new btSphereShape(0.5);
-			default: ;
-		}
-		btVector3 myStartingInertia(0, 0, 0);
-		if(mass > 0.0)
-			col_shape->calculateLocalInertia(mass, myStartingInertia);
+		BodyInterface& interface = physics_system->GetBodyInterface();
+		EMotionType type;
+		dynamic ? type = EMotionType::Dynamic : type = EMotionType::Static;
 
-		btRigidBody::btRigidBodyConstructionInfo myRigidBodyConstructionInfo(mass,
-			motionState, col_shape,
-			myStartingInertia);
-		myRigidBodyConstructionInfo.m_restitution = 0.35;
-		myRigidBodyConstructionInfo.m_friction = 0.0;
-		
-		btRigidBody* body = new btRigidBody(myRigidBodyConstructionInfo);
-		dynamics_world->addRigidBody(body);
-		return body;
-	}
-
-	void PhysicsWorld::Tick(const double& timeStep) const
-	{
-		dynamics_world->stepSimulation(timeStep*0.1,2);
+		const BodyCreationSettings settings(
+			new SphereShape(radius),
+			{ _position.x, _position.y, _position.z },
+			Quat::sEulerAngles({ _eulRotation.x, _eulRotation.y, _eulRotation.z }),
+			type,
+			Layers::MOVING
+		);
+		return interface.CreateAndAddBody(settings, EActivation::Activate);
 	}
 }

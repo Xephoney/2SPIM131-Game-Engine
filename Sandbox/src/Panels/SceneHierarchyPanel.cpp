@@ -5,7 +5,7 @@
 #include "Engine/Scene/Entity.h"
 #include <glm/glm.hpp>
 #include "glm/gtc/type_ptr.hpp"
-#include "Engine/Physics/PhysicsWorld.h"
+//#include "Engine/Physics/PhysicsWorld.h"
 #include "Engine/Random.h"
 
 namespace Engine
@@ -132,41 +132,44 @@ namespace Engine
 			ImGui::Separator();
 		}
 
-		if (entity.HasComponent<Rigidbody>())
+		if (entity.HasComponent<RigidBody>())
 		{
-			if (ImGui::TreeNodeEx((void*)(typeid(Rigidbody).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Rigidbody"))
+			if (ImGui::TreeNodeEx((void*)(typeid(RigidBody).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Rigidbody"))
 			{
-				auto& rb = entity.GetComponent<Rigidbody>();
-				
+				auto& rb = entity.GetComponent<RigidBody>();
+
+				auto& interface = m_scene->physicsWorld->GetInterface();
 				if (positionDirtyFlag)
-					rb.internal_rb->getWorldTransform().setOrigin({ entity.GetComponent<Transform>().position.x,entity.GetComponent<Transform>().position.y,entity.GetComponent<Transform>().position.z });
+					interface.SetPosition(rb.data,{
+						entity.GetComponent<Transform>().position.x,
+						entity.GetComponent<Transform>().position.y,
+						entity.GetComponent<Transform>().position.z }, 
+						JPH::EActivation::Activate);
+						
 				if(rotationDirtyFlag)
-					rb.internal_rb->getWorldTransform().setRotation(btQuaternion{ glm::radians(entity.GetComponent<Transform>().euler_rotation.z),glm::radians(entity.GetComponent<Transform>().euler_rotation.y), glm::radians(entity.GetComponent<Transform>().euler_rotation.x)});
+					interface.SetRotation(rb.data, JPH::Quat::sEulerAngles({
+						glm::radians(entity.GetComponent<Transform>().euler_rotation.x),
+						glm::radians(entity.GetComponent<Transform>().euler_rotation.y),
+						glm::radians(entity.GetComponent<Transform>().euler_rotation.z) }),
+						JPH::EActivation::Activate);
 				if(ImGui::Checkbox("Dynamic", &rb.dynamic))
 				{
-					if(rb.mass > 0.0 && rb.dynamic)
+					if(rb.dynamic)
 					{
-						btVector3 localinert = rb.internal_rb->getLocalInertia();
-						rb.internal_rb->getCollisionShape()->calculateLocalInertia(rb.mass, localinert);
-						rb.internal_rb->setMassProps(rb.mass, localinert);
-						//rb.internal_rb->setAngularVelocity(btVector3{ 0,10,0 });
+						interface.SetMotionType(rb.data, JPH::EMotionType::Dynamic, JPH::EActivation::Activate);
 					}
 					else
 					{
-						rb.internal_rb->setMassProps(0, btVector3(0,0,0));
+						interface.SetMotionType(rb.data, JPH::EMotionType::Static, JPH::EActivation::Activate);
 					}
 				}
 
-				ImGui::Text("Mass  "); ImGui::SameLine();
-				
-				if (ImGui::DragFloat(" ##kjdsafjlkdsafdsa", &rb.mass, 1.f, 0.f, 200000.f))
-					rb.internal_rb->setMassProps(rb.mass, { 0,0,0 });
-
 				if(ImGui::Button("Reset Motion"))
 				{
-					rb.internal_rb->clearForces();
-					rb.internal_rb->setLinearVelocity({ 0,0,0 });
-					rb.internal_rb->setAngularVelocity({ 0,0,0 });
+					interface.SetLinearAndAngularVelocity(
+						rb.data,
+						{ 0,0,0 },
+						{ 0,0,0 });
 				}
 
 				ImGui::TreePop();
@@ -176,8 +179,8 @@ namespace Engine
 		else if (ImGui::Button("Add RigidBody"))
 		{
 			auto& tf =  entity.GetComponent<Transform>();
-			auto rb= m_scene->physicsWorld->NewRigidBody(1.f, tf.position, tf.euler_rotation, CollisionShape::Box);
-			entity.AddComponent<Rigidbody>(rb);
+			auto rb= m_scene->physicsWorld->CreateBoxBody(true, tf.position, tf.euler_rotation, {0.5f,0.5f ,0.5f });
+			entity.AddComponent<RigidBody>(rb);
 		}
 		ImGui::Separator();
 	}

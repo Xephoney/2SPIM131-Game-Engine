@@ -3,11 +3,13 @@
 #include <string>
 
 #include "MeshManager.h"
+#include "Engine/Application.h"
+#include "Engine/Application.h"
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Audio/sound.h"
 #include "glm/gtx/transform.hpp"
 
-
+#include "Jolt/Jolt.h"
 namespace Engine
 {
 
@@ -91,14 +93,15 @@ namespace Engine
 		{
 			std::vector<Vertex> verts;
 			std::vector<unsigned int> indices;
-			verts.emplace_back(Vertex({  0.505,-0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ -0.505,-0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ -0.505, 0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ 0.505, 0.505,0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ 0.505,-0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ -0.505,-0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ -0.505, 0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
-			verts.emplace_back(Vertex({ 0.505, 0.505,-0.505 }, { 0,0,0 }, color, { 0,0 }));
+			float size = 0.5001;
+			verts.emplace_back(Vertex({ size,-size,size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -size,-size,size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -size, size,size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ size, size,size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ size,-size,-size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -size,-size,-size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ -size, size,-size }, { 0,0,0 }, color, { 0,0 }));
+			verts.emplace_back(Vertex({ size, size,-size }, { 0,0,0 }, color, { 0,0 }));
 
 			indices.push_back(0);
 			indices.push_back(1);
@@ -200,7 +203,17 @@ namespace Engine
 		}
 	};
 
-	struct Rigidbody
+	struct RigidBody
+	{
+		JPH::BodyID data {0};
+		bool dynamic { true };
+		RigidBody() = default;
+		RigidBody(JPH::BodyID id) : data(id) { }
+		RigidBody(const RigidBody&) = default;
+		
+	};
+
+	/*struct Rigidbody_bt
 	{
 		Rigidbody()
 		{
@@ -245,6 +258,7 @@ namespace Engine
 		}
 		btRigidBody* internal_rb{ nullptr };
 	};
+	*/
 
 	struct CameraComponent
 	{

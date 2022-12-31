@@ -38,7 +38,6 @@ namespace Engine
 		EditorLayer() : Layer("EditorLayer")
 		{
 			activeScene = std::make_shared<Scene>();
-			auto& ent = activeScene->CreateEntity("Ground");
 			Application::GetApplication().loadedScene = activeScene;
 
 			camera = std::make_shared<PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
