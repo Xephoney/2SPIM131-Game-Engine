@@ -14,6 +14,8 @@ namespace Engine
 		void SetContext(const std::shared_ptr<Scene>& scene);
 		void PickEntity(const uint32_t& EntityID);
 		void OnImGuiRender();
+		void ClearEntity() { m_Selected = { entt::null, m_scene.get() }; }
+		Entity GetSelectedEntity() const { return m_Selected; }
 	private:
 
 		void DrawEntityNode(Entity entity);

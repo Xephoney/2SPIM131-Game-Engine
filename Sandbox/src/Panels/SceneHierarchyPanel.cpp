@@ -36,7 +36,7 @@ namespace Engine
 		});
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
-			m_Selected = {};
+			m_Selected = {entt::null, m_scene.get()};
 		ImGui::End();
 
 
@@ -69,7 +69,8 @@ namespace Engine
 	
 	void SceneHierarchyPanel::DrawComponents(Entity entity)
 	{
-		
+		if (entity.m_EntityHandle == entt::null)
+			return;
 		if (entity.HasComponent<Tag>())
 		{
 			auto& nameTag = entity.GetComponent<Tag>().tag;
@@ -95,7 +96,17 @@ namespace Engine
 				ImGui::Text("Position"); ImGui::SameLine();
 				positionDirtyFlag = ImGui::DragFloat3(" ", value_ptr(transform.position), 0.1f);
 				ImGui::Text("Rotation"); ImGui::SameLine();
-				rotationDirtyFlag = ImGui::DragFloat3("\t", value_ptr(transform.euler_rotation), 0.05f); ImGui::SameLine(); ImGui::Checkbox("                ", &rotationDirtyFlag);
+
+				glm::vec3 rot = { glm::degrees(transform.euler_rotation.x), glm::degrees(transform.euler_rotation.y), glm::degrees(transform.euler_rotation.z )};
+				if (ImGui::DragFloat3("\t", glm::value_ptr(rot), 0.05f))
+				{
+					transform.euler_rotation.x = glm::radians(rot.x);
+					transform.euler_rotation.y = glm::radians(rot.y);
+					transform.euler_rotation.z = glm::radians(rot.z);
+					rotationDirtyFlag = true;
+				}
+				else
+					rotationDirtyFlag = false;
 				ImGui::Text("Scale   "); ImGui::SameLine();
 				static bool uniformScale = false;
 				if(!uniformScale)
@@ -139,19 +150,7 @@ namespace Engine
 				auto& rb = entity.GetComponent<RigidBody>();
 
 				auto& interface = m_scene->physicsWorld->GetInterface();
-				if (positionDirtyFlag)
-					interface.SetPosition(rb.data,{
-						entity.GetComponent<Transform>().position.x,
-						entity.GetComponent<Transform>().position.y,
-						entity.GetComponent<Transform>().position.z }, 
-						JPH::EActivation::Activate);
-						
-				if(rotationDirtyFlag)
-					interface.SetRotation(rb.data, JPH::Quat::sEulerAngles({
-						glm::radians(entity.GetComponent<Transform>().euler_rotation.x),
-						glm::radians(entity.GetComponent<Transform>().euler_rotation.y),
-						glm::radians(entity.GetComponent<Transform>().euler_rotation.z) }),
-						JPH::EActivation::Activate);
+				
 				if(ImGui::Checkbox("Dynamic", &rb.dynamic))
 				{
 					if(rb.dynamic)

@@ -33,8 +33,8 @@ namespace Engine
 		auto Initialize(bool withFloor = false) -> void;
 		auto Tick(const double& timeStep) -> void;
 		auto GetInterface() -> JPH::BodyInterface& { return physics_system->GetBodyInterface(); }
-		auto CreateBoxBody(bool dynamic, const glm::vec3& _position, const glm::vec3& _eulRotation, const glm::vec3& halfExtent) -> JPH::BodyID;
-		auto CreateSphereBody(bool dynamic, const glm::vec3& _position, const glm::vec3& _eulRotation, const float& radius) -> JPH::BodyID;
+		auto CreateBoxBody(bool dynamic, const glm::vec3& _position, const glm::vec3& _eulRotation, const glm::vec3& halfExtent) const -> JPH::BodyID;
+		auto CreateSphereBody(bool dynamic, const glm::vec3& _position, const glm::vec3& _eulRotation, const float& radius) const -> JPH::BodyID;
 		auto SetGravity(const glm::vec3& dir) -> void { physics_system->SetGravity({ dir.x, dir.y, dir.z }); }
 		auto GetBodyPosition(const JPH::BodyID id, glm::vec3& in_position) const -> void
 		{
@@ -53,9 +53,9 @@ namespace Engine
 				return;
 
 			JPH::RVec3 newrot = physics_system->GetBodyInterface().GetRotation(id).GetEulerAngles();
-			in_rotation.x = glm::degrees(newrot.GetX());
-			in_rotation.y = glm::degrees(newrot.GetY());
-			in_rotation.z = glm::degrees(newrot.GetZ());
+			in_rotation.x = newrot.GetX();
+			in_rotation.y = newrot.GetY();
+			in_rotation.z = newrot.GetZ();
 		}
 		auto SphereOverlapCheck(const glm::vec3& inpos, const float& radius) -> void
 		{

@@ -123,7 +123,7 @@ public:
 	virtual void			OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 	{
 		ENGINE_LOG_INFO("A contact was added");
-		inBody1.GetAccumulatedForce()
+		inBody1.GetAccumulatedForce();
 		//Called whenever a new contact point is detected.
 		//Note that this callback is called when all bodies are locked, so don't use any locking functions!
 		//Body 1 and 2 will be sorted such that body 1 ID < body 2 ID, so body 1 may not be dynamic.
@@ -206,7 +206,7 @@ namespace Engine
 	}
 
 	auto PhysicsWorld::CreateBoxBody(bool dynamic, const glm::vec3& _position,
-		const glm::vec3& _eulRotation, const glm::vec3& halfExtent) -> BodyID
+		const glm::vec3& _eulRotation, const glm::vec3& halfExtent) const -> BodyID
 	{
 		BodyInterface& interface = physics_system->GetBodyInterface();
 		EMotionType type;
@@ -226,7 +226,7 @@ namespace Engine
 	}
 
 	auto PhysicsWorld::CreateSphereBody(bool dynamic, const glm::vec3& _position, const glm::vec3& _eulRotation,
-		const float& radius) -> JPH::BodyID
+		const float& radius) const -> JPH::BodyID
 	{
 		BodyInterface& interface = physics_system->GetBodyInterface();
 		EMotionType type;

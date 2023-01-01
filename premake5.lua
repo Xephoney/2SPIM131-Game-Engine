@@ -28,6 +28,7 @@ IncludeDir["stb_image"] = "Engine/3rdParty/stb_image/include"
 IncludeDir["FMOD"] = "Engine/3rdParty/FMOD/inc"
 IncludeDir["assimp"] = "Engine/3rdParty/assimp/include"
 IncludeDir["Jolt"] = "Engine/3rdParty/jolt/include"
+IncludeDir["ImGuizmo"] = "Engine/3rdParty/ImGuizmo/"
 --IncludeDir["bullet3"] = "Engine/3rdParty/bullet3/include"
 --IncludeDir["yaml_cpp"] = "Engine/3rdParty/yaml-cpp/include"
 
@@ -63,11 +64,16 @@ project "Engine"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/src/**.hpp",
+
 		"%{prj.name}/3rdParty/glm/glm/**.hpp",
 		"%{prj.name}/3rdParty/glm/glm/**.inl",
+
 		"%{prj.name}/3rdParty/assimp/include/assimp/**.hpp",
 		"%{prj.name}/3rdParty/assimp/include/assimp/**.cpp",
-		"%{prj.name}/3rdParty/assimp/include/assimp/**.h"
+		"%{prj.name}/3rdParty/assimp/include/assimp/**.h",
+
+		"%{prj.name}/3rdParty/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/3rdParty/ImGuizmo/ImGuizmo.cpp"
 	}
 	defines
 	{
@@ -86,7 +92,8 @@ project "Engine"
 		"%{IncludeDir.assimp}",
 		--"%{IncludeDir.bullet3}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.Jolt}"
+		"%{IncludeDir.Jolt}",
+		"%{IncludeDir.ImGuizmo}"
 		--"%{IncludeDir.yaml_cpp}"
 	}
 	libdirs
@@ -108,6 +115,9 @@ project "Engine"
 		"opengl32",
 		"Jolt"
 	}
+
+	filter "files:Engine/3rdParty/ImGuizmo/**.cpp"
+		flags {"NoPCH"}
 
 	filter "system:windows"
 		systemversion "latest"
@@ -146,7 +156,9 @@ project "Sandbox"
 		"%{IncludeDir.yaml_cpp}",
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
-		"%{prj.name}/src/**.hpp"
+		"%{prj.name}/src/**.hpp",
+		"%{IncludeDir.ImGuizmo}/ImGuizmo.h",
+		"%{IncludeDir.ImGuizmo}/ImGuizmo.cpp"
 	}
 	defines
 	{
@@ -163,8 +175,7 @@ project "Sandbox"
 		"%{IncludeDir.assimp}",
 		"%{IncludeDir.Jolt}",
 		"Engine/3rdParty/jolt/src",
-		--"%{IncludeDir.bullet3}",
-		--"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}",
 		"Engine/src"
 	}
 	libdirs

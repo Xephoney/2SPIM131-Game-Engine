@@ -20,6 +20,8 @@ namespace Engine
 		entt::registry& GetReg() { return m_Registry; }
 
 		void OnViewportResize(uint32_t w, uint32_t h);
+		void StartSimulation();
+		void StopSimulation();
 		void OnUpdate(const double& dt);
 		void OnFixedUpdate(const double& dt);
 

@@ -15,24 +15,29 @@
 #include "glm/gtx/vector_angle.hpp"
 #include "Panels/SceneHierarchyPanel.h"
 
+#include "ImGuizmo.h"
+#include "Engine/Math/Math.h"
+#include "glm/gtc/type_ptr.hpp"
+
+
 namespace Engine
 {
 	class EditorLayer : public Layer
 	{
 	public:
-		double _dt;
+		double _dt {0};
 		double _elapsed{ 0 };
 		glm::vec2 renderwindowSize{ 1920, 1080 };
 		glm::vec2 renderwindowCenter;
 		glm::vec2 viewportBounds[2];
-		glm::vec2 viewportSize;
+		glm::vec2 viewportSize{1280, 720};
 		bool viewportFocused = false;
 		bool viewportHovered = false;
 		std::shared_ptr<Scene> activeScene;
 		std::shared_ptr<Camera> camera;
 		std::shared_ptr<Framebuffer> m_FrameBuffer;
 		SceneHierarchyPanel m_SceneGraph;
-
+		int m_guizmoType = 0;
 
 
 		EditorLayer() : Layer("EditorLayer")
@@ -76,7 +81,7 @@ namespace Engine
 
 			//Normal loop
 			{
-				if (viewportFocused)
+				if (viewportHovered)
 					MoveEditorCamera();
 
 				camera->update(dt);
@@ -87,12 +92,15 @@ namespace Engine
 
 				activeScene->OnUpdate(dt);
 
-				if (Input::IsMouseButtonPressed(MOUSE_BUTTON_1) && !bMB1Pressed)
+				if (Input::IsMouseButtonPressed(MOUSE_BUTTON_1) && !bMB1Pressed && viewportHovered && !ImGuizmo::IsOver())
 				{
 					bMB1Pressed = true;
 					int clickedData = SampleViewportAtMouseLocation();
 					if (clickedData >= 0)
 						m_SceneGraph.PickEntity(static_cast<uint32_t>(clickedData));
+					else
+						m_SceneGraph.ClearEntity();
+
 				}
 			}
 
@@ -106,9 +114,18 @@ namespace Engine
 		void OnAttach() override
 		{
 			m_SceneGraph.SetContext(activeScene);
-			Entity entity = activeScene->CreateEntity("My Fellow Serializer");
-			entity.GetComponent<Transform>().position = { 0, 10, 0 };
-			
+			Entity entity = activeScene->CreateEntity("Cube 1");
+			entity.GetComponent<Transform>().position = { -4, 2, 0 };
+			entity.GetComponent<Transform>().euler_rotation= { 22.5, 45, 120 };
+
+			entity = activeScene->CreateEntity("Cube 2");
+			entity.GetComponent<Transform>().position = { 0, 2, 0 };
+			entity.GetComponent<Transform>().euler_rotation = { 120, 12, 10 };
+
+			entity = activeScene->CreateEntity("Cube 3");
+			entity.GetComponent<Transform>().position = { 4, 2, 0 };
+			entity.GetComponent<Transform>().euler_rotation = { 270, 25, 77 };
+
 			/*SceneSerializer serializer(activeScene);
 			serializer.SerializeText("../Engine/Assets/Scenes/EditorExample.lvl");*/
 
@@ -232,6 +249,52 @@ namespace Engine
 			ImVec2 maxBound = { minBound.x + windowSize.x, minBound.y + windowSize.y };
 			viewportBounds[0] = { minBound.x, minBound.y };
 			viewportBounds[1] = { maxBound.x, maxBound.y };
+
+			// RENDER WINDOW GIZMO
+			Entity selectedEntity = m_SceneGraph.GetSelectedEntity();
+			if(selectedEntity && m_guizmoType != -1)
+			{
+				ImGuizmo::SetOrthographic(false);
+				ImGuizmo::SetDrawlist();
+				ImGuizmo::SetRect(viewportBounds[0].x, viewportBounds[0].y, viewportBounds[1].x - viewportBounds[0].x, viewportBounds[1].y - viewportBounds[0].y);
+				const glm::mat4& view = camera->GetViewMatrix();
+				const glm::mat4& projection = camera->GetProjectionMatrix();
+
+				auto& tc = selectedEntity.GetComponent<Transform>();
+				glm::mat4& transform = tc.transform;
+
+				// Snapping
+				bool snap = Input::IsKeyPressed(KEY_LEFT_CONTROL);
+				float snapValue = 0.1f; // Snap to 0.5m for translation/scale
+				// Snap to 10 degrees for rotation
+				if (m_guizmoType == ImGuizmo::OPERATION::SCALE)
+					snapValue = 0.1f;
+				if (m_guizmoType == ImGuizmo::OPERATION::ROTATE)
+					snapValue = 11.25f;
+
+				float snapValues[3] = { snapValue, snapValue, snapValue };
+
+
+
+				ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(projection),
+					(ImGuizmo::OPERATION)m_guizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+					nullptr, snap ? snapValues : nullptr);
+
+				
+				if(ImGuizmo::IsUsing())
+				{
+					glm::vec3 position, rotation, scale;
+					Math::DecomposeTransform(transform, position, rotation, scale);
+					const glm::vec3 deltaRot = rotation - tc.euler_rotation;
+		
+					tc.position = position;
+					tc.Rotate(deltaRot);
+					tc.scale = scale;
+				}
+			}
+
+
+
 			ImGui::End();
 
 			ImGui::PopStyleVar();
@@ -243,16 +306,22 @@ namespace Engine
 			{
 				if(ImGui::Button("Start Simulation"))
 				{
-					activeScene->SetSimulationState(true);
+					activeScene->StartSimulation();
 				}
+				
 			}
 			else
 			{
 				if (ImGui::Button("Pause Simulation"))
 				{
-					activeScene->SetSimulationState(false);
+					activeScene->StopSimulation();
 				}
 			}
+			ImGui::SameLine();
+
+			ImGui::Checkbox("Hovered", &viewportHovered);
+			ImGui::SameLine();
+			ImGui::Checkbox("Focused", &viewportFocused);
 			ImGui::End();
 		}
 
@@ -262,12 +331,28 @@ namespace Engine
 
 			ENGINE_LOG_TRACE("{0}", event.ToString())
 
-				if (event.GetEventType() == EventType::KeyPressed)
+				if (event.GetEventType() == EventType::KeyPressed && !Input::IsMouseButtonPressed(MOUSE_BUTTON_2))
 				{
 					const auto& newEvent = dynamic_cast<KeyPressedEvent&>(event);
+
+					switch (newEvent.GetKeyCode())
+					{
+					case KEY_Q :
+						m_guizmoType = -1;
+						break;
+					case KEY_W :
+						m_guizmoType = ImGuizmo::OPERATION::TRANSLATE;
+						break;
+					case KEY_E :
+						m_guizmoType = ImGuizmo::OPERATION::ROTATE;
+						break;
+					case KEY_R:
+						m_guizmoType = ImGuizmo::OPERATION::SCALE;
+						break;
+					}
 					if (newEvent.GetKeyCode() == KEY_SPACE)
 					{
-						// SPACE IS BEING PRESSED <3 
+						
 					}
 				}
 
@@ -283,6 +368,8 @@ namespace Engine
 				const auto& newEvent = dynamic_cast<MouseScrolledEvent&>(event);
 				camera->m_movementSpeed += newEvent.GetYOffset() * 0.5f;
 			}
+
+
 		}
 
 		void MoveEditorCamera()

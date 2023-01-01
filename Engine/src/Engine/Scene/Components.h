@@ -8,7 +8,8 @@
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Audio/sound.h"
 #include "glm/gtx/transform.hpp"
-
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/quaternion.hpp>
 #include "Jolt/Jolt.h"
 namespace Engine
 {
@@ -38,11 +39,22 @@ namespace Engine
 		}
 		inline void CalculateTransform()
 		{
-			transform = glm::translate(glm::mat4{ 1.f }, position);
-			transform = glm::rotate(transform, glm::radians(euler_rotation.x), { 1,0,0 });
-			transform = glm::rotate(transform, glm::radians(euler_rotation.y), { 0,1,0 });
-			transform = glm::rotate(transform, glm::radians(euler_rotation.z), { 0,0,1 });
-			transform = glm::scale(transform, scale);
+			glm::mat4 translation = glm::translate(glm::mat4{ 1.f }, position);
+			glm::mat4 rotation = glm::toMat4(glm::quat(euler_rotation));
+			//glm::mat4 rotation = glm::rotate(glm::mat4(1.f), glm::radians(euler_rotation.x), {1,0,0})
+				//				* glm::rotate(glm::mat4(1.f), glm::radians(euler_rotation.y), { 0,1,0 })
+					//			* glm::rotate(glm::mat4(1.f), glm::radians(euler_rotation.z), { 0,0,1 });
+
+			transform = translation * rotation * glm::scale(glm::mat4{ 1.f }, scale);
+		}
+		void SetRotation(const glm::vec3& rot)
+		{
+			euler_rotation = rot;
+		}
+
+		void Rotate(const glm::vec3& deltaRotation)
+		{
+			euler_rotation += deltaRotation;
 		}
 	};
 

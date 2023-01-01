@@ -54,6 +54,24 @@ namespace Engine
 		}
 	}
 
+	void Scene::StartSimulation()
+	{
+		simulate = true;
+		auto view = m_Registry.view<Transform, RigidBody>();
+		auto& interface = physicsWorld->GetInterface();
+		for (auto& entity : view)
+		{
+			auto& [transform, rb] = view.get<Transform, RigidBody>(entity);
+			interface.SetPosition(rb.data, { transform.position.x, transform.position.y, transform.position.z }, JPH::EActivation::Activate);
+			interface.SetRotation(rb.data, JPH::Quat::sEulerAngles({ transform.euler_rotation.x, transform.euler_rotation.y, transform.euler_rotation.z}), JPH::EActivation::Activate);
+		}
+	}
+
+	void Scene::StopSimulation()
+	{
+		simulate = false;
+	}
+
 	void Scene::OnUpdate(const double& dt)
 	{
 		{
