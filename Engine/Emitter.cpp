@@ -51,7 +51,7 @@ void Emitter::EmitParticles(GLint ParticleShaderViewProj, GLint ParticleShaderTr
 
 void Emitter::UpdateParticles(float ts)
 {
-	m_lifeRemaining = -ts;
+	m_lifeRemaining =- ts;
 	for (auto& particle : m_ParticlePool)
 	{
 		if (!particle.getStatus())
