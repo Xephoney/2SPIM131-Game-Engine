@@ -1,8 +1,9 @@
 #include "engpch.h"
 #include "ParticleSystem.h"
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem(int numOfEmitters)
 {
+	m_numOfEmitters = numOfEmitters;
 	m_EmitterPool.resize(numOfEmitters);
 }
 

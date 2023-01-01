@@ -18,7 +18,7 @@
 
 class ParticleSystem
 {
-	ParticleSystem();
+	ParticleSystem(int numOfEmitters);
 
 	void Update(float ts); 
 	void Render(); 
@@ -32,6 +32,6 @@ private:
 	std::unique_ptr<Shader> m_ParticleShader; // pointer to the shader program
 	GLint m_ParticleShaderViewProj, m_ParticleShaderTransform, m_ParticleShaderColor; // opengl variables
 
-	int numOfEmitters = 10;
+	int m_numOfEmitters = 10;
 };
 
