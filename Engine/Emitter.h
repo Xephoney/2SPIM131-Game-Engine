@@ -25,6 +25,7 @@ public:
 	void UpdateParticles(float ts);
 	void setLifeTime(float lifeTime) { m_lifeTime = lifeTime; };
 	float getLifeRemaining() { return m_lifeRemaining; };
+	void UpdateEmitterPosition(glm::vec2 position) { m_Position = position; };
 
 private:
 	glm::vec2 m_Position;
