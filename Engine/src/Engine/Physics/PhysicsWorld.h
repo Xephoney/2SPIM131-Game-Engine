@@ -15,6 +15,7 @@
 
 #include "glm/trigonometric.hpp"
 #include "glm/vec3.hpp"
+#include "Jolt/Physics/Collision/ShapeCast.h"
 
 
 class MyBodyActivationListener;
@@ -55,6 +56,10 @@ namespace Engine
 			in_rotation.x = glm::degrees(newrot.GetX());
 			in_rotation.y = glm::degrees(newrot.GetY());
 			in_rotation.z = glm::degrees(newrot.GetZ());
+		}
+		auto SphereOverlapCheck(const glm::vec3& inpos, const float& radius) -> void
+		{
+			//JPH::RShapeCast cast(JPH::SphereShape,JPH::Vec3(radius));
 		}
 		
 	private :

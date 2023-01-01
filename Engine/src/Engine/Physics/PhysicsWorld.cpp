@@ -123,6 +123,16 @@ public:
 	virtual void			OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 	{
 		ENGINE_LOG_INFO("A contact was added");
+		inBody1.GetAccumulatedForce()
+		//Called whenever a new contact point is detected.
+		//Note that this callback is called when all bodies are locked, so don't use any locking functions!
+		//Body 1 and 2 will be sorted such that body 1 ID < body 2 ID, so body 1 may not be dynamic.
+		//Note that only active bodies will report contacts, as soon as a body goes to sleep the contacts between that body and all other bodies will receive an OnContactRemoved callback, if this is the case then Body::IsActive() will return false during the callback.
+		//When contacts are added, the constraint solver has not run yet, so the collision impulse is unknown at that point.
+
+		//The velocities of inBody1 and inBody2 are the velocities before the
+		//		contact has been resolved, so you can use this to estimate the collision impulse
+		//		to e.g. determine the volume of the impact sound to play.
 	}
 
 	virtual void			OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override

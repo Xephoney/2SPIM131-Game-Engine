@@ -73,11 +73,12 @@ namespace Engine
 		// CHECK SIMULATION STATE
 		if(simulate)
 		{
+			constexpr float timestep = 1.0 / 120.0;
 			fixedDTCounter += dt;
-			while(fixedDTCounter >= 0.005)
+			while(fixedDTCounter >= timestep)
 			{
 				OnFixedUpdate(fixedDTCounter);
-				fixedDTCounter -= 0.005;
+				fixedDTCounter -= timestep;
 			}
 		}		
 
