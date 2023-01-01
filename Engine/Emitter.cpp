@@ -17,8 +17,10 @@ void Emitter::PopulateEmitter(Particle& particle, int numOfParticles)
 	m_ParticlePool.resize(numOfParticles);
 	for (int i = 0; i < numOfParticles; i++)
 	{
+		Particle temp = particle;
+		temp.init();
 		particle.setStartPosition(m_Position); // setting particle position to emitter position
-		m_ParticlePool.push_back(particle);
+		m_ParticlePool.push_back(temp);
 	}
 }
 
