@@ -1,10 +1,8 @@
 #include "engpch.h"
 
-#include "Engine/engpch.h"
-
 #include "Shader.h"
 
-#include <fstream>
+#include <fstream> 
 
 #include "Renderer.h"
 #include "Engine/Log.h"

@@ -285,4 +285,17 @@ namespace Engine
 			
 		}
 	};
+	struct ParticleProperties // Used to set the properties for a given particle.
+	{
+		glm::vec2 Position;
+		glm::vec2 Velocity, VelocityVariation;
+		glm::vec4 ColorBegin, ColorEnd;
+		float SizeBegin, SizeEnd, SizeVariation;
+		float LifeTime = 1.0f;
+	};
+	struct EmitterProperties // Used to set the properties for a given emitter
+	{
+		glm::vec2 position;
+		float lifeTime;
+	};
 }
