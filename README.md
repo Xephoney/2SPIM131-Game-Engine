@@ -2,11 +2,10 @@
  Game Engine Architecture @ HINN 2022
 
 
-Hans Ola and Kristian's Game Engine Project
-The code comes mostly from TheCherno's Game Engine Series, but with some modifications
-to suit our needs
+Hans Ola, Kristian and Fabian's Game Engine Project
+The codebase comes mostly from following TheCherno's Game Engine Series
 
 Code compiles with MSVC v143
 Project setup and pp-step is done with Premake 5
 
-To begin; Run Setup.bat
+To begin; Run GenerateProject.bat
