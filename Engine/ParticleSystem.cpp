@@ -22,7 +22,10 @@ void ParticleSystem::Render()
 {
 	for (auto& emitter : m_EmitterPool)
 	{
-		emitter.EmitParticles(m_ParticleShaderViewProj, m_ParticleShaderTransform, m_ParticleShaderColor);
+		if (emitter.getLifeRemaining() > 0)
+		{
+			emitter.EmitParticles(m_ParticleShaderViewProj, m_ParticleShaderTransform, m_ParticleShaderColor);
+		}
 	}
 }
 
