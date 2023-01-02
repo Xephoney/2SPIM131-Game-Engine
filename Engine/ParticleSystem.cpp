@@ -27,9 +27,12 @@ void ParticleSystem::Render()
 }
 
 /* used to initialize a particle and give it properties */
-void ParticleSystem::Emit(Emitter& emitter)
+void ParticleSystem::Emit(std::vector<Emitter>& emitter)
 {
-	m_EmitterPool.push_back(emitter);
+	for (auto x: emitter)
+	{
+		m_EmitterPool.push_back(x);
+	}
 }
 
 void ParticleSystem::init(Engine::OrthographicCamera& camera)

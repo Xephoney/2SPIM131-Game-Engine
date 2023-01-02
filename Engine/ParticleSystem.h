@@ -22,7 +22,7 @@ class ParticleSystem
 
 	void Update(float ts); 
 	void Render(); 
-	void Emit(Emitter& emitter);
+	void Emit(std::vector<Emitter>& emitter);
 	void init(Engine::OrthographicCamera& camera);
 
 private:
