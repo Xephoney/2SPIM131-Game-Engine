@@ -13,6 +13,10 @@ namespace Engine {
 		result = system->init(512, FMOD_INIT_NORMAL, 0);
 		if (!successCheck(result))
 			exit(-1);
+		result = system->setOutput(FMOD_OUTPUTTYPE_WINSONIC);
+		if (!successCheck(result))
+			exit(-1);
+		
 #ifdef DEBUG
 		ENGINE_LOG_INFO("Fmod Initialized");
 #endif // DEBUG
@@ -25,7 +29,7 @@ namespace Engine {
 		//set up reverb
 		
 		result = system->createReverb3D(&reverb);
-		FMOD_REVERB_PROPERTIES reverbProp = FMOD_PRESET_CONCERTHALL;
+		FMOD_REVERB_PROPERTIES reverbProp = FMOD_PRESET_LIVINGROOM;
 		reverb->setProperties(&reverbProp);
 
 		//set up 3D sound
@@ -36,7 +40,7 @@ namespace Engine {
 		addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", true);
 		addSound("../Engine/Assets/Sound/pop.mp3", "Pop", true);
 		addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", true);
-		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAll", true);
+		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAllID:0", true);
 
 #ifdef DEBUG
 		ENGINE_LOG_INFO("Default sounds added, no issues reported.");
@@ -56,23 +60,26 @@ namespace Engine {
 	{
 		ENGINE_LOG_INFO("Adding sound");
 		FMOD::Sound* tempSound = nullptr;
-
-		auto got = mSounds.find(name);
-		if (got != mSounds.end())
-		{
+		sound* newSound = new sound(file, name);
+		for (auto i = 0; i < soundList.size(); i++)		
+			if (soundList[i]->getName() == name)
+			{
 #ifdef DEBUG
-			ENGINE_LOG_INFO("tried adding sound with existing name: '{0}'", name);
+				ENGINE_LOG_INFO("tried adding sound with existing name: '{0}'", name);
 #endif // DEBUG
-			return;
-		}
+				return;
+			}
 
 		if (!in3DSpace) //3D spacing to be tested out when sources and listeners are set up
 		{
 			system->createSound(file, FMOD_DEFAULT, nullptr, &tempSound);
 		}
 		else
-			system->createSound(file, FMOD_3D_LINEARROLLOFF, 0, &tempSound);
-		mSounds.insert(std::pair(name, tempSound));
+			system->createSound(file, FMOD_3D, 0, &tempSound);
+		soundList.push_back(newSound);
+		mSounds.insert(std::pair(soundList.size(), tempSound));		
+		
+		ENGINE_LOG_INFO("soundList size: {0}", soundList.size());
 
 #ifdef DEBUG
 		ENGINE_LOG_INFO("Created new sound '{0}' and added to list of sounds", name);
@@ -97,59 +104,126 @@ namespace Engine {
 		glm::vec3 CamPos = Renderer::GetRenderCamera()->GetPosition();
 		glm::vec3 CamFwd = Renderer::GetRenderCamera()->Forward();
 		glm::vec3 CamUp = Renderer::GetRenderCamera()->Up();
-		glm::vec3 CamVel = glm::vec3(0.f, 0.f, 0.f);
+		glm::vec3 CamVel = Renderer::GetRenderCamera()->VelocityNormalized();
 		
-		FMOD_VECTOR earPos = ToFMODVec(CamVel);
+		FMOD_VECTOR earPos = ToFMODVec(CamPos);
 		FMOD_VECTOR earUp = ToFMODVec(CamUp);
 		FMOD_VECTOR earfwd = ToFMODVec(CamFwd);
+		FMOD_VECTOR earVel = ToFMODVec(CamVel);
 
 		for (int i = 0; i < soundList.size(); i++)
 			soundList[i]->update();
 
-		system->set3DListenerAttributes(0, &earPos, 0, &earfwd, &earUp);
+		system->set3DListenerAttributes(0, &earPos, &earVel, &earfwd, &earUp);
 		system->update();
 
 	}
 
 	bool SoundManager::bSoundExists(std::string name)
 	{
-		if (mSounds.find(name) != mSounds.end())
-			return true;
-		else
-			ENGINE_LOG_ERROR("GIVEN SOUND '{0}' DOES NOT EXIST IN MEMORY", name);
-			return false;
+		for(int i=0;i<soundList.size();i++)
+			for (int j = 0; j < name.size(); j++)
+			{
+				if (soundList[i]->getName()[j] != name[j])
+					break;
+				if(name[j+1]=='I' && name[j+2]=='D')
+					return true;
+			}
+			
+
+		ENGINE_LOG_ERROR("GIVEN SOUND '{0}' DOES NOT EXIST IN MEMORY", name);
+		return false;
 	}
 
 	void SoundManager::playSound(const std::string& name) {
 		FMOD_RESULT  result;
 		FMOD::Channel* channel = nullptr;
-
+		
 		if (mSounds.size() < 1) {
 			ENGINE_LOG_WARNING("NO SOUNDS LOADED TO PLAY!");
 			return;
 		}
 
+		
 		//Looking through mSounds to see if called sound exists
 		//TODO : maybe have a toUpper to avoid having to care about capital letters?
-		auto current = mSounds.find(name);
-		if (current == mSounds.end())
+
+		if (findSound(name))
 		{
-			ENGINE_LOG_ERROR("Sound '{0}' not found in list of sounds!", name);
+			channel->set3DAttributes(findExactSound(name)->getConstPos(),0);
+			ENGINE_LOG_INFO("found sound, {0} as {1}", name, findExactSound(name)->getName());
+			result = system->playSound(mSounds[findSoundPlacement(name) + 1], nullptr, false, &channel);
+
+
+			
+			//ENGINE_LOG_WARNING("EAR LOCATION : {0},{1},{2}", Renderer::GetRenderCamera()->GetPosition().x,Renderer::GetRenderCamera()->GetPosition().y, Renderer::GetRenderCamera()->GetPosition().z);
+			//ENGINE_LOG_WARNING("EAR LOCATION : {0},{1},{2}", ToFMODVec(Renderer::GetRenderCamera()->GetPosition()).x, Renderer::GetRenderCamera()->GetPosition().y, Renderer::GetRenderCamera()->GetPosition().z);
+			
 			return;
 		}
-		result = system->playSound(mSounds[name], nullptr, false, &channel);
-		if (!successCheck(result))
-			exit(-1);
-#ifdef DEBUG
-		ENGINE_LOG_INFO("played sound");
-#endif //DEBUG
+
+		ENGINE_LOG_ERROR("Sound '{0}' not found in list of sounds!", name);
 		return;
+	}
+
+	sound* SoundManager::findSound(std::string name)
+	{
+		for (int i = 0; i < soundList.size(); i++)
+		{
+			for (int j = 0; j < name.size(); j++)
+			{
+				if (soundList[i]->getName()[j] != name[j])
+					break;
+				if (name[j + 1] == 'I' && name[j + 2] == 'D') 
+				{
+					
+					return soundList[i];
+				}
+			}
+		}
+		ENGINE_LOG_ERROR("Could not find pre-existing sound : {0}", name);
+		return nullptr;
+	}
+
+	int SoundManager::findSoundPlacement(std::string name)
+	{
+		for (int i = 0; i < soundList.size(); i++)
+		{
+			/*for (int j = 0; j < name.size(); j++)
+			{
+				if (soundList[i]->getName()[j] != name[j])
+					break;
+				if (name[j + 1] == 'I' && name[j + 2] == 'D') {
+					
+					return i;
+				}
+			}*/
+			if (soundList[i]->getName() == name)
+				return i;
+		}
+		ENGINE_LOG_ERROR("Could not find pre-existing sound : {0}", name);
+		return -1;
+	}
+
+	sound* SoundManager::findExactSound(std::string name)
+	{
+		for (int i = 0; i < soundList.size(); i++)
+			if (soundList[i]->getName() == name)
+				return soundList[i];
+		return nullptr;
 	}
 
 	void SoundManager::addToSoundlist(sound* inSound)
 	{
-		soundList.push_back(inSound);
-		ENGINE_LOG_INFO("Added sound to soundlist");
+		const std::string temp = findSound(inSound->getName())->getFilePath();
+		const char* mPath = temp.c_str();
+		addSound(mPath, inSound->getName(), true);
+
+			
+#ifdef DEBUG
+		if (bSoundExists(inSound->getName()))
+			ENGINE_LOG_INFO("Added sound to soundlist, Name: {0}", inSound->getName());
+#endif //DEBUG
 	}
 
 	FMOD_VECTOR SoundManager::ToFMODVec(glm::vec3 in)
@@ -172,6 +246,27 @@ namespace Engine {
 		return system;
 	}
 
+	int SoundManager::getSoundListSize()
+	{
+		return soundList.size();
+	}
+
+	int SoundManager::getExistingSoundsWithName(std::string name)
+	{
+		int amount = 0;
+		for (int i = 0; i < soundList.size(); i++)
+		{
+			for (int j = 0; j < name.size(); j++)
+			{
+				if (soundList[i]->getName()[j] != name[j])
+					break;
+				if (j == name.size() - 1)
+					amount++;
+			}
+		}
+		return amount;
+	}
+
 	sound::sound(std::string name)
 	{
 		mName = name;
@@ -190,6 +285,12 @@ namespace Engine {
 		mName = name;
 	}
 
+	sound::sound(const char* file, std::string name)
+	{
+		mName = name;
+		mPath = file;
+	}
+
 	std::string sound::getName() {
 		return mName;
 	}
@@ -197,6 +298,25 @@ namespace Engine {
 	FMOD_VECTOR sound::getPos()
 	{
 		return mPos;
+	}
+
+	const FMOD_VECTOR* sound::getConstPos()
+	{
+		FMOD_VECTOR* temp = new FMOD_VECTOR;
+		temp->x = mPos.x;
+		temp->y = mPos.y;
+		temp->z = mPos.z;
+		return temp;
+	}
+
+	std::string sound::getFilePath()
+	{
+		return mPath;
+	}
+
+	FMOD_VECTOR sound::getVelocity()
+	{
+		return mVel;
 	}
 
 	void sound::playSound(std::string name)
@@ -227,7 +347,8 @@ namespace Engine {
 	void sound::update()
 	{
 		SoundManager::getSoundManager().getReverb()->set3DAttributes(&mPos, minDist, maxDist);
-		ENGINE_LOG_WARNING("MIN DIST: {0}   MAX DIST: {1}", minDist, maxDist);
+
+		//ENGINE_LOG_WARNING("MIN DIST: {0}   MAX DIST: {1}", minDist, maxDist);
 	}
 
 	void sound::setPos(glm::vec3 pos)
@@ -250,6 +371,14 @@ namespace Engine {
 	void sound::setMaxDist(float dist)
 	{
 		maxDist = dist;
+	}
+
+	void sound::setFilePath(const char* newPath)
+	{
+		mPath = newPath;
+#ifdef DEBUG
+		ENGINE_LOG_INFO("Changed file path for {0} to {1}", mName, newPath);
+#endif // DEBUG
 	}
 
 }

@@ -127,17 +127,18 @@ namespace Engine
 		AudioSource(sound* inSound) 
 		{
 			mSound = inSound;
-			mName = mSound->getName();
+			mName = setIdentifyer(mSound->getName());
 		}
 		AudioSource(std::string name)
 		{
-			mName = name;
-			mSound = new sound(name);
+			mName = setIdentifyer(name);
+			mSound = new sound(setIdentifyer(name));
 		}
 		AudioSource(sound* inSound, glm::vec3 pos)
 		{
 			mSound = inSound;
-			mName = mSound->getName();
+			//mName = mSound->getName();
+			mName=setIdentifyer(mSound->getName());
 			setPos(pos);
 			mSound->setMaxDist(maxDist);
 			mSound->setMinDist(minDist);
@@ -146,21 +147,21 @@ namespace Engine
 		}
 		AudioSource(std::string name, glm::vec3 pos)
 		{
-			mName = name;
+			mName=setIdentifyer(name);
 			setPos(pos);
-			mSound = new sound(name);
+			mSound = new sound(setIdentifyer(name));
 			mSound->setMaxDist(maxDist);
 			mSound->setMinDist(minDist);
 			mSound->setPos(pos);
 			SoundManager::getSoundManager().addToSoundlist(mSound);
-			ENGINE_LOG_INFO("Created sound at {0},{1},{2}", mSound->getPos().x, mSound->getPos().y, mSound->getPos().z);
+			
 		}
 
 		//Other functions
 		void addSound(const char* file, std::string name)
 		{
-			mSound = new sound(file, name, false);
-			mName = name;
+			mSound = new sound(file, setIdentifyer(name), false);
+			mName = setIdentifyer(name);
 		}
 		void add3DSound(const char* file, std::string name, glm::vec3 pos)
 		{
@@ -169,14 +170,14 @@ namespace Engine
 			mPos.z = pos.z;
 			mSound = new sound(file, name, true);
 			mSound->setPos(mPos);
-			mName = name;
+			mName = setIdentifyer(name);
 		}
 		void swapSound(std::string name) {
 			//Swap to an existing sound
 			bool success = mSound->swapSound(name);
 			if(!success)
-				ENGINE_LOG_INFO("could not swap sound to {0}",name);
-			mName = name;
+				ENGINE_LOG_WARNING("could not swap sound to {0}",name);
+			mName = setIdentifyer(name);
 		}
 		void playSound()
 		{
@@ -211,6 +212,13 @@ namespace Engine
 		float getMaxDist()
 		{
 			return maxDist;
+		}
+
+		std::string setIdentifyer(std::string name) 
+		{
+			int num = SoundManager::getSoundManager().getExistingSoundsWithName(name);
+			std::string newName = name + "ID:" + std::to_string(num);
+			return newName;
 		}
 	};
 }

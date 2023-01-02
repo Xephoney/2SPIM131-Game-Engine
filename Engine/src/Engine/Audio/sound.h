@@ -8,7 +8,7 @@
 #include <string>
 #include "Engine/Renderer/Renderer.h"
 
-#define DEBUG
+//#define DEBUG
 
 
 namespace Engine {
@@ -16,7 +16,8 @@ namespace Engine {
 	class SoundManager 
 	{
 	private:
-		std::unordered_map<std::string, FMOD::Sound*> mSounds;
+		//std::unordered_map<std::string, FMOD::Sound*> mSounds;
+		std::unordered_map<int, FMOD::Sound*> mSounds;
 		std::vector<class sound*> soundList;
 		FMOD::ChannelGroup* gameSound = nullptr;
 		FMOD::System* system = nullptr;
@@ -37,12 +38,18 @@ namespace Engine {
 
 		void playSound(const std::string& name);
 
+		sound* findSound(std::string name);
+		int findSoundPlacement(std::string name);
+		sound* findExactSound(std::string name);
+
 		void addToSoundlist(class sound* inSound);
 
 		FMOD_VECTOR ToFMODVec(glm::vec3 in);
 
 		FMOD::Reverb3D* getReverb();
 		FMOD::System* getSystem();
+		int getSoundListSize();
+		int getExistingSoundsWithName(std::string name);
 		
 	};
 
@@ -52,9 +59,11 @@ namespace Engine {
 		static sound& s_sound;
 		bool is3D = false;
 		std::string mName = "EMPTY";
-		FMOD_VECTOR mPos = { 0.f,0.f,0.f };
-		float minDist = 10.f;
-		float maxDist = 20.f;
+		FMOD_VECTOR mPos ={ 0.f,0.f,0.f };
+		FMOD_VECTOR mVel = { 0.f,0.f,0.f };
+		float minDist = 0.f;
+		float maxDist = 10.f;
+		std::string mPath = "NOPATH";
 	public:
 		// constructors
 		sound() 
@@ -65,6 +74,7 @@ namespace Engine {
 		}
 		sound(std::string name);
 		sound(const char* file, std::string name, bool is3D);
+		sound(const char* file, std::string name);
 
 		// sound functions
 		void playSound(std::string name);
@@ -78,6 +88,9 @@ namespace Engine {
 		// get values
 		std::string getName();
 		FMOD_VECTOR getPos();
+		const FMOD_VECTOR* getConstPos();
+		std::string getFilePath();
+		FMOD_VECTOR getVelocity();
 
 
 		// set values
@@ -85,6 +98,7 @@ namespace Engine {
 		void setPos(FMOD_VECTOR pos);
 		void setMinDist(float dist);
 		void setMaxDist(float dist);
+		void setFilePath(const char* newPath);
 		
 	};
 

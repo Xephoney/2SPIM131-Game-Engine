@@ -364,7 +364,7 @@ public:
 				ImGui::SameLine();
 				if (ImGui::Button("Delete All"))
 				{
-					Engine::SoundManager::getSoundManager().playSound("DeleteAll");
+					Engine::SoundManager::getSoundManager().playSound("DeleteAllID:0");
 					memset(selection, 0, sizeof(selection));
 					for (auto entity : entities)
 					{
