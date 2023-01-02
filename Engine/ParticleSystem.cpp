@@ -38,7 +38,7 @@ void ParticleSystem::Emit(std::vector<Emitter>& emitter)
 	}
 }
 
-void ParticleSystem::init(Engine::OrthographicCamera& camera)
+void ParticleSystem::init(Engine::Camera& camera)
 {
 	m_ParticleShader = std::unique_ptr<Shader>(new Shader("ParticleShader"));
 	m_ParticleShaderViewProj = glGetUniformLocation(m_ParticleShader->getProgram(), "u_ViewProj");
