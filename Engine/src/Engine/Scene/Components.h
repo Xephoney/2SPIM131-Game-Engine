@@ -297,15 +297,25 @@ namespace Engine
 	};
 	struct ParticleProperties // Used to set the properties for a given particle.
 	{
-		glm::vec2 Position;
-		glm::vec2 Velocity, VelocityVariation;
-		glm::vec4 ColorBegin, ColorEnd;
-		float SizeBegin, SizeEnd, SizeVariation;
+		glm::vec3 Position;
+		glm::vec3 Velocity, VelocityVariation;
+		glm::vec4 ColorBegin{ 1,0,0,1 }, ColorEnd {0,1,0,1};
+		float SizeBegin{ 1.f };
+		float SizeEnd{ 0.1f };
+		float SizeVariation {0.5f};
 		float LifeTime = 1.0f;
 	};
 	struct EmitterProperties // Used to set the properties for a given emitter
 	{
-		glm::vec2 position;
+		glm::vec3 position;
 		float lifeTime;
+	};
+
+	struct EmitterComponent
+	{
+		ParticleProperties particle_properties;
+		EmitterComponent() = default;
+		EmitterComponent(const EmitterComponent&) = default;
+
 	};
 }

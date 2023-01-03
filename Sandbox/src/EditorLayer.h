@@ -46,7 +46,8 @@ namespace Engine
 			Application::GetApplication().loadedScene = activeScene;
 
 			camera = std::make_shared<PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
-
+			camera->SetPosition({ 40,25,40 });
+			camera->Direction() = glm::normalize(glm::vec3(0.f) - camera->GetPosition() );
 			FramebufferSpesification fbs;
 			//						Color Texture	                     Mouse picking (Entity ID)						( Depth Texture ) 
 			fbs.attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth, FramebufferTextureFormat::RGBA16F };

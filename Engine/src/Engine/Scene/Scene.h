@@ -3,7 +3,7 @@
 #include "entt.hpp"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Audio/sound.h"
-//#include "Engine/Particle/ParticleSystem.h"
+#include "Engine/Particle/ParticleSystem.h"
 #include "Engine/Physics/PhysicsWorld.h"
 //#include "Engine/Physics/PhysicsWorld.h"
 
@@ -11,13 +11,15 @@ namespace Engine
 {
 	class Scene
 	{
-		friend class Entity;
+		
 	public:
+		friend class Entity;
 		Scene();
 		~Scene();
 
 		Entity CreateEntity(const std::string& tagName = "_empty_");
 		Entity CreateEmptyEntity(const std::string& tagName = "_empty_");
+		Entity CreateEmptyEmitterEntity(const std::string& tagName);
 		entt::registry& GetReg() { return m_Registry; }
 
 		void OnViewportResize(uint32_t w, uint32_t h);
@@ -31,12 +33,14 @@ namespace Engine
 		void SetSimulationState(bool bSimulate) { simulate = bSimulate; }
 		bool IsSimulating() const { return simulate; }
 
-		
+	
 	private:
+
+		
 		entt::registry m_Registry;
 		double deltaTime;
 		PhysicsWorld* physicsWorld;
-		//ParticleSystem* particleSystem;
+		ParticleSystem* particleSystem;
 
 		bool simulate { false };
 		double fixedDTCounter {0};
@@ -52,4 +56,5 @@ namespace Engine
 		
 	};
 
+	
 }

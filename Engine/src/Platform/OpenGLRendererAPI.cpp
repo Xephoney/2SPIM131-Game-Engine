@@ -25,6 +25,11 @@ namespace Engine
 		glDrawElements(GL_LINES, data->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
+	void OpenGLRendererAPI::DrawIndexedQuad(const std::shared_ptr<VertexArray>& data)
+	{
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+	}
+
 	void OpenGLRendererAPI::Init()
 	{
 		glEnable(GL_DEPTH_TEST);

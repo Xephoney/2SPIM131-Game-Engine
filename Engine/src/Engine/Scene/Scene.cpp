@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Components.h"
 #include "Entity.h"
+#include "Engine/Particle/Emitter.h"
 #include "Engine/Renderer/Renderer.h"
 
 #include "glm/gtx/rotate_vector.hpp"
@@ -14,6 +15,10 @@ namespace Engine
 	{
 		physicsWorld = new PhysicsWorld();
 		physicsWorld->Initialize();
+		particleSystem = new ParticleSystem();
+		particleSystem->init();
+
+
 		Entity entity = CreateEmptyEntity("Directional Light");
 		entity.AddComponent<DirectionalLight>();
 		entity.GetComponent<Transform>().euler_rotation = { glm::radians(-83.f), glm::radians(16.f), glm::radians(27.f) };
@@ -45,6 +50,13 @@ namespace Engine
 		return entity;
 	}
 
+	Entity Scene::CreateEmptyEmitterEntity(const std::string& tagName)
+	{
+		Entity entity = CreateEmptyEntity("Emitter");
+		entity.AddComponent<EmitterComponent>();
+		return entity;
+	}
+
 	void Scene::OnViewportResize(uint32_t w, uint32_t h)
 	{
 		viewportHeight = h;
@@ -61,7 +73,7 @@ namespace Engine
 	void Scene::StartSimulation()
 	{
 		simulate = true;
-		auto view = m_Registry.view<Transform, RigidBody>();
+		auto& view = m_Registry.view<Transform, RigidBody>();
 		auto& interface = physicsWorld->GetInterface();
 		for (auto& entity : view)
 		{
@@ -72,6 +84,20 @@ namespace Engine
 			interface.SetShape(rb.data, box, true, JPH::EActivation::Activate);
 		}
 		physicsWorld->physics_system->OptimizeBroadPhase();
+
+		auto& emitterView = m_Registry.view<Transform, EmitterComponent>();
+		for (auto& entity : emitterView)
+		{
+			auto& [transform, emitter] = emitterView.get<Transform, EmitterComponent>(entity);
+			Emitter n_emitter;
+			n_emitter.CreateEmitter(transform.position, emitter.particle_properties.LifeTime);
+			Particle particle;
+			particle.init();
+			particle.setParticleProperties(emitter.particle_properties);
+			n_emitter.PopulateEmitter(particle, 100);
+			particleSystem->Emit(n_emitter);
+		}
+
 	}
 
 	void Scene::StopSimulation()
@@ -121,6 +147,11 @@ namespace Engine
 				OnFixedUpdate(fixedDTCounter);
 				fixedDTCounter -= timestep;
 			}
+
+
+
+			particleSystem->Render();
+			particleSystem->Update(dt);
 		}		
 
 		{
@@ -207,5 +238,6 @@ namespace Engine
 				light.shadowFrameBuffer->Unbind();
 			}
 		}
-	}
+
+	}	
 }

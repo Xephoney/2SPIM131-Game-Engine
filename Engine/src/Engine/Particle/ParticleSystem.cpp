@@ -1,5 +1,7 @@
-#include "engpch.h"
+#include <engpch.h>
 #include "ParticleSystem.h"
+#include "Emitter.h"
+
 
 namespace Engine
 {
@@ -8,13 +10,14 @@ namespace Engine
 		m_EmitterPool.resize(numOfEmitters);
 	}
 
-	void ParticleSystem::Update(float ts)
+	void ParticleSystem::Update(const double& dt)
 	{
 		for (auto& emitter : m_EmitterPool)
 		{
-			if (emitter.getLifeRemaining() > 0)
+			float remaining = emitter.getLifeRemaining();
+			if (remaining > 0)
 			{
-				emitter.UpdateParticles(ts);
+				emitter.UpdateParticles(dt);
 			}
 		}
 	}
@@ -23,7 +26,10 @@ namespace Engine
 	{
 		for (auto& emitter : m_EmitterPool)
 		{
-			emitter.EmitParticles(m_ParticleShaderViewProj, m_ParticleShaderTransform, m_ParticleShaderColor);
+			if (emitter.getLifeRemaining() > 0)
+			{
+				emitter.EmitParticles();
+			}
 		}
 	}
 
@@ -33,20 +39,8 @@ namespace Engine
 		m_EmitterPool.push_back(emitter);
 	}
 
-	void ParticleSystem::init(Engine::OrthographicCamera& camera)
+	void ParticleSystem::init()
 	{
-		m_ParticleShader = Shader::Create("../Engine/Assets/Shaders/PlainShader.glsl");;
-		/*m_ParticleShaderViewProj = glGetUniformLocation(m_ParticleShader->getProgram(), "u_ViewProj");
-		m_ParticleShaderTransform = glGetUniformLocation(m_ParticleShader->getProgram(), "u_Transform");
-		m_ParticleShaderColor = glGetUniformLocation(m_ParticleShader->getProgram(), "u_Color");
-
-		glUseProgram(m_ParticleShader->getProgram()); // One shader for now. 
-		glUniformMatrix4fv(m_ParticleShaderViewProj, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionMatrix()));*/
+		
 	}
 }
-
-
-/*
-glEnable(GL_BLEND);
-glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-*/

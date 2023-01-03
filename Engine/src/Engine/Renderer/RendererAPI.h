@@ -22,6 +22,7 @@ namespace Engine
 		virtual ~RendererAPI() = default;
 
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) = 0;
+		virtual void DrawIndexedQuad(const std::shared_ptr<VertexArray>& data) = 0;
 		virtual void DrawLinesIndexed(const std::shared_ptr<VertexArray>& data) = 0;
 		inline static API GetAPI() { return s_API; }
 	private:

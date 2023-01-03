@@ -27,8 +27,56 @@ namespace Engine
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		/*ImGui::ShowDemoWindow();*/
+		ImGui::ShowDemoWindow();
 		ImGui::Begin("Scene Graph");
+
+		if (ImGui::IsMouseDown(ImGuiMouseButton_Right) &&  ImGui::IsWindowHovered())
+			ImGui::OpenPopup("create entity");
+
+		if (ImGui::BeginPopup("create entity"))
+		{
+			ImGui::Text(" - Create Menu -" );
+			ImGui::Separator();
+			if (ImGui::MenuItem("Empty"))
+				m_Selected = m_scene->CreateEmptyEntity("Empty");
+						
+			ImGui::Separator();
+			if (ImGui::BeginMenu("3D"))
+			{
+				if(ImGui::MenuItem("Cube"))
+					m_Selected = m_scene->CreateEntity("Cube");
+				ImGui::MenuItem("Sphere");
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Audio"))
+			{
+				ImGui::EndMenu();
+			}
+			
+			if (ImGui::BeginMenu("Physics"))
+			{
+				ImGui::EndMenu();
+			}
+				
+			if (ImGui::BeginMenu("Particles"))
+			{
+				if (ImGui::MenuItem("Emitter"))
+				{
+					m_Selected = m_scene->CreateEmptyEmitterEntity("Emitter");
+				}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Lighting"))
+			{
+				ImGui::MenuItem("Cube Map");
+				ImGui::MenuItem("Directional Light");
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndPopup();
+		}
 		m_scene->m_Registry.each([&](entt::entity entity)
 		{
 			Entity e{ entity, m_scene.get() };
@@ -37,6 +85,9 @@ namespace Engine
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
 			m_Selected = {entt::null, m_scene.get()};
+
+		
+
 		ImGui::End();
 
 
@@ -200,6 +251,7 @@ namespace Engine
 			auto rb = m_scene->physicsWorld->CreateBoxBody(true, tf.position, tf.euler_rotation, { 0.5f,0.5f ,0.5f });
 			entity.AddComponent<RigidBody>(rb);
 		}
+		ImGui::Separator();
 
 		if (entity.HasComponent<DirectionalLight>())
 		{
@@ -217,8 +269,29 @@ namespace Engine
 			uint32_t da = dl.shadowFrameBuffer->TextureID();
 			float size = static_cast<float>(dl.shadowFrameBuffer->TextureSize().first);
 			ImGui::Image(reinterpret_cast<void*>(da), { size,size });
+			ImGui::Separator();
 		}
-		
-		ImGui::Separator();
+
+		if(entity.HasComponent<EmitterComponent>())
+		{
+			auto& emitter = entity.GetComponent<EmitterComponent>();
+			if (ImGui::TreeNodeEx((void*)(typeid(EmitterComponent).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "EmitterComponent"))
+			{
+				ImGui::Text("Lifetime"); ImGui::SameLine();
+				ImGui::DragFloat("##label098586767835436176451", &emitter.particle_properties.LifeTime,0.2f, 0.f, 10.f);
+
+				ImGui::Text("Start Color"); ImGui::SameLine();
+				ImGui::ColorEdit4("##label9038217", glm::value_ptr(emitter.particle_properties.ColorBegin));
+				ImGui::Text("Start Color"); ImGui::SameLine();
+				ImGui::ColorEdit4("##label9098493503", glm::value_ptr(emitter.particle_properties.ColorEnd));
+				ImGui::Separator();
+				ImGui::Text("Start Velocity"); ImGui::SameLine();
+				ImGui::DragFloat3("##label5894728906432654782354802", glm::value_ptr(emitter.particle_properties.Velocity));
+				ImGui::Text("Velocity Variation"); ImGui::SameLine();
+				ImGui::DragFloat3("##label58947289064326547823542", glm::value_ptr(emitter.particle_properties.VelocityVariation),0.2f);
+				ImGui::TreePop();
+			}
+			ImGui::Separator();
+		}
 	}
 }

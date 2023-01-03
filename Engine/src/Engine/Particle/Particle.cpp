@@ -4,12 +4,14 @@ namespace Engine
 {
 	Particle::Particle()
 	{
-
+		
 	}
 
 	void Particle::init()
 	{
-		if (!m_QuadVA)
+		//mesh = MeshManager::instance().GetMesh("../Engine/Assets/3D/Primitives/plane.gltf");
+		mesh = MeshManager::instance().GetMesh("../Engine/Assets/3D/Primitives/split_cube.gltf");
+		/*if (!m_QuadVA)
 		{
 			float vertices[] = {
 				-0.5f, -0.5f, 0.0f,
@@ -36,7 +38,7 @@ namespace Engine
 			glCreateBuffers(1, &quadIB);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadIB);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-		}
+		}*/
 	}
 
 	void Particle::setParticleProperties(const Engine::ParticleProperties& particleProps)

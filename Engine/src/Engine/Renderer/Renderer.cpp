@@ -61,11 +61,16 @@ namespace Engine
 	}
 
 
-	void Renderer::SubmitQuad(Shader& shader, const glm::vec4& color, const glm::mat4& transform)
+	void Renderer::SubmitParticle(const std::shared_ptr<Shader>& shader, const glm::vec4& color, const std::shared_ptr<VertexArray>& va, const glm::mat4& transform)
 	{
-		shader.Bind();
-		//RenderCommand::DrawQuad();
-
+		shader->Bind();
+		shader->SetFloat4("u_Color", color);
+		shader->SetMat4("u_model", transform);
+		shader->SetMat4("u_view_projection", m_SceneData->ViewProjectionMatrix);
+		va->Bind();
+		RenderCommand::DrawIndexed(va);
+		shader->Unbind();
+		va->Unbind();
 	}
 
 	void Renderer::SubmitLines(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray,

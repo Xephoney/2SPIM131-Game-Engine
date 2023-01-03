@@ -4,21 +4,34 @@
 
 #include "Engine/Renderer/Renderer.h"
 
+#include <glm/gtc/type_ptr.hpp>
+#include <GLFW/glfw3.h>
+#include <gl/GL.h>
+#include <glad/glad.h>
+
 namespace Engine
 {
 
 	Emitter::Emitter()
 	{
-
+		particleShader = Shader::Create("../Engine/Assets/Shaders/ParticleShader.glsl");
+		m_lifeRemaining = m_lifeTime;
 	}
 
 	void Emitter::CreateEmitter(const Engine::EmitterProperties& emitterProps)
 	{
 		m_Position = emitterProps.position;
 		m_lifeTime = emitterProps.lifeTime;
+		m_lifeRemaining = m_lifeTime;
+	}
+	void Emitter::CreateEmitter(const glm::vec3& position, const float& lifetime)
+	{
+		m_Position = position;
+		m_lifeTime = lifetime;
+		m_lifeRemaining = m_lifeTime;
 	}
 
-	void Emitter::PopulateEmitter(Particle& particle, int numOfParticles)
+	void Emitter::PopulateEmitter(Particle particle, int numOfParticles)
 	{
 		m_ParticlePool.resize(numOfParticles);
 		for (int i = 0; i < numOfParticles; i++)
@@ -28,7 +41,7 @@ namespace Engine
 		}
 	}
 
-	void Emitter::EmitParticles(GLint ParticleShaderViewProj, GLint ParticleShaderTransform, GLint ParticleShaderColor)
+	void Emitter::EmitParticles()
 	{
 		for (auto& particle : m_ParticlePool)
 		{
@@ -43,22 +56,18 @@ namespace Engine
 			float size = (particle.getEndSize() * (1.0f - life)) + (particle.getStartSize() * life);
 
 			// Render
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f), { particle.getPosition().x, particle.getPosition().y, 0.0f })
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f),  particle.getPosition())
 
 				* glm::rotate(glm::mat4(1.0f), particle.getRotation(), { 0.0f, 0.0f, 1.0f })
-				* glm::scale(glm::mat4(1.0f), { size, size, 10.0f });
-			glUniformMatrix4fv(ParticleShaderTransform, 1, GL_FALSE, glm::value_ptr(transform));
-			glUniform4fv(ParticleShaderColor, 1, glm::value_ptr(color));
-			glBindVertexArray(particle.m_QuadVA);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+				* glm::scale(glm::mat4(1.0f), { size, size, size });
 
-			//Renderer::SubmitQuad();
+			Renderer::SubmitParticle(particleShader, color, particle.getMesh().vertexArray, transform);
 		}
 	}
 
-	void Emitter::UpdateParticles(float ts)
+	void Emitter::UpdateParticles(const double& dt)
 	{
-		m_lifeRemaining = -ts;
+		m_lifeRemaining -= static_cast<float>(dt);
 		for (auto& particle : m_ParticlePool)
 		{
 			if (!particle.getStatus())
@@ -70,9 +79,9 @@ namespace Engine
 				continue;
 			}
 
-			particle.setLifeRemaining(ts);
-			particle.setPosition(ts);
-			particle.setRotation(ts);
+			particle.setLifeRemaining(dt);
+			particle.setPosition(dt);
+			particle.setRotation(dt);
 		}
 	}
 }
