@@ -40,8 +40,13 @@ namespace Engine
 	class ShaderLibrary
 	{
 	public:
+		static ShaderLibrary& instance()
+		{
+			static ShaderLibrary instance;
+			return instance;
+		}
 		void Add(const std::string& name, const std::shared_ptr<Shader>& shader);
-		void Add(const std::shared_ptr<Shader>& shader);
+		bool Add(const std::shared_ptr<Shader>& shader);
 
 		std::shared_ptr<Shader> Load(const std::string& filepath);
 		std::shared_ptr<Shader> Load(const std::string& name, const std::string& filepath);
@@ -50,6 +55,7 @@ namespace Engine
 
 		bool Exists(const std::string& name) const;
 	private:
+		ShaderLibrary();
 		std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders { };
 	};
 	

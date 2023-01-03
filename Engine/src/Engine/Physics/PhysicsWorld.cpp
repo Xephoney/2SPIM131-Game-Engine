@@ -114,16 +114,13 @@ public:
 	// See: ContactListener
 	virtual ValidateResult	OnContactValidate(const Body& inBody1, const Body& inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override
 	{
-		ENGINE_LOG_INFO("Contact validate callback" );
-
 		// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
-		return ValidateResult::AcceptAllContactsForThisBodyPair;
+		return ValidateResult::AcceptContact;
 	}
 
 	virtual void			OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 	{
-		ENGINE_LOG_INFO("A contact was added");
-		inBody1.GetAccumulatedForce();
+	
 		//Called whenever a new contact point is detected.
 		//Note that this callback is called when all bodies are locked, so don't use any locking functions!
 		//Body 1 and 2 will be sorted such that body 1 ID < body 2 ID, so body 1 may not be dynamic.
@@ -137,12 +134,12 @@ public:
 
 	virtual void			OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
 	{
-		ENGINE_LOG_INFO("A contact was persisted");
+		//ENGINE_LOG_INFO("A contact was persisted");
 	}
 
 	virtual void			OnContactRemoved(const SubShapeIDPair& inSubShapePair) override
 	{
-		ENGINE_LOG_INFO("A contact was removed");
+		//ENGINE_LOG_INFO("A contact was removed");
 	}
 };
 
@@ -178,8 +175,12 @@ namespace Engine
 			MyObjectCanCollide
 		);
 
+		ContactListener = new MyContactListener();
+		physics_system->SetContactListener(ContactListener);
+
 		body_activation_listener = new MyBodyActivationListener();
 		physics_system->SetBodyActivationListener(body_activation_listener);
+
 		physics_system->SetGravity({ 0,-10.0,0 });
 		// Used to interface with (Rigid)bodies
 		BodyInterface& body_interface = physics_system->GetBodyInterface();
@@ -222,6 +223,7 @@ namespace Engine
 		Body* bdy = interface.CreateBody(settings);
 		
 		interface.AddBody(bdy->GetID(), EActivation::Activate);
+		
 		return bdy->GetID();
 	}
 

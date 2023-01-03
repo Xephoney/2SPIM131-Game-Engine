@@ -2,24 +2,21 @@
 #include "Scene.h"
 #include "Components.h"
 #include "Entity.h"
-#include "Engine/Application.h"
-#include "Engine/Input.h"
 #include "Engine/Renderer/Renderer.h"
 
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
-#include "Engine/KeyCodes.h"
 #define SIZE 16.f
 
 namespace Engine
 {
 	Scene::Scene() 
 	{
-		//physicsWorld = new PhysicsWorld();
-
 		physicsWorld = new PhysicsWorld();
 		physicsWorld->Initialize();
-
+		Entity entity = CreateEmptyEntity("Directional Light");
+		entity.AddComponent<DirectionalLight>();
+		entity.GetComponent<Transform>().euler_rotation = { glm::radians(-83.f), glm::radians(16.f), glm::radians(27.f) };
 	}
 
 	Scene::~Scene()
@@ -38,6 +35,13 @@ namespace Engine
 		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 1.0, 0.1, 1 });
 #endif
 
+		return entity;
+	}
+	Entity Scene::CreateEmptyEntity(const std::string& tagName)
+	{
+		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<Tag>(tagName);
+		entity.AddComponent<Transform>(glm::mat4{ 1.f });
 		return entity;
 	}
 
@@ -64,7 +68,10 @@ namespace Engine
 			auto& [transform, rb] = view.get<Transform, RigidBody>(entity);
 			interface.SetPosition(rb.data, { transform.position.x, transform.position.y, transform.position.z }, JPH::EActivation::Activate);
 			interface.SetRotation(rb.data, JPH::Quat::sEulerAngles({ transform.euler_rotation.x, transform.euler_rotation.y, transform.euler_rotation.z}), JPH::EActivation::Activate);
+			JPH::Shape* box = new JPH::BoxShape({ transform.scale.x / 2.f, transform.scale.y / 2.f, transform.scale.z / 2.f });
+			interface.SetShape(rb.data, box, true, JPH::EActivation::Activate);
 		}
+		physicsWorld->physics_system->OptimizeBroadPhase();
 	}
 
 	void Scene::StopSimulation()
@@ -88,6 +95,22 @@ namespace Engine
 			}
 		}
 
+		{
+			auto view = m_Registry.view<Transform, DirectionalLight>();
+			for (auto& e : view)
+			{
+				auto& [transform, light] = view.get<Transform, DirectionalLight>(view.front());
+
+				transform.CalculateTransform();
+				Renderer::SubmitDirectionalLight(
+					*light.lightShader.get(),
+					transform.Forward(),
+					light.specularExponent,
+					light.specularStrength,
+					light.ambientStrength,
+					light.lightColor);
+			}
+		}
 		// CHECK SIMULATION STATE
 		if(simulate)
 		{
@@ -146,10 +169,56 @@ namespace Engine
 
 			physicsWorld->GetBodyPosition(rb.data, transform.position);
 			physicsWorld->GetBodyRotation(rb.data, transform.euler_rotation);
-						
 		}
 	}
 
-	
-	
+	void Scene::ShadowPass()
+	{
+		//Directional light SHADOWS AND UNIFORMS 
+		{
+			auto view = m_Registry.view<Transform, DirectionalLight>();
+			
+			for (auto& e : view)
+			{
+				auto& [transform, light] = view.get<Transform, DirectionalLight>(view.front());
+				light.shadowFrameBuffer->Bind();
+				transform.CalculateTransform();
+				light.UpdateViewProjectionMatrix(transform.Forward());
+				
+				
+				
+				/*Renderer::SubmitDirectionalLight(
+					*light.lightShader.get(),
+					transform.Forward(),
+					light.specularExponent,
+					light.specularStrength,
+					light.ambientStrength,
+					light.lightColor);*/
+
+				/*Renderer::SubmitDirectionalLightShadow(
+					*light.lightShader.get(),
+					transform.Forward(),
+					light.lightSpaceMatrix,
+					light.specularExponent,
+					light.specularStrength,
+					light.ambientStrength,
+					light.lightColor);
+					*/
+
+				auto renderpass = m_Registry.view<Transform, StaticMeshRenderer>();
+				for (auto& entity : renderpass)
+				{
+					auto& [renderTransform, staticmesh] = renderpass.get<Transform, StaticMeshRenderer>(entity);
+					for (int i = 0; i < staticmesh.mesh.meshes.size(); i++)
+					{
+						auto mesh = MeshManager::instance().GetMeshFromID(staticmesh.mesh.meshes[i]);
+						Renderer::SubmitDepthpass(light.shadowMapShader, mesh.vertexArray, renderTransform);
+					}
+				}
+				light.shadowFrameBuffer->BindDepthTexture();
+				light.lightShader->SetInt("shadowMap", light.shadowFrameBuffer->TextureID());
+				light.shadowFrameBuffer->Unbind();
+			}
+		}
+	}
 }

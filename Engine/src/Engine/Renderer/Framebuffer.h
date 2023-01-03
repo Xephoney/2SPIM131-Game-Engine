@@ -61,5 +61,6 @@ namespace Engine
 		virtual void Resize(uint32_t w, uint32_t h) = 0;
 		virtual int ReadPixel(uint32_t attachmentIndex, uint32_t x, uint32_t y) = 0;
 		[[nodiscard]] virtual uint32_t GetColorAttachment(uint32_t index = 0) const = 0;
+		[[nodiscard]] virtual uint32_t GetDepthAttachment() const = 0;
 	};
 }

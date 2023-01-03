@@ -76,7 +76,6 @@ namespace Engine
 				}
 			}
 
-
 			Renderer::NewFrame(camera);
 
 			//Normal loop
@@ -85,6 +84,10 @@ namespace Engine
 					MoveEditorCamera();
 
 				camera->update(dt);
+
+				
+				activeScene->ShadowPass();
+				
 
 				m_FrameBuffer->Bind();
 				RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -113,19 +116,33 @@ namespace Engine
 		}
 		void OnAttach() override
 		{
-			m_SceneGraph.SetContext(activeScene);
+			m_SceneGraph.SetContext(activeScene); 
 			Entity entity = activeScene->CreateEntity("Cube 1");
-			entity.GetComponent<Transform>().position = { -4, 2, 0 };
+			entity.GetComponent<Transform>().position = { -4, 20, 0 };
 			entity.GetComponent<Transform>().euler_rotation= { 22.5, 45, 120 };
+			auto rb = activeScene->physicsWorld->CreateBoxBody(true,
+				entity.GetComponent<Transform>().position,
+				entity.GetComponent<Transform>().euler_rotation,
+				entity.GetComponent<Transform>().scale/2.f);
+			entity.AddComponent<RigidBody>(rb);
 
 			entity = activeScene->CreateEntity("Cube 2");
-			entity.GetComponent<Transform>().position = { 0, 2, 0 };
+			entity.GetComponent<Transform>().position = { 0, 20, 0 };
 			entity.GetComponent<Transform>().euler_rotation = { 120, 12, 10 };
+			rb = activeScene->physicsWorld->CreateBoxBody(true,
+				entity.GetComponent<Transform>().position,
+				entity.GetComponent<Transform>().euler_rotation,
+				entity.GetComponent<Transform>().scale / 2.f);
+			entity.AddComponent<RigidBody>(rb);
 
-			entity = activeScene->CreateEntity("Cube 3");
-			entity.GetComponent<Transform>().position = { 4, 2, 0 };
-			entity.GetComponent<Transform>().euler_rotation = { 270, 25, 77 };
-
+			entity = activeScene->CreateEntity("Floor");
+			entity.GetComponent<Transform>().position = { 0, 0, 0 };
+			entity.GetComponent<Transform>().scale = { 40, 0.5, 40 };
+			rb = activeScene->physicsWorld->CreateBoxBody(false,
+				entity.GetComponent<Transform>().position,
+				entity.GetComponent<Transform>().euler_rotation,
+				entity.GetComponent<Transform>().scale / 2.f);
+			entity.AddComponent<RigidBody>(rb);
 			/*SceneSerializer serializer(activeScene);
 			serializer.SerializeText("../Engine/Assets/Scenes/EditorExample.lvl");*/
 

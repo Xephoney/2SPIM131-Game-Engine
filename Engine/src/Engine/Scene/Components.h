@@ -4,13 +4,15 @@
 
 #include "MeshManager.h"
 #include "Engine/Application.h"
-#include "Engine/Application.h"
 #include "Engine/Renderer/VertexArray.h"
 #include "Engine/Audio/sound.h"
-#include "glm/gtx/transform.hpp"
+#include "Engine/Renderer/Framebuffer.h"
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
-#include "Jolt/Jolt.h"
+
+#include "Engine/Renderer/DepthOnlyFrameBuffer.h"
+
 namespace Engine
 {
 
@@ -56,6 +58,11 @@ namespace Engine
 		{
 			euler_rotation += deltaRotation;
 		}
+
+		glm::vec3 Forward() const
+		{
+			return glm::normalize(glm::vec3(transform[2]));
+		}
 	};
 
 	struct Tag
@@ -94,6 +101,7 @@ namespace Engine
 				
 				meshes.emplace_back(mesh);
 			}
+			return meshes;
 		}
 	};
 
@@ -163,6 +171,7 @@ namespace Engine
 			std::shared_ptr<IndexBuffer> ib;
 			ib.reset(IndexBuffer::Create(indices.data(), indices.size()));
 			va->SetIndexBuffer(ib);
+			mat = { "../Engine/Assets/Shaders/PlainUnlitShader.glsl" };
 		}
 		Material mat;
 		DebugBox(const DebugBox&) = default;
@@ -219,59 +228,60 @@ namespace Engine
 	{
 		JPH::BodyID data {0};
 		bool dynamic { true };
+		bool show_collider{ true };
 		RigidBody() = default;
 		RigidBody(JPH::BodyID id) : data(id) { }
 		RigidBody(const RigidBody&) = default;
 		
 	};
 
-	/*struct Rigidbody_bt
+	struct DirectionalLight
 	{
-		Rigidbody()
+		float intensity { 1.f };
+		glm::vec3 lightColor { 1.f };
+	
+		int specularExponent = 128;
+		float specularStrength = 0.9;
+		float ambientStrength = 0.45;
+		std::shared_ptr<Shader> lightShader;
+		std::shared_ptr<Shader> dirLightShader;
+		std::shared_ptr<Shader> shadowMapShader;
+		std::shared_ptr<DepthOnlyFramebuffer> shadowFrameBuffer;
+		glm::mat4 projectionMatrix{1.f};
+		glm::mat4 viewMatrix{ 1.f };
+		glm::mat4 lightSpaceMatrix{ 1.f };
+		DirectionalLight()
 		{
-			mass = 1;
-			velocity = 0;
-		}
-		Rigidbody(btRigidBody* rb)
-			: internal_rb(rb)
-		{
-			mass = (float)rb->getMass();
-			if (mass > 0.0)
-				dynamic = true;
-
-		}
-		Rigidbody(const Rigidbody&) = default;
-
-		bool dynamic{ false };
-
-		float mass {1.0};
-		float velocity {0.0};
-		
-		void AddForce(const glm::vec3& force)
-		{
-			internal_rb->applyCentralForce(btVector3(force.x, force.y, force.z));
-		}
-		
-		void SetMass(const float& newMass)
-		{
-			mass = newMass;
-			btVector3 inertia(0,0,0);
-			if (mass > 0.f)
-			{
-				dynamic = true;
-				internal_rb->setMassProps(mass, inertia);
-			}
-			else
-			{
-				
-			}
+			lightShader = ShaderLibrary::instance().Get("PlainShader");
+			dirLightShader = ShaderLibrary::instance().Get("DirectionalShadows");
+			shadowMapShader = ShaderLibrary::instance().Get("DirectionalShadows");
 			
-				
+			shadowFrameBuffer = DepthOnlyFramebuffer::Create(4098);
+			projectionMatrix = glm::ortho(-30.0, 30.0, -30.0, 30.0, -10.0, 40.0);
 		}
-		btRigidBody* internal_rb{ nullptr };
-	};
-	*/
 
+		DirectionalLight(const DirectionalLight&) = default;
+
+		void UpdateViewProjectionMatrix(const glm::vec3& direction)
+		{
+			glm::vec3 pos = 20.f * direction;
+			viewMatrix = glm::lookAt(pos, glm::vec3(0.f), {0,1,0});
+			lightSpaceMatrix = projectionMatrix * viewMatrix;
+			shadowMapShader->Bind();
+			shadowMapShader->SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+			lightShader->Bind();
+			lightShader->SetMat4("u_biasedLight", lightSpaceMatrix);
+		}
+		glm::mat4 GetBiasedViewProjection() const {
+			return glm::mat4(
+				0.5, 0.0, 0.0, 0.0,
+				0.0, 0.5, 0.0, 0.0,
+				0.0, 0.0, 0.5, 0.0,
+				0.5, 0.5, 0.5, 1.0
+			) * lightSpaceMatrix;
+		}
+	};
+	
 	struct CameraComponent
 	{
 		glm::mat4 Projection;
