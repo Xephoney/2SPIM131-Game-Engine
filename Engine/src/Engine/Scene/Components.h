@@ -256,8 +256,8 @@ namespace Engine
 			dirLightShader = ShaderLibrary::instance().Get("DirectionalShadows");
 			shadowMapShader = ShaderLibrary::instance().Get("DirectionalShadows");
 			
-			shadowFrameBuffer = DepthOnlyFramebuffer::Create(4096);
-			projectionMatrix = glm::ortho(-20.0, 20.0, -20.0, 20.0, 0.01, 40.0);
+			shadowFrameBuffer = DepthOnlyFramebuffer::Create(4098);
+			projectionMatrix = glm::ortho(-30.0, 30.0, -30.0, 30.0, -10.0, 40.0);
 		}
 
 		DirectionalLight(const DirectionalLight&) = default;

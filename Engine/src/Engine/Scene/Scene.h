@@ -46,6 +46,7 @@ namespace Engine
 		
 		friend class SceneSerializer;
 
+		friend class EditorLayer;
 		
 	};
 

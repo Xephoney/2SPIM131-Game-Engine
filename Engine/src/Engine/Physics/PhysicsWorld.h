@@ -18,6 +18,7 @@
 #include "Jolt/Physics/Collision/ShapeCast.h"
 
 
+class MyContactListener;
 class MyBodyActivationListener;
 class BPLayerInterfaceImpl;
 
@@ -68,6 +69,7 @@ namespace Engine
 		JPH::JobSystemThreadPool* job_system { nullptr};
 		BPLayerInterfaceImpl* broad_phase_layer_interface{ nullptr };
 		MyBodyActivationListener* body_activation_listener{ nullptr };
+		MyContactListener* ContactListener{ nullptr };
 
 		friend struct RigidBody;
 		friend class Scene;
