@@ -3,6 +3,7 @@
 #include "entt.hpp"
 #include "Engine/Renderer/Camera.h"
 #include "Engine/Audio/sound.h"
+//#include "Engine/Particle/ParticleSystem.h"
 #include "Engine/Physics/PhysicsWorld.h"
 //#include "Engine/Physics/PhysicsWorld.h"
 
@@ -35,6 +36,7 @@ namespace Engine
 		entt::registry m_Registry;
 		double deltaTime;
 		PhysicsWorld* physicsWorld;
+		//ParticleSystem* particleSystem;
 
 		bool simulate { false };
 		double fixedDTCounter {0};

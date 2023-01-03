@@ -143,19 +143,6 @@ namespace Engine
 				}
 			}
 		}
-#ifdef _DEBUG
-		/*{
-			auto view = m_Registry.view<Transform, DebugBox>();
-			for (auto& entity : view)
-			{
-				auto& [transform, DebugComp] = view.get<Transform, DebugBox>(entity);
-				Renderer::SubmitLines(DebugComp.mat, DebugComp.va, transform, static_cast<int>(entity));
-				
-			}
-		}*/
-#endif
-
-		
 	}
 
 	void Scene::OnFixedUpdate(const double& dt)
