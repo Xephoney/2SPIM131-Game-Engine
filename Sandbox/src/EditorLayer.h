@@ -76,7 +76,6 @@ namespace Engine
 				}
 			}
 
-
 			Renderer::NewFrame(camera);
 
 			//Normal loop
@@ -85,6 +84,10 @@ namespace Engine
 					MoveEditorCamera();
 
 				camera->update(dt);
+
+				
+				activeScene->ShadowPass();
+				
 
 				m_FrameBuffer->Bind();
 				RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -115,16 +118,16 @@ namespace Engine
 		{
 			m_SceneGraph.SetContext(activeScene);
 			Entity entity = activeScene->CreateEntity("Cube 1");
-			entity.GetComponent<Transform>().position = { -4, 2, 0 };
+			entity.GetComponent<Transform>().position = { -4, 4, 0 };
 			entity.GetComponent<Transform>().euler_rotation= { 22.5, 45, 120 };
 
 			entity = activeScene->CreateEntity("Cube 2");
-			entity.GetComponent<Transform>().position = { 0, 2, 0 };
+			entity.GetComponent<Transform>().position = { 0, 4, 0 };
 			entity.GetComponent<Transform>().euler_rotation = { 120, 12, 10 };
 
-			entity = activeScene->CreateEntity("Cube 3");
-			entity.GetComponent<Transform>().position = { 4, 2, 0 };
-			entity.GetComponent<Transform>().euler_rotation = { 270, 25, 77 };
+			entity = activeScene->CreateEntity("Floor");
+			entity.GetComponent<Transform>().position = { 0, 0, 0 };
+			entity.GetComponent<Transform>().scale = { 40, 0.5, 40 };
 
 			/*SceneSerializer serializer(activeScene);
 			serializer.SerializeText("../Engine/Assets/Scenes/EditorExample.lvl");*/

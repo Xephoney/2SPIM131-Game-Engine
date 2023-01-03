@@ -222,6 +222,7 @@ namespace Engine
 		Body* bdy = interface.CreateBody(settings);
 		
 		interface.AddBody(bdy->GetID(), EActivation::Activate);
+		
 		return bdy->GetID();
 	}
 

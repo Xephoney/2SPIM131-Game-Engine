@@ -16,7 +16,7 @@ namespace Engine
 		~Scene();
 
 		Entity CreateEntity(const std::string& tagName = "_empty_");
-
+		Entity CreateEmptyEntity(const std::string& tagName = "_empty_");
 		entt::registry& GetReg() { return m_Registry; }
 
 		void OnViewportResize(uint32_t w, uint32_t h);
@@ -25,8 +25,12 @@ namespace Engine
 		void OnUpdate(const double& dt);
 		void OnFixedUpdate(const double& dt);
 
+		void ShadowPass();
+
 		void SetSimulationState(bool bSimulate) { simulate = bSimulate; }
 		bool IsSimulating() const { return simulate; }
+
+		
 	private:
 		entt::registry m_Registry;
 		double deltaTime;
@@ -37,10 +41,12 @@ namespace Engine
 
 		uint32_t viewportWidth {0};
 		uint32_t viewportHeight {0};
-
+		
 		friend class SceneHierarchyPanel;
-		friend class Entity;
+		
 		friend class SceneSerializer;
+
+		
 	};
 
 }

@@ -70,6 +70,7 @@ namespace Engine
 		MyBodyActivationListener* body_activation_listener{ nullptr };
 
 		friend struct RigidBody;
+		friend class Scene;
 
 	};
 }

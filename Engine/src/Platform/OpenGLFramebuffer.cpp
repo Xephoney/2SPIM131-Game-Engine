@@ -173,6 +173,7 @@ namespace Engine
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, spesification.width, spesification.height);
+		
 	}
 
 	void OpenGLFramebuffer::Unbind()

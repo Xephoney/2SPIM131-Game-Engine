@@ -54,18 +54,27 @@ namespace Engine
 		m_shaders[name] = shader;
 	}
 
-	void ShaderLibrary::Add(const std::shared_ptr<Shader>& shader)
+	bool ShaderLibrary::Add(const std::shared_ptr<Shader>& shader)
 	{
 		auto& name = shader->GetName();
-		ENGINE_CORE_ASSERT(!Exists(name), "Shader already exists!")
+		if (Exists(name))
+		{
+			return false;
+		}
 		Add(name, shader);
+		return true;
 	}
 
 	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string& filepath)
 	{
 		auto shader = Shader::Create(filepath);
-		Add(shader);
-		return shader;
+		if (Add(shader))
+			return shader;
+		
+		std::string name = shader->GetName();
+		shader.reset();
+		return m_shaders[name];
+	
 	}
 
 	std::shared_ptr<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
@@ -88,7 +97,13 @@ namespace Engine
 	{
 		return m_shaders.find(name) != m_shaders.end();
 	}
-	
+
+	ShaderLibrary::ShaderLibrary()
+	{
+		Load("../Engine/Assets/Shaders/PlainShader.glsl");
+		Load("../Engine/Assets/Shaders/PlainUnlitShader.glsl");
+		Load("../Engine/Assets/Shaders/DirectionalShadows.glsl");
+	}
 }
 
 

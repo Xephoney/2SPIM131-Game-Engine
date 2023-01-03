@@ -9,34 +9,24 @@ namespace Engine
 	struct Material
 	{
 		glm::vec3 diffuse{};
-		glm::vec3 ambient{};
 		glm::vec3 specular{};
 		glm::vec3 roughness{};
-		glm::vec3 emissive{};
-		glm::vec4 emissive_color{};
-
-		float shininess = 0.f;
+		
 		bool twoSided = false;
 		std::shared_ptr<Shader> shader;
 
-		Material() : ambient(glm::vec3(1.f)), diffuse(glm::vec3(0.f)), specular(glm::vec3(0.f)), roughness(1.f),
-		             emissive(0.f),
-		             emissive_color(0.f)
+		Material() : diffuse(glm::vec3(1.f)), specular(glm::vec3(0.f)), roughness(1.f)
 		{
-			//shader = Shader::Create("plainShader", vertexShaderTemp, fragmentShaderTemp);
-			shader = Shader::Create("../Engine/Assets/Shaders/PlainShader.glsl");
+			shader = ShaderLibrary::instance().Load("../Engine/Assets/Shaders/PlainShader.glsl");
 		}
 
 		Material(const Material&) = default;
 		Material(const std::string& ShaderFilePath) :
-			ambient(glm::vec3(1.f)),
-			diffuse(glm::vec3(0.f)),
+			diffuse(glm::vec3(1.f)),
 			specular(glm::vec3(0.f)),
-			roughness(1.f),
-			emissive(0.f),
-			emissive_color(0.f)
+			roughness(1.f)
 		{
-			shader = Shader::Create(ShaderFilePath);
+			shader = ShaderLibrary::instance().Load(ShaderFilePath);
 		}
 
 		operator Shader& () { return *shader; }

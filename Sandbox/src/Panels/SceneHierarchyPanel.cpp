@@ -94,19 +94,16 @@ namespace Engine
 			if (ImGui::TreeNodeEx(reinterpret_cast<void*>(typeid(Transform).hash_code()),ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
 			{
 				ImGui::Text("Position"); ImGui::SameLine();
-				positionDirtyFlag = ImGui::DragFloat3(" ", value_ptr(transform.position), 0.1f);
+				ImGui::DragFloat3(" ", value_ptr(transform.position), 0.1f);
 				ImGui::Text("Rotation"); ImGui::SameLine();
 
 				glm::vec3 rot = { glm::degrees(transform.euler_rotation.x), glm::degrees(transform.euler_rotation.y), glm::degrees(transform.euler_rotation.z )};
-				if (ImGui::DragFloat3("\t", glm::value_ptr(rot), 0.05f))
+				if (ImGui::DragFloat3("\t", glm::value_ptr(rot), 1.f))
 				{
 					transform.euler_rotation.x = glm::radians(rot.x);
 					transform.euler_rotation.y = glm::radians(rot.y);
 					transform.euler_rotation.z = glm::radians(rot.z);
-					rotationDirtyFlag = true;
 				}
-				else
-					rotationDirtyFlag = false;
 				ImGui::Text("Scale   "); ImGui::SameLine();
 				static bool uniformScale = false;
 				if(!uniformScale)
@@ -142,6 +139,27 @@ namespace Engine
 			}
 			ImGui::Separator();
 		}
+		if(entity.HasComponent<StaticMeshRenderer>())
+		{
+			auto& smr = entity.GetComponent<StaticMeshRenderer>();
+			
+			if (ImGui::TreeNodeEx((void*)(typeid(StaticMeshRenderer).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Static Mesh"))
+			{
+				auto meshes = smr.GetMeshes();
+				ImGui::Text("Meshes");
+				ImGui::Separator();
+				for (auto& mesh : meshes)
+				{
+					
+					ImGui::BulletText("Shader"); ImGui::SameLine();
+					ImGui::TextColored({ 0.5f,0.7f,0.2f,1.f }, mesh.material.shader->GetName().c_str());
+					ImGui::BulletText("Diffuse"); ImGui::SameLine();
+					ImGui::ColorEdit3("##label", glm::value_ptr(mesh.material.diffuse));
+				}
+				ImGui::TreePop();
+			}
+			ImGui::Separator();
+		}
 
 		if (entity.HasComponent<RigidBody>())
 		{
@@ -163,7 +181,8 @@ namespace Engine
 					}
 				}
 
-				if(ImGui::Button("Reset Motion"))
+				//Collider Extent
+				if (ImGui::Button("Reset Motion"))
 				{
 					interface.SetLinearAndAngularVelocity(
 						rb.data,
@@ -177,10 +196,29 @@ namespace Engine
 		}
 		else if (ImGui::Button("Add RigidBody"))
 		{
-			auto& tf =  entity.GetComponent<Transform>();
-			auto rb= m_scene->physicsWorld->CreateBoxBody(true, tf.position, tf.euler_rotation, {0.5f,0.5f ,0.5f });
+			auto& tf = entity.GetComponent<Transform>();
+			auto rb = m_scene->physicsWorld->CreateBoxBody(true, tf.position, tf.euler_rotation, { 0.5f,0.5f ,0.5f });
 			entity.AddComponent<RigidBody>(rb);
 		}
+
+		if (entity.HasComponent<DirectionalLight>())
+		{
+			auto& dl = entity.GetComponent<DirectionalLight>();
+			ImGui::Text("Light Color"); ImGui::SameLine();
+			ImGui::ColorEdit3("##label0", glm::value_ptr(dl.lightColor));
+			ImGui::Text("Ambient Intensity"); ImGui::SameLine();
+			ImGui::DragFloat("##label1", &dl.ambientStrength, 0.01f, 0.0f, 1.0f);
+
+			ImGui::Text("Specular Strength"); ImGui::SameLine();
+			ImGui::DragFloat("##label2", &dl.specularStrength, 0.05f, 0.0f, 1.0f);
+			ImGui::Text("Specular Exponent"); ImGui::SameLine();
+			ImGui::DragInt("##label3", &dl.specularExponent, 4, 0, 512);
+
+			uint32_t da = dl.shadowFrameBuffer->TextureID();
+			float size = static_cast<float>(dl.shadowFrameBuffer->TextureSize().first);
+			ImGui::Image(reinterpret_cast<void*>(da), { size,size });
+		}
+		
 		ImGui::Separator();
 	}
 }

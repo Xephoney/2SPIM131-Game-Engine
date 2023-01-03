@@ -6,6 +6,7 @@
 #include "Renderer.h"
 
 #include "Engine/Scene/Mesh.h"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace Engine
 {
@@ -53,8 +54,15 @@ namespace Engine
 		vertexArray->Unbind();
 	}
 
+	void Renderer::SubmitCubeFrame(glm::vec4 Color, const glm::mat4& transform, int ID)
+	{
+		//std::shared_ptr<Shader> shader = m_SceneData->shader_library.Get("PlainShader");
+		ENGINE_CORE_ASSERT(false, "FUNCTION NOT IMPLEMENTED YET")
+	}
+
+
 	void Renderer::SubmitLines(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray,
-		const glm::mat4& transform, int ID)
+	                           const glm::mat4& transform, int ID)
 	{
 		shader.Bind();
 		shader.SetMat4("u_model", transform);
@@ -66,6 +74,44 @@ namespace Engine
 		shader.Unbind();
 		vertexArray->Unbind();
 	}
+
+	void Renderer::SubmitDepthpass(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& va,
+		const glm::mat4& transform)
+	{
+		shader->Bind();
+		shader->SetMat4("u_model", transform);
+		va->Bind();
+		RenderCommand::DrawIndexed(va);
+		va->Unbind();
+		shader->Unbind();
+		
+	}
+
+	void Renderer::SubmitDirectionalLight(Shader& shader, 
+	                                      const glm::vec3& direction,
+	                                      int specularExponent, 
+	                                      float specularStrength , 
+	                                      float ambientStrength ,
+	                                      const glm::vec3& lightColor)
+	{
+		shader.Bind();
+		shader.SetFloat3("lightDirection", direction);
+		shader.SetFloat3("cameraPosition", m_SceneData->render_camera->GetPosition());
+		shader.SetInt("specularExponent", specularExponent);
+		shader.SetFloat("specularStrength", specularStrength);
+		shader.SetFloat("ambientStrength", ambientStrength);
+		shader.SetFloat3("lightColor", lightColor);
+	}
+
+	void Renderer::SubmitDirectionalLightShadow(Shader& shader, const glm::vec3& direction,
+		const glm::mat4& lightSpaceMatrix, int specularExponent, float specularStrength, float ambientStrength,
+		const glm::vec3& lightColor)
+	{
+		shader.Bind();
+		shader.SetMat4("lightSpaceMatrix", lightSpaceMatrix);
+		SubmitDirectionalLight(shader, direction, specularExponent, specularStrength, ambientStrength, lightColor);
+	}
+
 
 	// void Renderer::SubmitInstanced(StaticMesh& staticMesh, const glm::mat4& transform)
 	// {
