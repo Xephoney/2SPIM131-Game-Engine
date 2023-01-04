@@ -1,6 +1,8 @@
 #include <engpch.h>
 
 #include "Camera.h"
+
+#include "Engine/Log.h"
 #include "glm/glm.hpp"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
@@ -14,10 +16,10 @@ namespace Engine
 		RecalculateViewMatrix();
 	}
 
-	OrthographicCamera::OrthographicCamera(const float& size, const float& aspectRation, const int& near,
-		const int& far)
+	OrthographicCamera::OrthographicCamera(const float& size, const float& aspectRation, const int& _near,
+		const int& _far)
 	{
-		m_projection = glm::ortho(size* aspectRation, size* aspectRation, size, size, static_cast<float>(near), static_cast<float>(far));
+		m_projection = glm::ortho(size* aspectRation, size* aspectRation, size, size, static_cast<float>(_near), static_cast<float>(_far));
 	}
 
 	void OrthographicCamera::Resize(uint32_t width, uint32_t height)
@@ -26,13 +28,13 @@ namespace Engine
 	}
 
 
-	PerspectiveCamera::PerspectiveCamera(const float& fov, const float& aspectRatio, const float& near,
-	                                     const float& far)
+	PerspectiveCamera::PerspectiveCamera(const float& fov, const float& aspectRatio, const float& __near,
+	                                     const float& __far)
 	{
 		FOV_degrees = fov;
-		_near = near;
-		_far = far;
-		m_projection = glm::perspective(glm::radians(fov), aspectRatio, near, far);
+		_near = __near;
+		_far = __far;
+		m_projection = glm::perspective(glm::radians(fov), aspectRatio, _near, _far);
 		RecalculateViewMatrix();
 	}
 
@@ -55,9 +57,11 @@ namespace Engine
 		{
 			m_movementSpeed = std::clamp(m_movementSpeed, 0.2f, FLT_MAX);
 			m_position += m_movementDir * static_cast<float>(dt) * m_movementSpeed;
-			m_movementDir = glm::vec3{ 0.f };
+			
 		}
 		RecalculateViewMatrix();
+		m_velocity = m_movementDir * m_movementSpeed;
+		m_movementDir = glm::vec3{ 0.f };
 	}
 
 	glm::vec3 Camera::Forward() 
@@ -76,6 +80,21 @@ namespace Engine
 	{
 		m_up = glm::normalize(cross(m_right, m_direction));
 		return m_up;
+	}
+
+	glm::vec3 Camera::Velocity() const
+	{
+		return m_velocity;
+	}
+
+	glm::vec3 Camera::VelocityNormalized() const
+	{
+		return normalize(m_velocity);
+	}
+
+	float Camera::VelocityUnit() const
+	{
+		return length(m_velocity);
 	}
 
 	void Camera::RecalculateViewMatrix()

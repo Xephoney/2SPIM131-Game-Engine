@@ -743,6 +743,7 @@ struct FMOD_ASYNCREADINFO
 
 typedef struct FMOD_VECTOR
 {
+    //FMOD_VECTOR(float _x, float _y, float _z) : x(_x),y(_y),z(_z) {}
     float x;
     float y;
     float z;

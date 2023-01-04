@@ -195,33 +195,114 @@ namespace Engine
 
 	struct AudioSource
 	{
+	private:
 		sound* mSound = nullptr;
 		std::string mName = "DEFAULT NAME";
+		FMOD_VECTOR mPos;
+		float minDist = 5.f;
+		float maxDist = 10.f;
+	public:
+		// constructors
 		AudioSource()
 		{
-			ENGINE_LOG_WARNING("AUDIOSOURCE COMPONENT ADDED, BUT NO SOUND OR MANAGER WAS PASSED IN");
+			ENGINE_LOG_WARNING("AUDIOSOURCE COMPONENT ADDED, BUT NO SOUND, SOUNDMANAGER OR POSITION WAS PASSED IN");
 		}
 		AudioSource(sound* inSound) 
 		{
 			mSound = inSound;
-			mName = mSound->getName();
+			mName = setIdentifyer(mSound->getName());
 		}
 		AudioSource(std::string name)
 		{
-			mName = name;
-			mSound = new sound(name);
+			mName = setIdentifyer(name);
+			mSound = new sound(setIdentifyer(name));
 		}
-		
+		AudioSource(sound* inSound, glm::vec3 pos)
+		{
+			mSound = inSound;
+			//mName = mSound->getName();
+			mName=setIdentifyer(mSound->getName());
+			setPos(pos);
+			mSound->setMaxDist(maxDist);
+			mSound->setMinDist(minDist);
+			mSound->setPos(pos);
+			SoundManager::getSoundManager().addToSoundlist(mSound);
+		}
+		AudioSource(std::string name, glm::vec3 pos)
+		{
+			mName=setIdentifyer(name);
+			setPos(pos);
+			mSound = new sound(setIdentifyer(name));
+			mSound->setMaxDist(maxDist);
+			mSound->setMinDist(minDist);
+			mSound->setPos(pos);
+			SoundManager::getSoundManager().addToSoundlist(mSound);
+			
+		}
+
+		//Other functions
 		void addSound(const char* file, std::string name)
 		{
-			mSound = new sound(file, name);
-			mName = name;
+			mSound = new sound(file, setIdentifyer(name), false);
+			mName = setIdentifyer(name);
 		}
-
-
+		void add3DSound(const char* file, std::string name, glm::vec3 pos)
+		{
+			mPos.x = pos.x;
+			mPos.y = pos.y;
+			mPos.z = pos.z;
+			mSound = new sound(file, name, true);
+			mSound->setPos(mPos);
+			mName = setIdentifyer(name);
+		}
+		void swapSound(std::string name) {
+			//Swap to an existing sound
+			mName = setIdentifyer(name);
+			bool success = mSound->swapSound(mName);
+			if(!success)
+				ENGINE_LOG_WARNING("could not swap sound to {0}",name);
+			
+		}
 		void playSound()
 		{
 			mSound->playSound(mName);
+		}
+
+		void setPos(glm::vec3 in)
+		{
+			mPos.x = in.x;
+			mPos.y = in.y;
+			mPos.z = in.z;
+		}
+
+		FMOD_VECTOR getFMODpos() 
+		{
+			return mPos;
+		}
+
+		glm::vec3 getVec3Pos()
+		{
+			glm::vec3 temp;
+			temp.x = mPos.x;
+			temp.y = mPos.y;
+			temp.z = mPos.z;
+			return temp;
+		}
+
+		float getMinDist()
+		{
+			return minDist;
+		}
+		float getMaxDist()
+		{
+			return maxDist;
+		}
+
+		std::string setIdentifyer(std::string name) 
+		{
+			int num = SoundManager::getSoundManager().getExistingSoundsWithName(name);
+			std::string newName = name + "ID:" + std::to_string(num);
+			return newName;
 		}
 	};
 

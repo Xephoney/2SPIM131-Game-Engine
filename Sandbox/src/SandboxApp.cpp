@@ -75,6 +75,7 @@ public:
 						if(selection[i] == true)
 						{
 							selection[i] = false;
+							reg.get<Engine::AudioSource>(entities[i]).swapSound("Delete");
 							reg.get<Engine::AudioSource>(entities[i]).playSound();
 							reg.destroy(entities[i]);
 							entity_count--;
@@ -84,7 +85,7 @@ public:
 				ImGui::SameLine();
 				if (ImGui::Button("Delete All"))
 				{
-					Engine::SoundManager::getSoundManager().playSound("DeleteAll");
+					Engine::SoundManager::getSoundManager().playSound("DeleteAllID:0");
 					memset(selection, 0, sizeof(selection));
 					for (auto entity : entities)
 					{
@@ -119,9 +120,11 @@ public:
 				std::string name = "Quad ";
 				name += std::to_string(entity_count);
 				Engine::Entity cube = scene->CreateEntity(name);
-				auto& thing = cube.AddComponent<Engine::AudioSource>("Delete"); // test after!!
+				
 				//thing.addSound("dummy", "Delete");
+				auto& thing = cube.AddComponent<Engine::AudioSource>("Pop", glm::vec3(x,y,0)); // test after!!
 				cube.GetComponent<Engine::Transform>().position = { x, y,0 };
+				cube.GetComponent<Engine::AudioSource>().playSound();
 			}
 		}
 		if (event.GetEventType() == Engine::EventType::KeyPressed)
@@ -164,10 +167,10 @@ public:
 				{
 					//Engine::SoundManager::getSoundManager().playSound("Trekant");
 				}
-				if (newEvent.GetKeyCode() == KEY_TAB)
+				/*if (newEvent.GetKeyCode() == KEY_TAB)
 				{
-					//Engine::SoundManager::getSoundManager().playSound("Pop");
-				}
+					Engine::SoundManager::getSoundManager().playSound("Pop");
+				}*/
 			}
 
 		if (Engine::Input::IsKeyPressed(KEY_SPACE))
