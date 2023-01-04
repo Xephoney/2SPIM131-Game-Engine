@@ -20,6 +20,10 @@ namespace Engine
 		Entity CreateEntity(const std::string& tagName = "_empty_");
 		Entity CreateEmptyEntity(const std::string& tagName = "_empty_");
 		Entity CreateEmptyEmitterEntity(const std::string& tagName);
+
+		bool DeleteEntity(Entity entity);
+		bool DeleteEntity(uint32_t entity);
+
 		entt::registry& GetReg() { return m_Registry; }
 
 		void OnViewportResize(uint32_t w, uint32_t h);

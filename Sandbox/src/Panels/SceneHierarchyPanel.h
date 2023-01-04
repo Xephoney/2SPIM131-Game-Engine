@@ -19,6 +19,7 @@ namespace Engine
 	private:
 
 		void DrawEntityNode(Entity entity);
+		void ConstructStructure();
 		void DrawComponents(Entity entity);
 		std::shared_ptr<Scene> m_scene;
 

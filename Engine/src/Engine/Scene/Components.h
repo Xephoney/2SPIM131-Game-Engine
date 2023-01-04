@@ -81,6 +81,7 @@ namespace Engine
 	struct StaticMeshRenderer
 	{
 		StaticMesh mesh;
+		glm::vec4 color{ 1,1,1,1 };
 		StaticMeshRenderer() = default;
 		StaticMeshRenderer(const StaticMeshRenderer&) = default;
 		// StaticMeshRenderer(StaticMeshRenderer&& SMR) noexcept :
@@ -227,10 +228,11 @@ namespace Engine
 	struct RigidBody
 	{
 		JPH::BodyID data {0};
+		bool box = true;
 		bool dynamic { true };
 		bool show_collider{ true };
 		RigidBody() = default;
-		RigidBody(JPH::BodyID id) : data(id) { }
+		RigidBody(JPH::BodyID id) : data(id) {  }
 		RigidBody(const RigidBody&) = default;
 		
 	};

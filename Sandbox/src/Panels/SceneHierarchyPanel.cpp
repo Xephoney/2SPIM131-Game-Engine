@@ -31,9 +31,9 @@ namespace Engine
 		ImGui::Begin("Scene Graph");
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Right) &&  ImGui::IsWindowHovered())
-			ImGui::OpenPopup("create entity");
+			ImGui::OpenPopup("create context");
 
-		if (ImGui::BeginPopup("create entity"))
+		if (ImGui::BeginPopup("create context"))
 		{
 			ImGui::Text(" - Create Menu -" );
 			ImGui::Separator();
@@ -56,6 +56,46 @@ namespace Engine
 			
 			if (ImGui::BeginMenu("Physics"))
 			{
+				if (ImGui::MenuItem("Physics Box"))
+				{
+					m_Selected = m_scene->CreateEntity("Physics Box (dynamic)");
+					glm::vec3 position, rotation, scale;
+					auto& tf = m_Selected.GetComponent<Transform>();
+					position = tf.position;
+					rotation = tf.euler_rotation;
+					scale = tf.scale;
+					auto body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
+					m_Selected.AddComponent<RigidBody>(body);
+				}
+				if (ImGui::MenuItem("Static Box"))
+				{
+					m_Selected = m_scene->CreateEntity("Physics Box (static)");
+					glm::vec3 position, rotation, scale;
+					auto& tf = m_Selected.GetComponent<Transform>();
+					position = tf.position;
+					rotation = tf.euler_rotation;
+					scale = tf.scale;
+					auto body = m_scene->physicsWorld->CreateBoxBody(false, position, rotation, scale / 2.f);
+					m_Selected.AddComponent<RigidBody>(body).dynamic = false;
+				}
+				if(ImGui::MenuItem("Wrecking Ball"))
+				{
+					ConstructStructure();
+					
+					Entity wreckingBall = m_scene->CreateEmptyEntity("WRECKING BALL");
+					wreckingBall.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/sphere.gltf");
+					auto& tf = wreckingBall.GetComponent<Transform>();
+					tf.position = { 0, 30, 0 };
+					tf.scale = glm::vec3(8);
+					wreckingBall.AddComponent<RigidBody>(m_scene->physicsWorld->CreateSphereBody(true, tf.position, { 0,0,0 }, 8.f/2.f)).box = false;
+					wreckingBall.GetComponent<StaticMeshRenderer>().color = { 0.8, 0.2, 0.1, 1 };
+				}
+
+				if(ImGui::MenuItem("Structure"))
+				{
+					ConstructStructure();
+				}
+
 				ImGui::EndMenu();
 			}
 				
@@ -86,6 +126,11 @@ namespace Engine
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
 			m_Selected = {entt::null, m_scene.get()};
 
+		if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && ImGui::IsWindowFocused() && m_Selected)
+		{
+			m_scene->DeleteEntity(m_Selected);
+			m_Selected = { entt::null, m_scene.get() };
+		}
 		
 
 		ImGui::End();
@@ -115,6 +160,89 @@ namespace Engine
 			//DrawEntityNode()
 		}
 	}
+
+	void SceneHierarchyPanel::ConstructStructure()
+	{
+		Entity temp_entity;
+		int xz_size = 5;
+		int height = 10;
+		for (int y = 0; y <= height; y++)
+		{
+			int amount = (y % 2 == 0) ? xz_size : xz_size - 1;
+			float colorval = ((float)y / (float)height) + 0.25f;
+			for (int x = 0; x < amount; x++)
+			{
+				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
+				glm::vec3 position, rotation, scale;
+				auto& tf = temp_entity.GetComponent<Transform>();
+
+				tf.position.z = static_cast<float>(xz_size) / 2.f + 0.1f;
+				tf.position.x = static_cast<float>(x) - (static_cast<float>(amount) / 2.f) + 0.1f;
+				tf.position.x += 0.5f;
+				tf.position.y = 0.51f + static_cast<float>(y);
+
+				position = tf.position;
+				rotation = tf.euler_rotation;
+				scale = tf.scale;
+				auto body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
+				temp_entity.AddComponent<RigidBody>(body);
+				temp_entity.GetComponent<StaticMeshRenderer>().color = { colorval,colorval,colorval,1 };
+
+				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
+				auto& tf2 = temp_entity.GetComponent<Transform>();
+
+				tf2.position.z = static_cast<float>(-xz_size) / 2.f + 0.1f;
+				tf2.position.x = static_cast<float>(x) - (static_cast<float>(amount) / 2.f) + 0.1f;
+				tf2.position.x += 0.5f;
+				tf2.position.y = 0.51f + static_cast<float>(y);
+
+				position = tf2.position;
+				rotation = tf2.euler_rotation;
+				scale = tf2.scale;
+				body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
+				temp_entity.AddComponent<RigidBody>(body);
+				temp_entity.GetComponent<StaticMeshRenderer>().color = { colorval,colorval,colorval,1 };
+			}
+			amount = (y % 2 == 1) ? xz_size : xz_size - 1;
+			for (int z = 0; z < amount; z++)
+			{
+				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
+				glm::vec3 position, rotation, scale;
+				auto& tf = temp_entity.GetComponent<Transform>();
+
+				tf.position.x = static_cast<float>(xz_size) / 2.f + 0.1f;
+				tf.position.z = static_cast<float>(z) - (static_cast<float>(amount) / 2.f) + 0.1f;
+
+				tf.position.z += 0.5f;
+				tf.position.y = 0.51f + static_cast<float>(y);
+
+				position = tf.position;
+				rotation = tf.euler_rotation;
+				scale = tf.scale;
+				auto body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
+				temp_entity.AddComponent<RigidBody>(body);
+				temp_entity.GetComponent<StaticMeshRenderer>().color = { colorval,colorval,colorval,1 };
+
+				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
+				auto& tf2 = temp_entity.GetComponent<Transform>();
+				
+
+				tf2.position.x = static_cast<float>(-xz_size) / 2.f + 0.1;
+				tf2.position.z = static_cast<float>(z) - (static_cast<float>(amount) / 2.f) + 0.1f;
+
+				tf2.position.z += 0.5f;
+				tf2.position.y = 0.51f + static_cast<float>(y);
+
+				position = tf2.position;
+				rotation = tf2.euler_rotation;
+				scale = tf2.scale;
+				body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
+				temp_entity.AddComponent<RigidBody>(body);
+				temp_entity.GetComponent<StaticMeshRenderer>().color = { colorval,colorval,colorval,1 };
+			}
+		}
+	}
+
 	bool positionDirtyFlag = true;
 	bool rotationDirtyFlag = true;
 	
@@ -201,11 +329,10 @@ namespace Engine
 				ImGui::Separator();
 				for (auto& mesh : meshes)
 				{
-					
 					ImGui::BulletText("Shader"); ImGui::SameLine();
 					ImGui::TextColored({ 0.5f,0.7f,0.2f,1.f }, mesh.material.shader->GetName().c_str());
 					ImGui::BulletText("Diffuse"); ImGui::SameLine();
-					ImGui::ColorEdit3("##label", glm::value_ptr(mesh.material.diffuse));
+					ImGui::ColorEdit3("##label", glm::value_ptr(smr.color));
 				}
 				ImGui::TreePop();
 			}
@@ -265,11 +392,7 @@ namespace Engine
 			ImGui::DragFloat("##label2", &dl.specularStrength, 0.05f, 0.0f, 1.0f);
 			ImGui::Text("Specular Exponent"); ImGui::SameLine();
 			ImGui::DragInt("##label3", &dl.specularExponent, 4, 0, 512);
-
-			uint32_t da = dl.shadowFrameBuffer->TextureID();
-			float size = static_cast<float>(dl.shadowFrameBuffer->TextureSize().first);
-			ImGui::Image(reinterpret_cast<void*>(da), { size,size });
-			ImGui::Separator();
+			
 		}
 
 		if(entity.HasComponent<EmitterComponent>())

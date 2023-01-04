@@ -22,6 +22,33 @@ namespace Engine
 		Entity entity = CreateEmptyEntity("Directional Light");
 		entity.AddComponent<DirectionalLight>();
 		entity.GetComponent<Transform>().euler_rotation = { glm::radians(-83.f), glm::radians(16.f), glm::radians(27.f) };
+
+		/*entity = CreateEntity("Cube 1");
+		entity.GetComponent<Transform>().position = { -4, 20, 0 };
+		entity.GetComponent<Transform>().euler_rotation = { 22.5, 45, 120 };
+		auto rb = physicsWorld->CreateBoxBody(true,
+			entity.GetComponent<Transform>().position,
+			entity.GetComponent<Transform>().euler_rotation,
+			entity.GetComponent<Transform>().scale / 2.f);
+		entity.AddComponent<RigidBody>(rb);
+
+		entity = CreateEntity("Cube 2");
+		entity.GetComponent<Transform>().position = { 0, 20, 0 };
+		entity.GetComponent<Transform>().euler_rotation = { 120, 12, 10 };
+		rb = physicsWorld->CreateBoxBody(true,
+			entity.GetComponent<Transform>().position,
+			entity.GetComponent<Transform>().euler_rotation,
+			entity.GetComponent<Transform>().scale / 2.f);
+		entity.AddComponent<RigidBody>(rb);*/
+
+		entity = CreateEntity("Floor");
+		entity.GetComponent<Transform>().position = { 0, -0.25, 0 };
+		entity.GetComponent<Transform>().scale = { 80, 0.5, 80 };
+		auto rb = physicsWorld->CreateBoxBody(false,
+			entity.GetComponent<Transform>().position,
+			entity.GetComponent<Transform>().euler_rotation,
+			entity.GetComponent<Transform>().scale / 2.f);
+		entity.AddComponent<RigidBody>(rb);
 	}
 
 	Scene::~Scene()
@@ -37,7 +64,7 @@ namespace Engine
 		// entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/sphere.gltf");
 		entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/split_cube.gltf");
 #ifdef _DEBUG
-		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 1.0, 0.1, 1 });
+		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 9.0, 0.1, 1 });
 #endif
 
 		return entity;
@@ -55,6 +82,16 @@ namespace Engine
 		Entity entity = CreateEmptyEntity("Emitter");
 		entity.AddComponent<EmitterComponent>();
 		return entity;
+	}
+
+	bool Scene::DeleteEntity(Entity entity)
+	{
+		return true;
+	}
+
+	bool Scene::DeleteEntity(uint32_t entity)
+	{
+		return true;
 	}
 
 	void Scene::OnViewportResize(uint32_t w, uint32_t h)
@@ -80,8 +117,13 @@ namespace Engine
 			auto& [transform, rb] = view.get<Transform, RigidBody>(entity);
 			interface.SetPosition(rb.data, { transform.position.x, transform.position.y, transform.position.z }, JPH::EActivation::Activate);
 			interface.SetRotation(rb.data, JPH::Quat::sEulerAngles({ transform.euler_rotation.x, transform.euler_rotation.y, transform.euler_rotation.z}), JPH::EActivation::Activate);
-			JPH::Shape* box = new JPH::BoxShape({ transform.scale.x / 2.f, transform.scale.y / 2.f, transform.scale.z / 2.f });
-			interface.SetShape(rb.data, box, true, JPH::EActivation::Activate);
+			JPH::Shape* shape;
+			if (rb.box)
+				shape = new JPH::BoxShape({ transform.scale.x / 2.f, transform.scale.y / 2.f, transform.scale.z / 2.f });
+			else
+				shape = new JPH::SphereShape(transform.scale.x/2.f);
+
+			interface.SetShape(rb.data, shape, true, JPH::EActivation::Activate);
 		}
 		physicsWorld->physics_system->OptimizeBroadPhase();
 
@@ -142,13 +184,11 @@ namespace Engine
 		{
 			constexpr float timestep = 1.0 / 120.0;
 			fixedDTCounter += dt;
-			while(fixedDTCounter >= timestep)
+			if(fixedDTCounter > timestep)
 			{
 				OnFixedUpdate(fixedDTCounter);
-				fixedDTCounter -= timestep;
+				fixedDTCounter = 0;
 			}
-
-
 
 			particleSystem->Render();
 			particleSystem->Update(dt);
@@ -162,7 +202,7 @@ namespace Engine
 				for(int i = 0; i < staticmesh.mesh.meshes.size(); i++)
 				{
 					auto mesh = MeshManager::instance().GetMeshFromID(staticmesh.mesh.meshes[i]);
-					Renderer::Submit(mesh.material, mesh.vertexArray, transform, static_cast<int>(entity));
+					Renderer::Submit(mesh.material, mesh.vertexArray, transform, static_cast<int>(entity), staticmesh.color);
 #ifdef _DEBUG
 					Entity ent{ entity, this };
 					if(ent.HasComponent<DebugBox>())

@@ -41,12 +41,13 @@ namespace Engine
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
-	void Renderer::Submit(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform, int ID)
+	void Renderer::Submit(Shader& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform, int ID, const glm::vec4& color)
 	{
 		shader.Bind();
 		shader.SetMat4("u_model", transform);
 		shader.SetMat4("u_view_projection", m_SceneData->ViewProjectionMatrix);
 		shader.SetInt("u_ID", ID);
+		shader.SetFloat4("u_Color", color);
 
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);

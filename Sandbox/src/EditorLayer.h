@@ -118,32 +118,7 @@ namespace Engine
 		void OnAttach() override
 		{
 			m_SceneGraph.SetContext(activeScene); 
-			Entity entity = activeScene->CreateEntity("Cube 1");
-			entity.GetComponent<Transform>().position = { -4, 20, 0 };
-			entity.GetComponent<Transform>().euler_rotation= { 22.5, 45, 120 };
-			auto rb = activeScene->physicsWorld->CreateBoxBody(true,
-				entity.GetComponent<Transform>().position,
-				entity.GetComponent<Transform>().euler_rotation,
-				entity.GetComponent<Transform>().scale/2.f);
-			entity.AddComponent<RigidBody>(rb);
-
-			entity = activeScene->CreateEntity("Cube 2");
-			entity.GetComponent<Transform>().position = { 0, 20, 0 };
-			entity.GetComponent<Transform>().euler_rotation = { 120, 12, 10 };
-			rb = activeScene->physicsWorld->CreateBoxBody(true,
-				entity.GetComponent<Transform>().position,
-				entity.GetComponent<Transform>().euler_rotation,
-				entity.GetComponent<Transform>().scale / 2.f);
-			entity.AddComponent<RigidBody>(rb);
-
-			entity = activeScene->CreateEntity("Floor");
-			entity.GetComponent<Transform>().position = { 0, 0, 0 };
-			entity.GetComponent<Transform>().scale = { 40, 0.5, 40 };
-			rb = activeScene->physicsWorld->CreateBoxBody(false,
-				entity.GetComponent<Transform>().position,
-				entity.GetComponent<Transform>().euler_rotation,
-				entity.GetComponent<Transform>().scale / 2.f);
-			entity.AddComponent<RigidBody>(rb);
+			
 			/*SceneSerializer serializer(activeScene);
 			serializer.SerializeText("../Engine/Assets/Scenes/EditorExample.lvl");*/
 
@@ -227,22 +202,13 @@ namespace Engine
 			}
 			ImGui::End();
 
-			ImGui::Begin("Test Window | EXAMPLE LAYER");
+			ImGui::Begin("##deltatime", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 			ImGui::Text("Deltatime = %f ms", _dt * 1000);
-
-			ImGui::Text("Elapsed Time = %f", _elapsed);
-			ImGui::Separator();
-			ImGui::CollapsingHeader("Movement Controls");
-			ImGui::Text("\t\t(while holding right-click)");
-			ImGui::BulletText("WASD - Move camera");
-			ImGui::BulletText("Q - Down");
-			ImGui::BulletText("E - Up");
-			ImGui::BulletText("Moving your mouse turns the camera");
 			ImGui::End();
 
 			// ------------------------------ RENDER WINDOW ------------------------------
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-			ImGui::Begin("Scene View");
+			ImGui::Begin("Scene##Scene View");
 			ImVec2 _viewportSize = ImGui::GetContentRegionAvail();
 			viewportSize.x = _viewportSize.x;
 			viewportSize.y = _viewportSize.y;
@@ -335,12 +301,8 @@ namespace Engine
 					activeScene->StopSimulation();
 				}
 			}
-			ImGui::SameLine();
-
-			ImGui::Checkbox("Hovered", &viewportHovered);
-			ImGui::SameLine();
-			ImGui::Checkbox("Focused", &viewportFocused);
 			ImGui::End();
+			ImGui::SameLine();
 		}
 
 		void OnEvent(Event& event) override

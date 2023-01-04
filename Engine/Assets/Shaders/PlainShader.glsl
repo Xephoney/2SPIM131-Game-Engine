@@ -9,6 +9,7 @@ uniform mat4 u_view_projection;
 uniform mat4 u_model;
 uniform mat4 u_biasedLight;
 
+
 out vec3 v_fragPos;
 out vec4 v_color;
 out vec3 normalTransposed;
@@ -36,11 +37,10 @@ in vec3 normalTransposed;
 in vec4 ShadowCoord;
 
 uniform int u_ID = -1;
-uniform vec3 u_color = vec3( 1.0,1.0,1.0 );
+uniform vec4 u_Color = vec4( 1.0, 1.0, 1.0, 1.0 );
 uniform int specularExponent = 128;
 uniform float specularStrength = 0.9;
 uniform float ambientStrength = 0.45;
-
 uniform vec3 lightDirection = vec3(0, 1, 1);
 uniform vec3 lightColor = vec3(1, 1, 1);
 
@@ -88,6 +88,6 @@ void main()
 {
 	
 	
-	fragmentColor = vec4(directionalLight() , 1.0) * v_color  * vec4(u_color, 1.0);
+	fragmentColor = vec4(directionalLight() , 1.0) * v_color  * u_Color;
 	index = u_ID;
 }
