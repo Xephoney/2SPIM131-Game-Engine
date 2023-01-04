@@ -107,13 +107,11 @@ namespace Engine
 
 				}
 			}
-
 			//Clean up
 			{
 				m_FrameBuffer->Unbind();
 				Renderer::RenderFrame();
 			}
-
 		}
 		void OnAttach() override
 		{
