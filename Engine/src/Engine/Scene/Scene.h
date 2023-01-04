@@ -21,7 +21,7 @@ namespace Engine
 		Entity CreateEmptyEntity(const std::string& tagName = "_empty_");
 		Entity CreateEmptyEmitterEntity(const std::string& tagName);
 
-		bool DeleteEntity(Entity entity);
+		bool DeleteEntity(Entity& entity);
 		bool DeleteEntity(uint32_t entity);
 
 		entt::registry& GetReg() { return m_Registry; }

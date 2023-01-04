@@ -16,16 +16,20 @@ namespace Engine
 		Emitter();
 		void CreateEmitter(const Engine::EmitterProperties& emitterProps);
 		void CreateEmitter(const glm::vec3& position, const float& lifetime);
-		void PopulateEmitter(Particle particle, int numOfParticles);
+		void PopulateEmitter(Particle particle, int numOfParticles, const Engine::ParticleProperties& particleProps);
 		void EmitParticles();
 		void UpdateParticles(const double& dt);
 		void setLifeTime(float lifeTime) { m_lifeTime = lifeTime; };
 		[[nodiscard]] float getLifeRemaining() const { return m_lifeRemaining; };
 
+		bool Active = false;
+
 	private:
 		glm::vec3 m_Position;
 		float m_lifeTime = 10.f;
 		float m_lifeRemaining = 0;
+
+
 
 		std::vector<Particle> m_ParticlePool;
 		int numberOfParticles;

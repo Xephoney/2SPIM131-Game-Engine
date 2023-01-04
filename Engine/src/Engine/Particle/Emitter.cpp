@@ -15,6 +15,7 @@ namespace Engine
 	Emitter::Emitter()
 	{
 		particleShader = Shader::Create("../Engine/Assets/Shaders/ParticleShader.glsl");
+		//particleShader = Shader::Create("../Engine/Assets/Shaders/PlainShader.glsl");
 		m_lifeRemaining = m_lifeTime;
 	}
 
@@ -31,13 +32,17 @@ namespace Engine
 		m_lifeRemaining = m_lifeTime;
 	}
 
-	void Emitter::PopulateEmitter(Particle particle, int numOfParticles)
+	void Emitter::PopulateEmitter(Particle particle, int numOfParticles , const Engine::ParticleProperties& particleProps)
 	{
-		m_ParticlePool.resize(numOfParticles);
+		m_ParticlePool.clear();
+		m_ParticlePool.reserve(numOfParticles);
 		for (int i = 0; i < numOfParticles; i++)
 		{
-			particle.setStartPosition(m_Position); // setting particle position to emitter position
-			m_ParticlePool.push_back(particle);
+			Particle temp = particle;
+			temp.setParticleProperties(particleProps);
+			temp.setStartPosition(m_Position); // setting particle position to emitter position
+			
+			m_ParticlePool.push_back(temp);
 		}
 	}
 
@@ -56,11 +61,15 @@ namespace Engine
 			float size = (particle.getEndSize() * (1.0f - life)) + (particle.getStartSize() * life);
 
 			// Render
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f),  particle.getPosition())
 
-				* glm::rotate(glm::mat4(1.0f), particle.getRotation(), { 0.0f, 0.0f, 1.0f })
+			glm::vec3 pos = particle.getPosition();
+			float rot = particle.getRotation();
+			ENGINE_LOG_INFO("pos {0},{1},{2}", pos.x, pos.y, pos.z);
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos)
+				* glm::rotate(glm::mat4(1.0f), rot, { 0.0f, 0.0f, 1.0f })
 				* glm::scale(glm::mat4(1.0f), { size, size, size });
 
+			particleShader->Bind();
 			Renderer::SubmitParticle(particleShader, color, particle.getMesh().vertexArray, transform);
 		}
 	}

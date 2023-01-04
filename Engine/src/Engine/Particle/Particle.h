@@ -29,14 +29,14 @@ namespace Engine
 		glm::vec4 getEndColor() { return m_EndColor; };
 
 		float getRotation() { return m_Rotation; };
-		void setRotation(float ts) { m_Rotation += 0.01f * ts; };
+		void setRotation(float ts) { m_Rotation += 2.f * ts; };
 
 		float getStartSize() { return m_StartSize; };
 		float getEndSize() { return m_EndSize; };
 		float getLifeTime() { return m_LifeTime; };
 
 		float getLifeRemaining() { return m_LifeRemaining; };
-		void setLifeRemaining(float ts) { m_LifeRemaining =- ts; };
+		void setLifeRemaining(float ts) { m_LifeRemaining -= ts; };
 
 		bool getStatus() { return m_Active; };
 		void setStatus(bool status) { m_Active = status; };
@@ -50,12 +50,12 @@ namespace Engine
 		glm::vec3 m_Velocity;
 		glm::vec4 m_StartColor, m_EndColor;
 		float m_Rotation = 0.0f;
-		float m_StartSize{ 1 }, m_EndSize {0.1};
+		float m_StartSize{ 1 }, m_EndSize {1.0};
 
 		float m_LifeTime = 5.0f;
 		float m_LifeRemaining = 0.0f;
 
-		bool m_Active = false;
+		bool m_Active = true;
 
 		
 

@@ -14,8 +14,7 @@ namespace Engine
 	{
 		for (auto& emitter : m_EmitterPool)
 		{
-			float remaining = emitter.getLifeRemaining();
-			if (remaining > 0)
+			if (emitter.getLifeRemaining() > 0 && emitter.Active)
 			{
 				emitter.UpdateParticles(dt);
 			}
@@ -26,7 +25,7 @@ namespace Engine
 	{
 		for (auto& emitter : m_EmitterPool)
 		{
-			if (emitter.getLifeRemaining() > 0)
+			if (emitter.getLifeRemaining() > 0 && emitter.Active)
 			{
 				emitter.EmitParticles();
 			}

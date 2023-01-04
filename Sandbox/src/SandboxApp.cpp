@@ -106,7 +106,7 @@ public:
 	}
 	bool OnSpacePressed(Engine::Event& event)
 	{
-		if(event.GetEventType() == Engine::EventType::KeyPressed)
+		/*if(event.GetEventType() == Engine::EventType::KeyPressed)
 		{
 			const auto& newEvent = dynamic_cast<Engine::KeyPressedEvent&>(event);
 			if(newEvent.GetKeyCode() == KEY_TAB)
@@ -135,7 +135,7 @@ public:
 				name += std::to_string(entity_count);
 				Engine::Entity cube = scene->CreateEntity(name);
 			}
-		}
+		}*/
 		return false;
 	}
 };
@@ -162,11 +162,11 @@ public:
 				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event); // sounds only work like this for now, but not correct way to do it!
 				if (newEvent.GetKeyCode() == KEY_SPACE)
 				{
-					Engine::SoundManager::getSoundManager().playSound("Trekant");
+					//Engine::SoundManager::getSoundManager().playSound("Trekant");
 				}
 				if (newEvent.GetKeyCode() == KEY_TAB)
 				{
-					Engine::SoundManager::getSoundManager().playSound("Pop");
+					//Engine::SoundManager::getSoundManager().playSound("Pop");
 				}
 			}
 

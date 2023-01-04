@@ -67,9 +67,13 @@ namespace Engine
 		operator uint32_t() const { return static_cast<uint32_t>(m_EntityHandle); }
 	
 		entt::entity m_EntityHandle {entt::null};
+		Entity* m_parent{ nullptr };
+		std::vector<Entity> children;
 	private:
 
 		Scene* m_Scene { nullptr };
+		
+		
 		
 	};
 

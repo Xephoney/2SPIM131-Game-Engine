@@ -7,6 +7,7 @@
 
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
+
 #define SIZE 16.f
 
 namespace Engine
@@ -64,7 +65,7 @@ namespace Engine
 		// entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/sphere.gltf");
 		entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/split_cube.gltf");
 #ifdef _DEBUG
-		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 9.0, 0.1, 1 });
+		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 0.9, 0.1, 1 });
 #endif
 
 		return entity;
@@ -84,14 +85,24 @@ namespace Engine
 		return entity;
 	}
 
-	bool Scene::DeleteEntity(Entity entity)
+	bool Scene::DeleteEntity(Entity& entity)
 	{
+		if(entity.HasComponent<RigidBody>())
+		{
+			auto rb = entity.GetComponent<RigidBody>();
+			physicsWorld->GetInterface().RemoveBody(rb.data);
+			physicsWorld->GetInterface().DestroyBody(rb.data);
+		}
+		m_Registry.destroy(entity.m_EntityHandle);
+		entity.m_EntityHandle= { entt::null };
 		return true;
 	}
 
 	bool Scene::DeleteEntity(uint32_t entity)
 	{
-		return true;
+		Entity _entity = { static_cast<entt::entity>(entity), this };
+		
+		return DeleteEntity(_entity);
 	}
 
 	void Scene::OnViewportResize(uint32_t w, uint32_t h)
@@ -135,9 +146,9 @@ namespace Engine
 			n_emitter.CreateEmitter(transform.position, emitter.particle_properties.LifeTime);
 			Particle particle;
 			particle.init();
-			particle.setParticleProperties(emitter.particle_properties);
-			n_emitter.PopulateEmitter(particle, 100);
+			n_emitter.PopulateEmitter(particle, 100, emitter.particle_properties);
 			particleSystem->Emit(n_emitter);
+			
 		}
 
 	}
@@ -162,6 +173,21 @@ namespace Engine
 				//TODO Set camera with Main = true to the Rendertarget Camera. Potentially adding Rendertarget textures.
 			}
 		}
+				
+		// CHECK SIMULATION STATE
+		if(simulate)
+		{
+			constexpr float timestep = 1.0 / 120.0;
+			fixedDTCounter += dt;
+			if(fixedDTCounter > timestep)
+			{
+				OnFixedUpdate(fixedDTCounter);
+				fixedDTCounter = 0;
+			}
+
+			particleSystem->Update(dt);
+			particleSystem->Render();
+		}
 
 		{
 			auto view = m_Registry.view<Transform, DirectionalLight>();
@@ -179,20 +205,6 @@ namespace Engine
 					light.lightColor);
 			}
 		}
-		// CHECK SIMULATION STATE
-		if(simulate)
-		{
-			constexpr float timestep = 1.0 / 120.0;
-			fixedDTCounter += dt;
-			if(fixedDTCounter > timestep)
-			{
-				OnFixedUpdate(fixedDTCounter);
-				fixedDTCounter = 0;
-			}
-
-			particleSystem->Render();
-			particleSystem->Update(dt);
-		}		
 
 		{
 			auto view = m_Registry.view<Transform, StaticMeshRenderer>();

@@ -66,6 +66,7 @@ namespace Engine
 	{
 		shader->Bind();
 		shader->SetFloat4("u_Color", color);
+		
 		shader->SetMat4("u_model", transform);
 		shader->SetMat4("u_view_projection", m_SceneData->ViewProjectionMatrix);
 		va->Bind();

@@ -38,7 +38,18 @@ namespace Engine
 			ImGui::Text(" - Create Menu -" );
 			ImGui::Separator();
 			if (ImGui::MenuItem("Empty"))
-				m_Selected = m_scene->CreateEmptyEntity("Empty");
+			{
+				if(m_Selected)
+				{
+					Entity ent = m_scene->CreateEmptyEntity("Empty Child");
+					m_Selected.children.push_back(ent);
+					m_Selected = ent;
+				}
+				else
+				{
+					m_Selected = m_scene->CreateEmptyEntity("Empty Child");
+				}
+			}
 						
 			ImGui::Separator();
 			if (ImGui::BeginMenu("3D"))
@@ -66,6 +77,16 @@ namespace Engine
 					scale = tf.scale;
 					auto body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
 					m_Selected.AddComponent<RigidBody>(body);
+				}
+				if (ImGui::MenuItem("Physics Ball"))
+				{
+					Entity wreckingBall = m_scene->CreateEmptyEntity("Physics Ball");
+					wreckingBall.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/sphere.gltf");
+					auto& tf = wreckingBall.GetComponent<Transform>();
+					tf.position = { 0, 0, 0 };
+					tf.scale = glm::vec3(1);
+					wreckingBall.AddComponent<RigidBody>(m_scene->physicsWorld->CreateSphereBody(true, tf.position, { 0,0,0 }, 0.5f)).box = false;
+					wreckingBall.GetComponent<StaticMeshRenderer>().color = { 0.8, 0.2, 0.1, 1 };
 				}
 				if (ImGui::MenuItem("Static Box"))
 				{
@@ -117,6 +138,7 @@ namespace Engine
 
 			ImGui::EndPopup();
 		}
+
 		m_scene->m_Registry.each([&](entt::entity entity)
 		{
 			Entity e{ entity, m_scene.get() };
@@ -126,7 +148,8 @@ namespace Engine
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
 			m_Selected = {entt::null, m_scene.get()};
 
-		if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && ImGui::IsWindowFocused() && m_Selected)
+		// DELETE BUTTON 
+		if(ImGui::IsKeyPressed(ImGuiKey_Delete, false) && m_Selected)
 		{
 			m_scene->DeleteEntity(m_Selected);
 			m_Selected = { entt::null, m_scene.get() };
@@ -147,8 +170,9 @@ namespace Engine
 	void SceneHierarchyPanel::DrawEntityNode(Entity entity)
 	{
 		Tag& tag = entity.GetComponent<Tag>();
-		
+
 		ImGuiTreeNodeFlags flags = ((m_Selected && m_Selected == entity) ? ImGuiTreeNodeFlags_Selected : 0) |  ImGuiTreeNodeFlags_OpenOnArrow;
+		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(static_cast<uint64_t>(static_cast<uint32_t>(entity))), flags, tag.tag.c_str());
 		if(ImGui::IsItemClicked())
 		{
@@ -156,8 +180,12 @@ namespace Engine
 		}
 		if(opened)
 		{
+			for(auto& entity : entity.children)
+			{
+				DrawEntityNode(entity);
+			}
 			ImGui::TreePop();
-			//DrawEntityNode()
+			
 		}
 	}
 
@@ -405,7 +433,7 @@ namespace Engine
 
 				ImGui::Text("Start Color"); ImGui::SameLine();
 				ImGui::ColorEdit4("##label9038217", glm::value_ptr(emitter.particle_properties.ColorBegin));
-				ImGui::Text("Start Color"); ImGui::SameLine();
+				ImGui::Text("End Color"); ImGui::SameLine();
 				ImGui::ColorEdit4("##label9098493503", glm::value_ptr(emitter.particle_properties.ColorEnd));
 				ImGui::Separator();
 				ImGui::Text("Start Velocity"); ImGui::SameLine();

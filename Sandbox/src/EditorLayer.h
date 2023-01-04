@@ -91,7 +91,7 @@ namespace Engine
 				
 
 				m_FrameBuffer->Bind();
-				RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
+				RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.f });
 				RenderCommand::Clear();
 
 				activeScene->OnUpdate(dt);
