@@ -18,4 +18,4 @@
 	url = https://github.com/jbeder/yaml-cpp.git
 [submodule "Engine/3rdParty/ImGuizmo"]
 	path = Engine/3rdParty/ImGuizmo
-	url = https://github.com/Xephoney/ImGuizmo
+	url = https://github.com/Xephoney/ImGuizmo.git
