@@ -37,9 +37,9 @@ namespace Engine {
 		system->setOutput(FMOD_OUTPUTTYPE_WINSONIC);
 
 		//adding some basic sounds
-		addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", true);
-		addSound("../Engine/Assets/Sound/pop.mp3", "Pop", true);
-		addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", true);
+		addSound("../Engine/Assets/Sound/Trekant.mp3", "TrekantID:0", true);
+		addSound("../Engine/Assets/Sound/pop.mp3", "PopID:0", true);
+		addSound("../Engine/Assets/Sound/delete_sound.mp3", "DeleteID:0", true);
 		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAllID:0", true);
 
 #ifdef DEBUG
@@ -146,19 +146,16 @@ namespace Engine {
 
 		
 		//Looking through mSounds to see if called sound exists
-		//TODO : maybe have a toUpper to avoid having to care about capital letters?
-
 		if (findSound(name))
 		{
-			channel->set3DAttributes(findExactSound(name)->getConstPos(),0);
+			if (findSound(name)->getName() != "DeleteID:0")
+				channel->set3DAttributes(findExactSound(name)->getConstPos(), 0);
+			else
+				channel->set3DAttributes(0, 0);
+#ifdef DEBUG
 			ENGINE_LOG_INFO("found sound, {0} as {1}", name, findExactSound(name)->getName());
+#endif // DEBUG
 			result = system->playSound(mSounds[findSoundPlacement(name) + 1], nullptr, false, &channel);
-
-
-			
-			//ENGINE_LOG_WARNING("EAR LOCATION : {0},{1},{2}", Renderer::GetRenderCamera()->GetPosition().x,Renderer::GetRenderCamera()->GetPosition().y, Renderer::GetRenderCamera()->GetPosition().z);
-			//ENGINE_LOG_WARNING("EAR LOCATION : {0},{1},{2}", ToFMODVec(Renderer::GetRenderCamera()->GetPosition()).x, Renderer::GetRenderCamera()->GetPosition().y, Renderer::GetRenderCamera()->GetPosition().z);
-			
 			return;
 		}
 
@@ -176,7 +173,6 @@ namespace Engine {
 					break;
 				if (name[j + 1] == 'I' && name[j + 2] == 'D') 
 				{
-					
 					return soundList[i];
 				}
 			}
@@ -189,15 +185,6 @@ namespace Engine {
 	{
 		for (int i = 0; i < soundList.size(); i++)
 		{
-			/*for (int j = 0; j < name.size(); j++)
-			{
-				if (soundList[i]->getName()[j] != name[j])
-					break;
-				if (name[j + 1] == 'I' && name[j + 2] == 'D') {
-					
-					return i;
-				}
-			}*/
 			if (soundList[i]->getName() == name)
 				return i;
 		}
@@ -217,14 +204,13 @@ namespace Engine {
 	{
 		const std::string temp = findSound(inSound->getName())->getFilePath();
 		const char* mPath = temp.c_str();
-		addSound(mPath, inSound->getName(), true);
-
-			
+		addSound(mPath, inSound->getName(), true);		
 #ifdef DEBUG
 		if (bSoundExists(inSound->getName()))
 			ENGINE_LOG_INFO("Added sound to soundlist, Name: {0}", inSound->getName());
 #endif //DEBUG
 	}
+
 
 	FMOD_VECTOR SoundManager::ToFMODVec(glm::vec3 in)
 	{
@@ -337,8 +323,10 @@ namespace Engine {
 
 	bool sound::swapSound(std::string name)
 	{
-		if (bSoundExists(name)) {
+		if (bSoundExists(name)) 
+		{
 			mName = name;
+			SoundManager::getSoundManager().addToSoundlist(this);
 			return true;
 		}
 		return false;

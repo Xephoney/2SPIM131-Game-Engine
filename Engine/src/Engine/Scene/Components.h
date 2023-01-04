@@ -174,10 +174,11 @@ namespace Engine
 		}
 		void swapSound(std::string name) {
 			//Swap to an existing sound
-			bool success = mSound->swapSound(name);
+			mName = setIdentifyer(name);
+			bool success = mSound->swapSound(mName);
 			if(!success)
 				ENGINE_LOG_WARNING("could not swap sound to {0}",name);
-			mName = setIdentifyer(name);
+			
 		}
 		void playSound()
 		{
