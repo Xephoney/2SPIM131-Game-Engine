@@ -303,6 +303,7 @@ namespace Engine {
 	FMOD_VECTOR sound::getVelocity()
 	{
 		return mVel;
+		int random;
 	}
 
 	void sound::playSound(std::string name)
