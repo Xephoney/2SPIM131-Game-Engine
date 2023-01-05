@@ -47,7 +47,7 @@ namespace Engine
 				}
 				else
 				{
-					m_Selected = m_scene->CreateEmptyEntity("Empty Child");
+					m_Selected = m_scene->CreateEmptyEntity("Empty Object");
 				}
 			}
 						
@@ -345,6 +345,12 @@ namespace Engine
 				ImGui::TreePop();
 			}
 			ImGui::Separator();
+		}
+		else if (ImGui::Button("Add Audio Source"))
+		{
+			auto& audio = entity.AddComponent<AudioSource>("Delete");
+			
+
 		}
 		if(entity.HasComponent<StaticMeshRenderer>())
 		{
