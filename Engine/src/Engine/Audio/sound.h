@@ -16,13 +16,13 @@ namespace Engine {
 	class SoundManager 
 	{
 	private:
-		//std::unordered_map<std::string, FMOD::Sound*> mSounds;
+		
 		std::unordered_map<int, FMOD::Sound*> mSounds;
 		std::vector<class sound*> soundList;
 		FMOD::ChannelGroup* gameSound = nullptr;
 		FMOD::System* system = nullptr;
 		FMOD::Reverb3D* reverb;
-		//FMOD::ChannelGroup mChannels[4]; COME BACK TO THIS LATER
+
 	public:
 		SoundManager();
 
@@ -56,7 +56,6 @@ namespace Engine {
 	class sound
 	{
 	private:
-		static sound& s_sound;
 		bool is3D = false;
 		std::string mName = "EMPTY";
 		FMOD_VECTOR mPos ={ 0.f,0.f,0.f };
@@ -79,7 +78,6 @@ namespace Engine {
 		// sound functions
 		void playSound(std::string name);
 		static sound& getSoundManager();
-		//static FMOD_CHANNEL& createChannel(std::string name);
 		bool bSoundExists();
 		bool bSoundExists(std::string name);
 		bool swapSound(std::string name);
@@ -101,11 +99,6 @@ namespace Engine {
 		void setFilePath(const char* newPath);
 		
 	};
-
-	inline sound& sound::getSoundManager() {
-		static sound instance;
-		return instance;
-	}
 
 
 	inline  sound& sound_createChannel(std::string name) {

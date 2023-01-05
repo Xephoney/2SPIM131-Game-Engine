@@ -216,11 +216,11 @@ namespace Engine
 		{
 			mName = setIdentifyer(name);
 			mSound = new sound(setIdentifyer(name));
+			SoundManager::getSoundManager().addToSoundlist(mSound);
 		}
 		AudioSource(sound* inSound, glm::vec3 pos)
 		{
 			mSound = inSound;
-			//mName = mSound->getName();
 			mName=setIdentifyer(mSound->getName());
 			setPos(pos);
 			mSound->setMaxDist(maxDist);

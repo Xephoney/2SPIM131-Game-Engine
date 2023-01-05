@@ -348,7 +348,7 @@ namespace Engine
 		}
 		else if (ImGui::Button("Add Audio Source"))
 		{
-			auto& audio = entity.AddComponent<AudioSource>("Delete");
+			auto& audio = entity.AddComponent<AudioSource>("Trekant",entity.GetComponent<Transform>().position);
 			
 
 		}

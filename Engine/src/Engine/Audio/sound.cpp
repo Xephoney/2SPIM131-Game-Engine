@@ -37,17 +37,14 @@ namespace Engine {
 		system->setOutput(FMOD_OUTPUTTYPE_WINSONIC);
 
 		//adding some basic sounds
-		addSound("../Engine/Assets/Sound/Trekant.mp3", "TrekantID:0", true);
-		addSound("../Engine/Assets/Sound/pop.mp3", "PopID:0", true);
-		addSound("../Engine/Assets/Sound/delete_sound.mp3", "DeleteID:0", true);
+		addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", true);
+		addSound("../Engine/Assets/Sound/pop.mp3", "Pop", true);
+		addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", true);
 		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAllID:0", true);
 
 #ifdef DEBUG
 		ENGINE_LOG_INFO("Default sounds added, no issues reported.");
 #endif // DEBUG
-
-
-
 	}
 
 	SoundManager& SoundManager::getSoundManager()
@@ -100,7 +97,7 @@ namespace Engine {
 
 	void SoundManager::update() 
 	{
-		//using scene camera for testing, will change to using listener components after
+		//using scene camera for listening
 		glm::vec3 CamPos = Renderer::GetRenderCamera()->GetPosition();
 		glm::vec3 CamFwd = Renderer::GetRenderCamera()->Forward();
 		glm::vec3 CamUp = Renderer::GetRenderCamera()->Up();
@@ -144,7 +141,6 @@ namespace Engine {
 			return;
 		}
 
-		
 		//Looking through mSounds to see if called sound exists
 		if (findSound(name))
 		{
@@ -199,6 +195,7 @@ namespace Engine {
 				return soundList[i];
 		return nullptr;
 	}
+
 
 	void SoundManager::addToSoundlist(sound* inSound)
 	{
@@ -258,6 +255,7 @@ namespace Engine {
 		mName = name;
 		if (!SoundManager::getSoundManager().bSoundExists(name))
 			ENGINE_LOG_WARNING("NEW SOUND {0} CREATED, BUT FILE NAME NOT FOUND IN MEMORY!", name);
+
 	}
 
 	sound::sound(const char* file, std::string name, bool is3D)

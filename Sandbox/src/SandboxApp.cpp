@@ -162,14 +162,14 @@ public:
 
 			if (event.GetEventType() == Engine::EventType::KeyPressed)
 			{
-				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event); // sounds only work like this for now, but not correct way to do it!
+				auto& newEvent = static_cast<Engine::KeyPressedEvent&>(event); // Old way to test if sound works
 				if (newEvent.GetKeyCode() == KEY_SPACE)
 				{
 					//Engine::SoundManager::getSoundManager().playSound("Trekant");
 				}
 				/*if (newEvent.GetKeyCode() == KEY_TAB)
 				{
-					Engine::SoundManager::getSoundManager().playSound("Pop");
+					Engine::SoundManager::getSoundManager().playSound("PopID:0");
 				}*/
 			}
 

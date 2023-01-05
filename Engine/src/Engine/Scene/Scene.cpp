@@ -75,6 +75,8 @@ namespace Engine
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<Tag>(tagName);
 		entity.AddComponent<Transform>(glm::mat4{ 1.f });
+		entity.AddComponent<AudioSource>("Pop", entity.GetComponent<Transform>().position);
+		entity.GetComponent<AudioSource>().playSound();
 		return entity;
 	}
 
@@ -92,6 +94,12 @@ namespace Engine
 			auto rb = entity.GetComponent<RigidBody>();
 			physicsWorld->GetInterface().RemoveBody(rb.data);
 			physicsWorld->GetInterface().DestroyBody(rb.data);
+		}
+		if (entity.HasComponent<AudioSource>())
+		{
+			auto ac = entity.GetComponent<AudioSource>();
+			ac.swapSound("Delete");
+			ac.playSound();
 		}
 		m_Registry.destroy(entity.m_EntityHandle);
 		entity.m_EntityHandle= { entt::null };
