@@ -37,7 +37,7 @@ namespace Engine {
 		system->setOutput(FMOD_OUTPUTTYPE_WINSONIC);
 
 		//adding some basic sounds
-		addSound("../Engine/Assets/Sound/Trekant.mp3", "Trekant", true);
+		addSound("../Engine/Assets/Sound/Hit.mp3", "Hit", true);
 		addSound("../Engine/Assets/Sound/pop.mp3", "Pop", true);
 		addSound("../Engine/Assets/Sound/delete_sound.mp3", "Delete", true);
 		addSound("../Engine/Assets/Sound/delete_all.mp3", "DeleteAllID:0", true);
@@ -132,7 +132,7 @@ namespace Engine {
 		return false;
 	}
 
-	void SoundManager::playSound(const std::string& name) {
+	void SoundManager::playSound(const std::string& name, bool bypassChecks) {
 		FMOD_RESULT  result;
 		FMOD::Channel* channel = nullptr;
 		
@@ -140,7 +140,13 @@ namespace Engine {
 			ENGINE_LOG_WARNING("NO SOUNDS LOADED TO PLAY!");
 			return;
 		}
-
+		// used to just play a sound regardless of if it's connected to an object
+		if (bypassChecks) {
+			channel->set3DAttributes(0, 0);
+			result = system->playSound(mSounds[findSoundPlacement(name) + 1], nullptr, false, &channel);
+			successCheck(result);
+			return;
+		}
 		//Looking through mSounds to see if called sound exists
 		if (findSound(name))
 		{
@@ -306,7 +312,7 @@ namespace Engine {
 	void sound::playSound(std::string name)
 	{
 		if(bSoundExists())
-			SoundManager::getSoundManager().playSound(name);
+			SoundManager::getSoundManager().playSound(name, false);
 	}
 
 	bool sound::bSoundExists()

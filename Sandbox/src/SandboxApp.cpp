@@ -85,7 +85,7 @@ public:
 				ImGui::SameLine();
 				if (ImGui::Button("Delete All"))
 				{
-					Engine::SoundManager::getSoundManager().playSound("DeleteAllID:0");
+					Engine::SoundManager::getSoundManager().playSound("DeleteAllID:0", true);
 					memset(selection, 0, sizeof(selection));
 					for (auto entity : entities)
 					{
@@ -167,10 +167,10 @@ public:
 				{
 					//Engine::SoundManager::getSoundManager().playSound("Trekant");
 				}
-				/*if (newEvent.GetKeyCode() == KEY_TAB)
+				if (newEvent.GetKeyCode() == KEY_TAB)
 				{
-					Engine::SoundManager::getSoundManager().playSound("PopID:0");
-				}*/
+					Engine::SoundManager::getSoundManager().playSound("Hit", true);
+				}
 			}
 
 		if (Engine::Input::IsKeyPressed(KEY_SPACE))

@@ -36,7 +36,7 @@ namespace Engine {
 
 		bool bSoundExists(std::string name);
 
-		void playSound(const std::string& name);
+		void playSound(const std::string& name, bool bypassChecks);
 
 		sound* findSound(std::string name);
 		int findSoundPlacement(std::string name);
