@@ -65,10 +65,11 @@ namespace Engine
 			_elapsed += _dt;
 			//Frame setup
 
-			if (FramebufferSpesification spec = m_FrameBuffer->GetSpesification(); viewportSize.x > 0.0f && viewportSize.y > 0.0f && (spec.width != static_cast<uint32_t>(viewportSize.x) || spec.height != static_cast<uint32_t>(viewportSize.y)))
+			FramebufferSpesification spec = m_FrameBuffer->GetSpesification();
+			if (viewportSize.x > 0.0f && viewportSize.y > 0.0f && (spec.width != static_cast<uint32_t>(viewportSize.x) || spec.height != static_cast<uint32_t>(viewportSize.y)))
 			{
-				uint32_t x = static_cast<uint32_t>(viewportSize.x);
-				uint32_t y = static_cast<uint32_t>(viewportSize.y);
+				const auto x = static_cast<uint32_t>(viewportSize.x);
+				const auto y = static_cast<uint32_t>(viewportSize.y);
 				if (x > 0 && y > 0)
 				{
 					m_FrameBuffer->Resize(x, y);
@@ -86,9 +87,8 @@ namespace Engine
 
 				camera->update(dt);
 
-				
+
 				activeScene->ShadowPass();
-				
 
 				m_FrameBuffer->Bind();
 				RenderCommand::SetClearColor({ 0.1f, 0.2f, 0.3f, 1.f });
@@ -96,7 +96,7 @@ namespace Engine
 
 				activeScene->OnUpdate(dt);
 
-				if (Input::IsMouseButtonPressed(MOUSE_BUTTON_1) && !bMB1Pressed && viewportHovered && !ImGuizmo::IsOver())
+				if (Input::IsMouseButtonPressed(MOUSE_BUTTON_1) && !bMB1Pressed && viewportHovered && (!ImGuizmo::IsOver() && !ImGuizmo::IsUsing()))
 				{
 					bMB1Pressed = true;
 					int clickedData = SampleViewportAtMouseLocation();
@@ -104,8 +104,8 @@ namespace Engine
 						m_SceneGraph.PickEntity(static_cast<uint32_t>(clickedData));
 					else
 						m_SceneGraph.ClearEntity();
-
 				}
+				
 			}
 			//Clean up
 			{

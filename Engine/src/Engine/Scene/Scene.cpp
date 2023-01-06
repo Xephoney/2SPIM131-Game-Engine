@@ -98,9 +98,12 @@ namespace Engine
 		if (entity.HasComponent<AudioSource>())
 		{
 			auto ac = entity.GetComponent<AudioSource>();
+			
 			ac.swapSound("Delete");
 			ac.playSound();
+			
 		}
+		
 		m_Registry.destroy(entity.m_EntityHandle);
 		entity.m_EntityHandle= { entt::null };
 		return true;
@@ -181,20 +184,18 @@ namespace Engine
 				//TODO Set camera with Main = true to the Rendertarget Camera. Potentially adding Rendertarget textures.
 			}
 		}
-				
-		// CHECK SIMULATION STATE
+
 		if(simulate)
 		{
 			constexpr float timestep = 1.0 / 120.0;
 			fixedDTCounter += dt;
 			if(fixedDTCounter > timestep)
 			{
-				OnFixedUpdate(fixedDTCounter);
+				OnFixedUpdate(timestep * fixedDTCounter/timestep);
 				fixedDTCounter = 0;
 			}
-
-			particleSystem->Update(dt);
 			particleSystem->Render();
+			particleSystem->Update(dt);
 		}
 
 		{
@@ -233,6 +234,7 @@ namespace Engine
 #endif
 				}
 			}
+			
 		}
 	}
 
@@ -263,26 +265,6 @@ namespace Engine
 				transform.CalculateTransform();
 				light.UpdateViewProjectionMatrix(transform.Forward());
 				
-				
-				
-				/*Renderer::SubmitDirectionalLight(
-					*light.lightShader.get(),
-					transform.Forward(),
-					light.specularExponent,
-					light.specularStrength,
-					light.ambientStrength,
-					light.lightColor);*/
-
-				/*Renderer::SubmitDirectionalLightShadow(
-					*light.lightShader.get(),
-					transform.Forward(),
-					light.lightSpaceMatrix,
-					light.specularExponent,
-					light.specularStrength,
-					light.ambientStrength,
-					light.lightColor);
-					*/
-
 				auto renderpass = m_Registry.view<Transform, StaticMeshRenderer>();
 				for (auto& entity : renderpass)
 				{
@@ -294,6 +276,7 @@ namespace Engine
 					}
 				}
 				light.shadowFrameBuffer->BindDepthTexture();
+				//light.lightShader->Bind();
 				light.lightShader->SetInt("shadowMap", light.shadowFrameBuffer->TextureID());
 				light.shadowFrameBuffer->Unbind();
 			}

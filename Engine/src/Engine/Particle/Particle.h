@@ -24,25 +24,25 @@ namespace Engine
 		void setPosition(float ts) { m_Position += m_Velocity * ts; };
 		void setStartPosition(glm::vec3 position) { m_Position = position; };
 
-		glm::vec2 getVelocity() { return m_Velocity; };
-		glm::vec4 getStartColor() { return m_StartColor; };
-		glm::vec4 getEndColor() { return m_EndColor; };
+		glm::vec2 getVelocity() const { return m_Velocity; };
+		glm::vec4 getStartColor() const { return m_StartColor; };
+		glm::vec4 getEndColor() const { return m_EndColor; };
 
-		float getRotation() { return m_Rotation; };
+		float getRotation() const { return m_Rotation; };
 		void setRotation(float ts) { m_Rotation += 2.f * ts; };
 
-		float getStartSize() { return m_StartSize; };
-		float getEndSize() { return m_EndSize; };
-		float getLifeTime() { return m_LifeTime; };
+		float getStartSize() const { return m_StartSize; };
+		float getEndSize() const { return m_EndSize; };
+		float getLifeTime() const { return m_LifeTime; };
 
-		float getLifeRemaining() { return m_LifeRemaining; };
+		float getLifeRemaining() const { return m_LifeRemaining; };
 		void setLifeRemaining(float ts) { m_LifeRemaining -= ts; };
 
-		bool getStatus() { return m_Active; };
+		bool getStatus() const { return m_Active; };
 		void setStatus(bool status) { m_Active = status; };
 
 		StaticMesh mesh;
-		Mesh getMesh() const { return MeshManager::instance().GetMeshFromID(mesh.meshes.front()); }
+		[[nodiscard]] Mesh getMesh() const { return MeshManager::instance().GetMeshFromID(mesh.meshes.front()); }
 				
 	private:
 		/* Main particle variables */

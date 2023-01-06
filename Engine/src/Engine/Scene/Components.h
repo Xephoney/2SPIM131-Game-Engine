@@ -1,3 +1,4 @@
+// ReSharper disable CppClangTidyModernizeUseNodiscard
 #pragma once
 #include "glm/glm.hpp"
 #include <string>
@@ -18,6 +19,19 @@ namespace Engine
 
 	struct Transform
 	{
+	private:
+		glm::vec3 int_pos{ 0.f };
+		glm::vec3 int_rot{ 0.f };
+		glm::vec3 int_scl{ 1.f };
+
+		float epsilon{ 0.001f };
+		bool check() const 
+		{
+			return (glm::length2(int_pos - position) > epsilon ||
+					glm::length2(int_rot - euler_rotation) > epsilon ||
+					glm::length2(int_scl - scale) > epsilon);
+		}
+	public:
 		glm::mat4 transform			{ 1.f  };
 		glm::vec3 position			{ 0.f };
 		glm::vec3 euler_rotation	{ 0.f };
@@ -32,23 +46,28 @@ namespace Engine
 
 		operator glm::mat4& ()
 		{
-			CalculateTransform();
+			if (check())
+			{
+				int_pos = position;
+				int_rot = euler_rotation;
+				int_scl = scale;
+				CalculateTransform();
+			}
 			return transform;
 		}
+
 		operator const glm::mat4& () const
 		{
 			return transform;
 		}
 		inline void CalculateTransform()
 		{
-			glm::mat4 translation = glm::translate(glm::mat4{ 1.f }, position);
-			glm::mat4 rotation = glm::toMat4(glm::quat(euler_rotation));
-			//glm::mat4 rotation = glm::rotate(glm::mat4(1.f), glm::radians(euler_rotation.x), {1,0,0})
-				//				* glm::rotate(glm::mat4(1.f), glm::radians(euler_rotation.y), { 0,1,0 })
-					//			* glm::rotate(glm::mat4(1.f), glm::radians(euler_rotation.z), { 0,0,1 });
-
+			const glm::mat4 translation = glm::translate(glm::mat4{ 1.f }, position);
+			const glm::mat4 rotation = glm::toMat4(glm::quat(euler_rotation));
+			
 			transform = translation * rotation * glm::scale(glm::mat4{ 1.f }, scale);
 		}
+		
 		void SetRotation(const glm::vec3& rot)
 		{
 			euler_rotation = rot;
@@ -339,7 +358,7 @@ namespace Engine
 			dirLightShader = ShaderLibrary::instance().Get("DirectionalShadows");
 			shadowMapShader = ShaderLibrary::instance().Get("DirectionalShadows");
 			
-			shadowFrameBuffer = DepthOnlyFramebuffer::Create(4098);
+			shadowFrameBuffer = DepthOnlyFramebuffer::Create(4096);
 			projectionMatrix = glm::ortho(-30.0, 30.0, -30.0, 30.0, -10.0, 40.0);
 		}
 

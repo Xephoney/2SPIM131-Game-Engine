@@ -148,7 +148,7 @@ namespace Engine
 	PhysicsWorld::PhysicsWorld() = default;
 	
 
-	void PhysicsWorld::Initialize(bool withFloor)
+	auto PhysicsWorld::Initialize(bool withFloor) -> void
 	{
 		// Register allocation hook
 		RegisterDefaultAllocator();
@@ -182,26 +182,13 @@ namespace Engine
 		physics_system->SetBodyActivationListener(body_activation_listener);
 
 		physics_system->SetGravity({ 0,-10.0,0 });
-		// Used to interface with (Rigid)bodies
+		
 		BodyInterface& body_interface = physics_system->GetBodyInterface();
-		if(withFloor)
-		{
-			BoxShapeSettings floor_shape_settings(Vec3(1000.0f, 1.0f, 1000.0f));
-
-			// Create the shape
-			ShapeSettings::ShapeResult floor_shape_result = floor_shape_settings.Create();
-			ShapeRefC floor_shape = floor_shape_result.Get(); // We don't expect an error here, but you can check floor_shape_result for HasError() / GetError()
-
-			BodyCreationSettings floor_settings(floor_shape, RVec3(0.0_r, -1.0_r, 0.0_r), Quat::sIdentity(), EMotionType::Static, Layers::NON_MOVING);
-			body_interface.CreateAndAddBody(floor_settings, EActivation::DontActivate);
-		}
-		//physics_system.OptimizeBroadPhase();
-
 		temp_alloc = new TempAllocatorImpl(100 * 1024 * 1024);
-		job_system = new JobSystemThreadPool(2048, 8, thread::hardware_concurrency() - 1);
+		job_system = new JobSystemThreadPool(2048, 8, static_cast<int>(thread::hardware_concurrency() - 1));
 	}
 
-	void PhysicsWorld::Tick(const double& timeStep)
+	auto PhysicsWorld::Tick(const double& timeStep) const -> void
 	{
 		physics_system->Update(timeStep, 1, 1, temp_alloc, job_system);
 	}
