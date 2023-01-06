@@ -14,16 +14,24 @@ namespace Engine
 {
 	Scene::Scene() 
 	{
+		Entity audiosrc = CreateEmptyEntity("AudioPlayer");
+		//auto& audiocomp = audiosrc.AddComponent<AudioSource>();
+
+		auto playbackFunction = [&](const std::string& clip)->void
+		{
+			SoundManager::getSoundManager().playSound(clip, true);
+		};
+
 		physicsWorld = new PhysicsWorld();
 		physicsWorld->Initialize();
+		physicsWorld->SetCollisionResponseFunction(playbackFunction);
 		particleSystem = new ParticleSystem();
 		particleSystem->init();
-
 
 		Entity entity = CreateEmptyEntity("Directional Light");
 		entity.AddComponent<DirectionalLight>();
 		entity.GetComponent<Transform>().euler_rotation = { glm::radians(-83.f), glm::radians(16.f), glm::radians(27.f) };
-
+		
 		/*entity = CreateEntity("Cube 1");
 		entity.GetComponent<Transform>().position = { -4, 20, 0 };
 		entity.GetComponent<Transform>().euler_rotation = { 22.5, 45, 120 };
@@ -134,6 +142,7 @@ namespace Engine
 		simulate = true;
 		auto& view = m_Registry.view<Transform, RigidBody>();
 		auto& interface = physicsWorld->GetInterface();
+		physicsWorld->EntityCount = 0;
 		for (auto& entity : view)
 		{
 			auto& [transform, rb] = view.get<Transform, RigidBody>(entity);
@@ -146,6 +155,8 @@ namespace Engine
 				shape = new JPH::SphereShape(transform.scale.x/2.f);
 
 			interface.SetShape(rb.data, shape, true, JPH::EActivation::Activate);
+			if (rb.dynamic) { physicsWorld->EntityCount++; }
+			
 		}
 		physicsWorld->physics_system->OptimizeBroadPhase();
 
@@ -161,7 +172,6 @@ namespace Engine
 			particleSystem->Emit(n_emitter);
 			
 		}
-
 	}
 
 	void Scene::StopSimulation()
@@ -169,6 +179,7 @@ namespace Engine
 		simulate = false;
 	}
 
+	constexpr float timestep = 1.0 / 120.0;
 	void Scene::OnUpdate(const double& dt)
 	{
 		{
@@ -187,11 +198,11 @@ namespace Engine
 
 		if(simulate)
 		{
-			constexpr float timestep = 1.0 / 120.0;
+			
 			fixedDTCounter += dt;
 			if(fixedDTCounter > timestep)
 			{
-				OnFixedUpdate(timestep * fixedDTCounter/timestep);
+				OnFixedUpdate(timestep * fixedDTCounter / timestep);
 				fixedDTCounter = 0;
 			}
 			particleSystem->Render();

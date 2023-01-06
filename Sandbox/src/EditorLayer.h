@@ -46,11 +46,12 @@ namespace Engine
 			Application::GetApplication().loadedScene = activeScene;
 
 			camera = std::make_shared<PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
-			camera->SetPosition({ 40,25,40 });
+			camera->SetPosition({ 20,17,20 });
 			camera->Direction() = glm::normalize(glm::vec3(0.f) - camera->GetPosition() );
 			FramebufferSpesification fbs;
+
 			//						Color Texture	                     Mouse picking (Entity ID)						( Depth Texture ) 
-			fbs.attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth, FramebufferTextureFormat::RGBA16F };
+			fbs.attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
 			fbs.width = 1280;
 			fbs.height = 720;
 			fbs.samples = 1;
@@ -64,22 +65,21 @@ namespace Engine
 			_dt = dt;
 			_elapsed += _dt;
 			//Frame setup
-
-			FramebufferSpesification spec = m_FrameBuffer->GetSpesification();
-			if (viewportSize.x > 0.0f && viewportSize.y > 0.0f && (spec.width != static_cast<uint32_t>(viewportSize.x) || spec.height != static_cast<uint32_t>(viewportSize.y)))
 			{
-				const auto x = static_cast<uint32_t>(viewportSize.x);
-				const auto y = static_cast<uint32_t>(viewportSize.y);
-				if (x > 0 && y > 0)
+				FramebufferSpesification spec = m_FrameBuffer->GetSpesification();
+				if (viewportSize.x > 0.0f && viewportSize.y > 0.0f && (spec.width != static_cast<uint32_t>(viewportSize.x) || spec.height != static_cast<uint32_t>(viewportSize.y)))
 				{
-					m_FrameBuffer->Resize(x, y);
-					camera->Resize(x, y);
-					activeScene->OnViewportResize(x, y);
+					const auto x = static_cast<uint32_t>(viewportSize.x);
+					const auto y = static_cast<uint32_t>(viewportSize.y);
+					if (x > 0 && y > 0)
+					{
+						m_FrameBuffer->Resize(x, y);
+						camera->Resize(x, y);
+						activeScene->OnViewportResize(x, y);
+					}
 				}
+				Renderer::NewFrame(camera);
 			}
-
-			Renderer::NewFrame(camera);
-
 			//Normal loop
 			{
 				if (viewportHovered)
@@ -202,6 +202,7 @@ namespace Engine
 
 			ImGui::Begin("##deltatime", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 			ImGui::Text("Deltatime = %f ms", _dt * 1000);
+			ImGui::Text("Dynamic Rigidbodies %d", activeScene->physicsWorld->EntityCount);
 			ImGui::End();
 
 			// ------------------------------ RENDER WINDOW ------------------------------

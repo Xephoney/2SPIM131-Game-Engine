@@ -24,7 +24,7 @@ namespace Engine
 		glm::vec3 int_rot{ 0.f };
 		glm::vec3 int_scl{ 1.f };
 
-		float epsilon{ 0.001f };
+		float epsilon{ 0.0005f };
 		bool check() const 
 		{
 			return (glm::length2(int_pos - position) > epsilon ||
@@ -96,7 +96,6 @@ namespace Engine
 		operator const std::string& () const { return tag; }
 	};
 
-	
 	struct StaticMeshRenderer
 	{
 		StaticMesh mesh;
@@ -216,11 +215,12 @@ namespace Engine
 	{
 	private:
 		sound* mSound = nullptr;
-		std::string mName = "DEFAULT NAME";
+		
 		FMOD_VECTOR mPos;
 		float minDist = 5.f;
 		float maxDist = 10.f;
 	public:
+		std::string mName = "DEFAULT NAME";
 		// constructors
 		AudioSource()
 		{
@@ -397,6 +397,7 @@ namespace Engine
 			
 		}
 	};
+
 	struct ParticleProperties // Used to set the properties for a given particle.
 	{
 		glm::vec3 Position;
@@ -407,6 +408,7 @@ namespace Engine
 		float SizeVariation {0.5f};
 		float LifeTime = 1.0f;
 	};
+
 	struct EmitterProperties // Used to set the properties for a given emitter
 	{
 		glm::vec3 position;
@@ -420,4 +422,23 @@ namespace Engine
 		EmitterComponent(const EmitterComponent&) = default;
 
 	};
+
+	struct BombComponent
+	{
+		float maxRadius {30.f};
+		float minRadius {10.f};
+
+		float impulsePower {25000.f};
+
+		std::shared_ptr<VertexArray> visualizer;
+		
+		BombComponent() = default;
+		BombComponent(const BombComponent&) = default;
+
+		inline void Explode() const
+		{
+			
+		}
+	};
+
 }

@@ -6,53 +6,56 @@
 #include <chrono>
 #include <vector>
 
-// struct to save name and time 
-struct ProfileResult
+namespace Benchmark
 {
-	const char* Name;
-	float Time;
-};
-
-std::vector<ProfileResult> m_ProfileResults; // vector to hold all names and times taken
-
-template<typename Fn>
-class Timer
-{
-public:
-	Timer(const char* name, Fn&& func)
-		: m_Name(name), m_Func(func), m_Stopped(false)
+	// struct to save name and time 
+	struct ProfileResult
 	{
-		m_StartTimepoint = std::chrono::high_resolution_clock::new();
-	}
+		const char* Name;
+		float Time;
+	};
 
-	void Stop()
+	std::vector<ProfileResult> m_ProfileResults; // vector to hold all names and times taken
+
+	template<typename Fn>
+	class Timer
 	{
-		auto endTimepoint = std::chrono::high_resolution_clock::new();
+	public:
+		Timer(const char* name, Fn&& func)
+			: m_Name(name), m_Func(func), m_Stopped(false)
+		{
+			m_StartTimepoint = std::chrono::high_resolution_clock::now();
+		}
 
-		long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
-		long long end = std::chrono::time_point:cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().cound();
+		void Stop()
+		{
+			const auto endTimepoint = std::chrono::high_resolution_clock::now();
 
-		m_Stopped = true;
+			const long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_StartTimepoint).time_since_epoch().count();
+			const long long end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimepoint).time_since_epoch().count();
 
-		float duration = end - start * 0.001f;
-		m_Func({ m_Name, duration });
-		//std::cout << "m_Name: " << "Duration: " << duration << "ms" << std::endl;
+			m_Stopped = true;
+
+			const float duration = end - start * 0.001f;
+			m_Func({ m_Name, duration });
+			//std::cout << "m_Name: " << "Duration: " << duration << "ms" << std::endl;
+		}
+
+		~Timer()
+		{
+			if (!m_Stopped)
+				Stop();
+		}
+	private:
+		const char* m_Name;
+		std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
+		bool m_Stopped;
+		Fn m_Func;
+	};
+
+	#define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) { m_ProfileResults.push_back(ProfileResult); }) // definition to make it easier to use this class
+	#define PROFILE_FUNCTION() PROFILE_SCOPE(__FUNCSIG__)
 	}
-
-	~Time()
-	{
-		if (!m_Stopped)
-			Stop();
-	}
-private:
-	const char* m_Name;
-	std::chrono::time_point<std::chrono::steady_clock> m_StartTimepoint;
-	bool m_Stopped;
-	Fn m_Func;
-};
-
-#define PROFILE_SCOPE(name) Timer timer##__LINE__(name, [&](ProfileResult profileResult) { m_ProfileResults.push_back(ProfileResult); }) // definition to make it easier to use this class
-
 /* TO USE THIS FUNCTION AND PRINT TO IMGUI USE THE FOLLOWING FUNCTION
 
 for(auto& result : m_ProfileResults)

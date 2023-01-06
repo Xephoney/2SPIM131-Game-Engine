@@ -19,8 +19,8 @@ namespace Engine
 	private:
 
 		void DrawEntityNode(Entity entity);
-		void ConstructStructure();
-		void DrawComponents(Entity entity);
+		void ConstructStructure(int size_x, int size_y, int size_z);
+		void DrawComponents(Entity entity) const;
 		std::shared_ptr<Scene> m_scene;
 
 		Entity m_Selected;

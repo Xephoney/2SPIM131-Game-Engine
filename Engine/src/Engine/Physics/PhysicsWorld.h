@@ -18,7 +18,41 @@
 #include "Jolt/Physics/Collision/ShapeCast.h"
 
 
-class MyContactListener;
+
+class MyContactListener : public JPH::ContactListener
+{
+
+public:
+	std::function<void(std::string clip)> callback;
+	// See: ContactListener
+	virtual JPH::ValidateResult	OnContactValidate(const JPH::Body& inBody1, const JPH::Body& inBody2, JPH::RVec3Arg inBaseOffset, const JPH::CollideShapeResult& inCollisionResult) override
+	{
+		// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
+		return JPH::ValidateResult::AcceptContact;
+	}
+
+	virtual void			OnContactAdded(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+	{
+
+		if (inBody1.GetLinearVelocity().LengthSq() > 200 || inBody2.GetLinearVelocity().LengthSq() > 200)
+			callback("Hit");
+		//Called whenever a new contact point is detected.
+		//Note that this callback is called when all bodies are locked, so don't use any locking functions!
+		//Body 1 and 2 will be sorted such that body 1 ID < body 2 ID, so body 1 may not be dynamic.
+		//Note that only active bodies will report contacts, as soon as a body goes to sleep the contacts between that body and all other bodies will receive an OnContactRemoved callback, if this is the case then Body::IsActive() will return false during the callback.
+		//When contacts are added, the constraint solver has not run yet, so the collision impulse is unknown at that point.
+
+		//The velocities of inBody1 and inBody2 are the velocities before the
+		//		contact has been resolved, so you can use this to estimate the collision impulse
+		//		to e.g. determine the volume of the impact sound to play.
+	}
+
+	virtual void			OnContactPersisted(const JPH::Body& inBody1, const JPH::Body& inBody2, const JPH::ContactManifold& inManifold, JPH::ContactSettings& ioSettings) override
+	{
+		//ENGINE_LOG_INFO("A contact was persisted");
+	}
+
+};
 class MyBodyActivationListener;
 class BPLayerInterfaceImpl;
 
@@ -56,11 +90,14 @@ namespace Engine
 			in_rotation.y = newrot.GetY();
 			in_rotation.z = newrot.GetZ();
 		}
-		
+		template<typename Fnc>
+		auto SetCollisionResponseFunction(Fnc&& lamda) const -> void;
 		auto SphereOverlapCheck(const glm::vec3& inpos, const float& radius) -> void
 		{
 			//JPH::RShapeCast cast(JPH::SphereShape,JPH::Vec3(radius));
 		}
+
+		int EntityCount{ 0 };
 		
 	private :
 		JPH::PhysicsSystem* physics_system { nullptr };
@@ -74,4 +111,12 @@ namespace Engine
 		friend class Scene;
 
 	};
+	template <typename Fnc>
+	auto PhysicsWorld::SetCollisionResponseFunction(Fnc&& lamda) const -> void
+	{
+		if(ContactListener)
+			ContactListener->callback = lamda;
+	}
+
+	
 }

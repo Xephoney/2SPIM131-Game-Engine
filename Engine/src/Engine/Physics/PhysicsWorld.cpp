@@ -2,8 +2,9 @@
 
 
 #include "PhysicsWorld.h"
-
+#include "Engine/Scene/Components.h"
 #include "engine/log.h"
+#include "Engine/Scene/Entity.h"
 
 using namespace JPH;
 
@@ -79,12 +80,13 @@ class MyBodyActivationListener : public BodyActivationListener
 public:
 	virtual void		OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
 	{
-		ENGINE_LOG_INFO("PHYSICS :: A body got activated");
+		//ENGINE_LOG_INFO("PHYSICS :: A body got activated");
 	}
 
 	virtual void		OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
 	{
-		ENGINE_LOG_INFO("PHYSICS :: A body went to sleep");
+
+		//ENGINE_LOG_INFO("PHYSICS :: A body went to sleep");
 	}
 };
 
@@ -108,40 +110,7 @@ static void TraceImpl(const char* inFMT, ...)
 	ENGINE_LOG_TRACE(inFMT);
 }
 // An example contact listener
-class MyContactListener : public ContactListener
-{
-public:
-	// See: ContactListener
-	virtual ValidateResult	OnContactValidate(const Body& inBody1, const Body& inBody2, RVec3Arg inBaseOffset, const CollideShapeResult& inCollisionResult) override
-	{
-		// Allows you to ignore a contact before it is created (using layers to not make objects collide is cheaper!)
-		return ValidateResult::AcceptContact;
-	}
 
-	virtual void			OnContactAdded(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
-	{
-	
-		//Called whenever a new contact point is detected.
-		//Note that this callback is called when all bodies are locked, so don't use any locking functions!
-		//Body 1 and 2 will be sorted such that body 1 ID < body 2 ID, so body 1 may not be dynamic.
-		//Note that only active bodies will report contacts, as soon as a body goes to sleep the contacts between that body and all other bodies will receive an OnContactRemoved callback, if this is the case then Body::IsActive() will return false during the callback.
-		//When contacts are added, the constraint solver has not run yet, so the collision impulse is unknown at that point.
-
-		//The velocities of inBody1 and inBody2 are the velocities before the
-		//		contact has been resolved, so you can use this to estimate the collision impulse
-		//		to e.g. determine the volume of the impact sound to play.
-	}
-
-	virtual void			OnContactPersisted(const Body& inBody1, const Body& inBody2, const ContactManifold& inManifold, ContactSettings& ioSettings) override
-	{
-		//ENGINE_LOG_INFO("A contact was persisted");
-	}
-
-	virtual void			OnContactRemoved(const SubShapeIDPair& inSubShapePair) override
-	{
-		//ENGINE_LOG_INFO("A contact was removed");
-	}
-};
 
 namespace Engine
 {
@@ -230,4 +199,5 @@ namespace Engine
 		);
 		return interface.CreateAndAddBody(settings, EActivation::Activate);
 	}
+	
 }

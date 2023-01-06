@@ -101,7 +101,7 @@ namespace Engine
 				}
 				if(ImGui::MenuItem("Wrecking Ball"))
 				{
-					ConstructStructure();
+					ConstructStructure(5, 10, 5);
 					
 					Entity wreckingBall = m_scene->CreateEmptyEntity("WRECKING BALL");
 					wreckingBall.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/sphere.gltf");
@@ -114,7 +114,19 @@ namespace Engine
 
 				if(ImGui::MenuItem("Structure"))
 				{
-					ConstructStructure();
+					ConstructStructure(5,10,5);
+				}
+				if (ImGui::MenuItem("Large Structure"))
+				{
+					ConstructStructure(4, 10, 4);
+					ConstructStructure(6, 10, 6);
+					ConstructStructure(10, 10, 10);
+				}
+				if(ImGui::MenuItem("Bomb"))
+				{
+					Entity bomb = m_scene->CreateEmptyEntity("bomb");
+					bomb.AddComponent<BombComponent>();
+					bomb.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/split_cube.gltf").color = { 0.9f, 0.2f, 0.1f, 1.f};
 				}
 
 				ImGui::EndMenu();
@@ -189,22 +201,22 @@ namespace Engine
 		}
 	}
 
-	void SceneHierarchyPanel::ConstructStructure()
+	void SceneHierarchyPanel::ConstructStructure(int size_x, int size_y, int size_z)
 	{
 		Entity temp_entity;
-		int xz_size = 5;
-		int height = 10;
-		for (int y = 0; y <= height; y++)
+		
+		
+		for (int y = 0; y <= size_y; y++)
 		{
-			int amount = (y % 2 == 0) ? xz_size : xz_size - 1;
-			float colorval = ((float)y / (float)height) + 0.25f;
+			int amount = (y % 2 == 0) ? size_x : size_x - 1;
+			float colorval = ((float)y / (float)size_y) + 0.25f;
 			for (int x = 0; x < amount; x++)
 			{
 				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
 				glm::vec3 position, rotation, scale;
 				auto& tf = temp_entity.GetComponent<Transform>();
 
-				tf.position.z = static_cast<float>(xz_size) / 2.f + 0.1f;
+				tf.position.z = static_cast<float>(size_z) / 2.f + 0.1f;
 				tf.position.x = static_cast<float>(x) - (static_cast<float>(amount) / 2.f) + 0.1f;
 				tf.position.x += 0.5f;
 				tf.position.y = 0.51f + static_cast<float>(y);
@@ -219,7 +231,7 @@ namespace Engine
 				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
 				auto& tf2 = temp_entity.GetComponent<Transform>();
 
-				tf2.position.z = static_cast<float>(-xz_size) / 2.f + 0.1f;
+				tf2.position.z = static_cast<float>(-size_z) / 2.f + 0.1f;
 				tf2.position.x = static_cast<float>(x) - (static_cast<float>(amount) / 2.f) + 0.1f;
 				tf2.position.x += 0.5f;
 				tf2.position.y = 0.51f + static_cast<float>(y);
@@ -231,14 +243,14 @@ namespace Engine
 				temp_entity.AddComponent<RigidBody>(body);
 				temp_entity.GetComponent<StaticMeshRenderer>().color = { colorval,colorval,colorval,1 };
 			}
-			amount = (y % 2 == 1) ? xz_size : xz_size - 1;
+			amount = (y % 2 == 1) ? size_z : size_z - 1;
 			for (int z = 0; z < amount; z++)
 			{
 				temp_entity = m_scene->CreateEntity("Physics Box (dynamic)");
 				glm::vec3 position, rotation, scale;
 				auto& tf = temp_entity.GetComponent<Transform>();
 
-				tf.position.x = static_cast<float>(xz_size) / 2.f + 0.1f;
+				tf.position.x = static_cast<float>(size_x) / 2.f + 0.1f;
 				tf.position.z = static_cast<float>(z) - (static_cast<float>(amount) / 2.f) + 0.1f;
 
 				tf.position.z += 0.5f;
@@ -255,7 +267,7 @@ namespace Engine
 				auto& tf2 = temp_entity.GetComponent<Transform>();
 				
 
-				tf2.position.x = static_cast<float>(-xz_size) / 2.f + 0.1;
+				tf2.position.x = static_cast<float>(-size_x) / 2.f + 0.1;
 				tf2.position.z = static_cast<float>(z) - (static_cast<float>(amount) / 2.f) + 0.1f;
 
 				tf2.position.z += 0.5f;
@@ -271,10 +283,7 @@ namespace Engine
 		}
 	}
 
-	bool positionDirtyFlag = true;
-	bool rotationDirtyFlag = true;
-	
-	void SceneHierarchyPanel::DrawComponents(Entity entity)
+	void SceneHierarchyPanel::DrawComponents(Entity entity) const
 	{
 		if (entity.m_EntityHandle == entt::null)
 			return;
@@ -449,6 +458,54 @@ namespace Engine
 				ImGui::TreePop();
 			}
 			ImGui::Separator();
+		}
+
+		if(entity.HasComponent<BombComponent>())
+		{
+			if (ImGui::TreeNodeEx((void*)(typeid(BombComponent).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Bomb"))
+			{
+				auto& bomb = entity.GetComponent<BombComponent>();
+				ImGui::DragFloat("Radius", &bomb.maxRadius);
+				ImGui::DragFloat("Power", &bomb.impulsePower);
+				if (ImGui::Button("DETONATE"))
+				{
+					auto& reg = m_scene->GetReg();
+					auto& interface = m_scene->physicsWorld->GetInterface();
+					const auto& view = reg.view<Transform, RigidBody>();
+					const auto& bombtf = entity.GetComponent<Transform>();
+					for(const auto& victim : view)
+					{
+						auto&[tf, rb] = view.get<Transform, RigidBody>(victim);
+						if(!rb.dynamic)
+							continue;
+						const glm::vec3 bias{ 1.2, 0.2, 1.2 };
+						const float forceVariation = Random::Float() + 0.25;
+						const glm::vec3 forceDir = glm::normalize(tf.position - bombtf.position) * bomb.impulsePower * bias * forceVariation;
+						interface.AddImpulse(rb.data, { forceDir.x,forceDir.y,forceDir.z });
+					}
+				}
+				ImGui::SameLine();
+				static bool checked{ false };
+				ImGui::Checkbox("Black Hole (the big succ)",&checked);
+
+				if(checked)
+				{
+					auto& reg = m_scene->GetReg();
+					auto& interface = m_scene->physicsWorld->GetInterface();
+					const auto& view = reg.view<Transform, RigidBody>();
+					const auto& bombtf = entity.GetComponent<Transform>();
+					for (const auto& victim : view)
+					{
+						auto& [tf, rb] = view.get<Transform, RigidBody>(victim);
+						if (!rb.dynamic)
+							continue;
+						const glm::vec3 forceDir = -glm::normalize(tf.position - bombtf.position) * (bomb.impulsePower/10.f) * Random::Float();
+						interface.AddImpulse(rb.data, { forceDir.x,forceDir.y,forceDir.z });
+					}
+				}
+				ImGui::TreePop();
+			}
+
 		}
 	}
 }

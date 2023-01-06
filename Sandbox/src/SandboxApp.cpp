@@ -146,12 +146,11 @@ public:
 class SoundLayer : public Engine::Layer
 {
 public:
-
-
 	SoundLayer() : Layer("SoundLayer") {
 		
 	}
-	void OnUpdate(const double& dt) override {
+	void OnUpdate(const double& dt) override
+	{
 		Engine::SoundManager::getSoundManager().update();
 	}
 	void OnEvent(Engine::Event& event) override
