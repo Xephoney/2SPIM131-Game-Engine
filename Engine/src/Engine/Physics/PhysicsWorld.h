@@ -90,6 +90,22 @@ namespace Engine
 			in_rotation.y = newrot.GetY();
 			in_rotation.z = newrot.GetZ();
 		}
+
+		void SetBodyPosition(const JPH::BodyID id, const glm::vec3& rotation) const
+		{
+			if (!system)
+				return;
+
+			physics_system->GetBodyInterface().SetPosition(id,JPH::RVec3{ rotation.x, rotation.y, rotation.z }, JPH::EActivation::Activate);
+		}
+		void SetBodyRotation(const JPH::BodyID id, const glm::vec3& rotation) const
+		{
+			if (!system)
+				return;
+
+			physics_system->GetBodyInterface().SetRotation(id, JPH::QuatArg::sEulerAngles( {rotation.x, rotation.y, rotation.z }), JPH::EActivation::Activate);
+		}
+
 		template<typename Fnc>
 		auto SetCollisionResponseFunction(Fnc&& lamda) const -> void;
 		auto SphereOverlapCheck(const glm::vec3& inpos, const float& radius) -> void

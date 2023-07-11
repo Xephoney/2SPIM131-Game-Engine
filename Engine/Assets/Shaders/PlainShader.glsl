@@ -63,7 +63,7 @@ vec3 directionalLight()
 
 		vec3 halfwayVec = normalize(viewDirection + lightDirection);
 		float specAmount = pow(max(dot(Normal, halfwayVec), 0.0), specularExponent);
-		specular = specAmount * 0.2;
+		specular = specAmount * 1;
 	}
 
 	float shadow = 0.f;

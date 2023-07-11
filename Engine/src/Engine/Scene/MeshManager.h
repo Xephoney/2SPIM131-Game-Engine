@@ -28,6 +28,7 @@ namespace Engine
 	private:
 		MeshManager();
 		std::unordered_map<std::string, StaticMesh> staticMeshes;
+		//std::unordered_map<StaticMesh, std::vector<glm::mat4&>> InstancedMeshes;
 		std::vector<Mesh*> meshes;
 		StaticMesh currentStaticMesh;
 

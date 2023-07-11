@@ -40,25 +40,28 @@ namespace Engine
 		int m_guizmoType = 0;
 
 
-		EditorLayer() : Layer("EditorLayer")
+		EditorLayer() : Layer("EditorLayer"), renderwindowCenter{ 0,0 }, viewportBounds{}
 		{
 			activeScene = std::make_shared<Scene>();
 			Application::GetApplication().loadedScene = activeScene;
 
 			camera = std::make_shared<PerspectiveCamera>(60.f, (16.f / 9.f), 0.01f, 1000.f);
-			camera->SetPosition({ 20,17,20 });
-			camera->Direction() = glm::normalize(glm::vec3(0.f) - camera->GetPosition() );
+			camera->SetPosition({20, 17, 20});
+			camera->Direction() = glm::normalize(glm::vec3(0.f) - camera->GetPosition());
 			FramebufferSpesification fbs;
 
 			//						Color Texture	                     Mouse picking (Entity ID)						( Depth Texture ) 
-			fbs.attachments = { FramebufferTextureFormat::RGBA16F, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
+			fbs.attachments = {
+				FramebufferTextureFormat::RGBA16F,			//		Color Texture
+				FramebufferTextureFormat::RED_INTEGER,		//      Mouse Picking (Entity ID)
+				FramebufferTextureFormat::Depth				//		Depth Texture
+			};
 			fbs.width = 1280;
 			fbs.height = 720;
 			fbs.samples = 1;
 			m_FrameBuffer = Framebuffer::Create(fbs);
-
-
 		}
+
 		bool bMB1Pressed{ false };
 		void OnUpdate(const double& dt) override
 		{
@@ -99,7 +102,7 @@ namespace Engine
 				if (Input::IsMouseButtonPressed(MOUSE_BUTTON_1) && !bMB1Pressed && viewportHovered && (!ImGuizmo::IsOver() && !ImGuizmo::IsUsing()))
 				{
 					bMB1Pressed = true;
-					int clickedData = SampleViewportAtMouseLocation();
+					const int clickedData = SampleViewportAtMouseLocation();
 					if (clickedData >= 0)
 						m_SceneGraph.PickEntity(static_cast<uint32_t>(clickedData));
 					else
@@ -201,7 +204,7 @@ namespace Engine
 			ImGui::End();
 
 			ImGui::Begin("##deltatime", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-			ImGui::Text("Deltatime = %f ms", _dt * 1000);
+			ImGui::Text("Deltatime = %.3f ms", _dt * 1000);
 			ImGui::Text("Dynamic Rigidbodies %d", activeScene->physicsWorld->EntityCount);
 			ImGui::End();
 
@@ -288,17 +291,12 @@ namespace Engine
 			if(!activeScene->IsSimulating())
 			{
 				if(ImGui::Button("Start Simulation"))
-				{
 					activeScene->StartSimulation();
-				}
-				
 			}
 			else
 			{
 				if (ImGui::Button("Pause Simulation"))
-				{
 					activeScene->StopSimulation();
-				}
 			}
 			ImGui::End();
 			ImGui::SameLine();
@@ -384,7 +382,7 @@ namespace Engine
 			static glm::vec2 center{ renderwindowSize.x / 2.f, renderwindowSize.y / 2.f };
 			glm::vec2 mousePos;
 			glm::vec2 delta;
-			const float cameraSensitivity = 55.f;
+			const float cameraSensitivity = 85.f;
 			if (Input::IsMouseButtonPressed(MOUSE_BUTTON_2))
 			{
 				//center = renderwindowCenter;

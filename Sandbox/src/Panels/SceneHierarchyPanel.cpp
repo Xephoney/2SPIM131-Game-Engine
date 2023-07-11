@@ -35,7 +35,7 @@ namespace Engine
 
 		if (ImGui::BeginPopup("create context"))
 		{
-			ImGui::Text(" - Create Menu -" );
+			ImGui::Text(" - Creation Menu -" );
 			ImGui::Separator();
 			if (ImGui::MenuItem("Empty"))
 			{
@@ -54,9 +54,21 @@ namespace Engine
 			ImGui::Separator();
 			if (ImGui::BeginMenu("3D"))
 			{
+				if (ImGui::MenuItem("Plane"))
+				{
+					m_Selected = m_scene->CreateEmptyEntity("Plane");
+					m_Selected.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/plane.gltf");
+				}
 				if(ImGui::MenuItem("Cube"))
+				{
 					m_Selected = m_scene->CreateEntity("Cube");
-				ImGui::MenuItem("Sphere");
+				}
+				if (ImGui::MenuItem("Sphere"))
+				{
+					m_Selected = m_scene->CreateEmptyEntity("Sphere");
+					m_Selected.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/sphere.gltf").color = glm::vec4(0.1f,0.2f,0.9f,1.f);
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -67,9 +79,9 @@ namespace Engine
 			
 			if (ImGui::BeginMenu("Physics"))
 			{
-				if (ImGui::MenuItem("Physics Box"))
+				if (ImGui::MenuItem("Box"))
 				{
-					m_Selected = m_scene->CreateEntity("Physics Box (dynamic)");
+					m_Selected = m_scene->CreateEntity("Physics Box");
 					glm::vec3 position, rotation, scale;
 					auto& tf = m_Selected.GetComponent<Transform>();
 					position = tf.position;
@@ -78,7 +90,7 @@ namespace Engine
 					auto body = m_scene->physicsWorld->CreateBoxBody(true, position, rotation, scale / 2.f);
 					m_Selected.AddComponent<RigidBody>(body);
 				}
-				if (ImGui::MenuItem("Physics Ball"))
+				if (ImGui::MenuItem("Ball"))
 				{
 					Entity wreckingBall = m_scene->CreateEmptyEntity("Physics Ball");
 					wreckingBall.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/sphere.gltf");
@@ -99,7 +111,7 @@ namespace Engine
 					auto body = m_scene->physicsWorld->CreateBoxBody(false, position, rotation, scale / 2.f);
 					m_Selected.AddComponent<RigidBody>(body).dynamic = false;
 				}
-				if(ImGui::MenuItem("Wrecking Ball"))
+				if(ImGui::MenuItem("Wrecking Ball Structure"))
 				{
 					ConstructStructure(5, 10, 5);
 					
@@ -355,12 +367,10 @@ namespace Engine
 			}
 			ImGui::Separator();
 		}
-		else if (ImGui::Button("Add Audio Source"))
+		/*else if (ImGui::Button("Add Audio Source"))
 		{
 			auto& audio = entity.AddComponent<AudioSource>("Trekant",entity.GetComponent<Transform>().position);
-			
-
-		}
+		}*/
 		if(entity.HasComponent<StaticMeshRenderer>())
 		{
 			auto& smr = entity.GetComponent<StaticMeshRenderer>();
@@ -374,6 +384,10 @@ namespace Engine
 				{
 					ImGui::BulletText("Shader"); ImGui::SameLine();
 					ImGui::TextColored({ 0.5f,0.7f,0.2f,1.f }, mesh.material.shader->GetName().c_str());
+					if(ImGui::Button("Recompile Shader"))
+					{
+						//TODO : Recompile Shader
+					}
 					ImGui::BulletText("Diffuse"); ImGui::SameLine();
 					ImGui::ColorEdit3("##label", glm::value_ptr(smr.color));
 				}
@@ -506,6 +520,23 @@ namespace Engine
 				ImGui::TreePop();
 			}
 
+		}
+
+
+		if(entity.HasComponent<Rotator>())
+		{
+			auto& rotator = entity.GetComponent<Rotator>();
+			if (ImGui::TreeNodeEx((void*)(typeid(Rotator).hash_code()), ImGuiTreeNodeFlags_DefaultOpen, "Rotator Component"))
+			{
+				ImGui::DragFloat3("Axis", value_ptr(rotator.axis), 0.1f);
+				ImGui::DragFloat("Speed", &rotator.speed, 0.1f);
+				ImGui::TreePop();
+			}
+			ImGui::Separator();
+		}
+		else if(ImGui::Button("Add Rotator"))
+		{
+			entity.AddComponent<Rotator>();
 		}
 	}
 }

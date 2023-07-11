@@ -70,7 +70,6 @@ namespace Engine
 		Entity entity = { m_Registry.create(), this};
 		entity.AddComponent<Tag>(tagName);
 		entity.AddComponent<Transform>(glm::mat4{1.f});
-		// entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/sphere.gltf");
 		entity.AddComponent<StaticMeshRenderer>("../Engine/Assets/3D/Primitives/split_cube.gltf");
 #ifdef _DEBUG
 		entity.AddComponent<DebugBox>(glm::vec4{ 0.3, 0.9, 0.1, 1 });
@@ -207,6 +206,15 @@ namespace Engine
 			}
 			particleSystem->Render();
 			particleSystem->Update(dt);
+
+			//Ticking all components that derive from Component
+			const auto view = m_Registry.view<Rotator>();
+			for (auto& entity : view)
+			{
+				Entity a(entity, this);
+				view.get<Rotator>(entity).Tick(dt, a.GetComponent<Transform>());
+			}
+			
 		}
 
 		{
@@ -257,9 +265,16 @@ namespace Engine
 		for (auto& entity : view)
 		{
 			auto& [transform, rb] = view.get<Transform, RigidBody>(entity);
-
-			physicsWorld->GetBodyPosition(rb.data, transform.position);
-			physicsWorld->GetBodyRotation(rb.data, transform.euler_rotation);
+			if(rb.dynamic)
+			{
+				physicsWorld->GetBodyPosition(rb.data, transform.position);
+				physicsWorld->GetBodyRotation(rb.data, transform.euler_rotation);
+			}
+			else
+			{
+				physicsWorld->SetBodyPosition(rb.data, transform.position);
+				physicsWorld->SetBodyRotation(rb.data, transform.position);
+			}
 		}
 	}
 

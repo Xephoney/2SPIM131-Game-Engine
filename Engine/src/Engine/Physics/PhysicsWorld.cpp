@@ -1,6 +1,5 @@
 #include <engpch.h>
 
-
 #include "PhysicsWorld.h"
 #include "Engine/Scene/Components.h"
 #include "engine/log.h"
@@ -78,12 +77,12 @@ private:
 class MyBodyActivationListener : public BodyActivationListener
 {
 public:
-	virtual void		OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
+	virtual void OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
 	{
 		//ENGINE_LOG_INFO("PHYSICS :: A body got activated");
 	}
 
-	virtual void		OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
+	virtual void OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
 	{
 
 		//ENGINE_LOG_INFO("PHYSICS :: A body went to sleep");

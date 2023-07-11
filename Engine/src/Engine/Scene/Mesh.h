@@ -35,7 +35,7 @@ namespace Engine
 
 	struct StaticMesh
 	{
-		std::vector<uint32_t> meshes;
+		std::vector<uint32_t> meshes {};
 	};
 
 	class Mesh
@@ -43,11 +43,11 @@ namespace Engine
 	public:
 		Mesh();
 		Mesh(const std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
-		~Mesh();
+		~Mesh() = default;
 		std::shared_ptr<VertexArray> vertexArray;
 		Material material;
 	};
-
+	
 	inline Mesh::Mesh(const std::vector<Vertex>& vertices, std::vector<uint32_t>& indices)
 	{
 		vertexArray.reset(VertexArray::Create());
@@ -66,8 +66,5 @@ namespace Engine
 		vertexArray->SetIndexBuffer(indexBuffer);
 	}
 
-	inline Mesh::~Mesh()
-	{
-
-	}
+	
 }

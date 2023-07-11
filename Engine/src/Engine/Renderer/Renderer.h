@@ -24,7 +24,7 @@ namespace Engine
 		static void SubmitDepthpass(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& va, const glm::mat4& transform = glm::mat4(1.f));
 		static void SubmitDirectionalLight(Shader& shader, const glm::vec3& direction, int specularExponent = 128,float specularStrength = 0.9f,float ambientStrength = 0.45f,const glm::vec3& lightColor = glm::vec3(1, 1, 1));
 		static void SubmitDirectionalLightShadow(Shader& shader, const glm::vec3& direction, const glm::mat4& lightSpaceMatrix, int specularExponent = 128, float specularStrength = 0.9f, float ambientStrength = 0.45f, const glm::vec3& lightColor = glm::vec3(1, 1, 1));
-		// static void SubmitInstanced(struct StaticMesh& staticMesh, const glm::mat4& transform = glm::mat4(1.f));
+		static void SubmitInstanced(struct StaticMesh& staticMesh, const glm::mat4& transform = glm::mat4(1.f));
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); };
 		inline static std::shared_ptr<Camera> GetRenderCamera()  { return m_SceneData->render_camera; }

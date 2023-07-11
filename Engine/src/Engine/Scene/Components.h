@@ -12,19 +12,22 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include "Entity.h"
 #include "Engine/Renderer/DepthOnlyFrameBuffer.h"
 
 namespace Engine
 {
 
-	struct Transform
+
+	
+	struct Transform 
 	{
 	private:
 		glm::vec3 int_pos{ 0.f };
 		glm::vec3 int_rot{ 0.f };
 		glm::vec3 int_scl{ 1.f };
 
-		float epsilon{ 0.0005f };
+		float epsilon{ 0.00005f };
 		bool check() const 
 		{
 			return (glm::length2(int_pos - position) > epsilon ||
@@ -60,7 +63,7 @@ namespace Engine
 		{
 			return transform;
 		}
-		inline void CalculateTransform()
+		void CalculateTransform()
 		{
 			const glm::mat4 translation = glm::translate(glm::mat4{ 1.f }, position);
 			const glm::mat4 rotation = glm::toMat4(glm::quat(euler_rotation));
@@ -77,13 +80,31 @@ namespace Engine
 		{
 			euler_rotation += deltaRotation;
 		}
+		void RotateAroundAxis(const glm::vec3& axis, float angle)
+		{
+			euler_rotation += axis * angle;
+		}
 
 		glm::vec3 Forward() const
 		{
 			return glm::normalize(glm::vec3(transform[2]));
 		}
+
+		~Transform() = default;
 	};
 
+	struct Rotator
+	{
+		Rotator() = default;
+		Rotator(const Rotator&) = default;
+		~Rotator() = default;
+		glm::vec3 axis{ 0.f, 1.f, 0.f };
+		float speed{ 1.f };
+		void Tick(double deltaTime, Transform& tf) const
+		{
+			tf.RotateAroundAxis(axis, speed * deltaTime);
+		}
+	};
 	struct Tag
 	{
 		std::string tag = "";
@@ -111,7 +132,7 @@ namespace Engine
 		operator StaticMesh& () { return mesh; }
 		operator const StaticMesh& () const { return mesh; }
 
-		std::vector<Mesh> GetMeshes()
+		std::vector<Mesh> GetMeshes() const
 		{
 			std::vector<Mesh> meshes;
 			for(auto& s_mesh : mesh.meshes)
@@ -441,4 +462,5 @@ namespace Engine
 		}
 	};
 
+	
 }
